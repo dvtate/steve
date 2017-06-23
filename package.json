@@ -1,0 +1,27 @@
+{
+  "name": "steve_bot",
+  "version": "1.0.0",
+  "description": "a telegram bot for RoboBibb",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robobibb/steve_bot.git"
+  },
+  "keywords": [
+    "telegram",
+    "bot"
+  ],
+  "author": "RoboBibb programming team",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/robobibb/steve_bot/issues"
+  },
+  "homepage": "https://github.com/robobibb/steve_bot#readme",
+  "dependencies": {
+    "express": "^4.15.3",
+    "telegram-node-bot": "^4.0.5"
+  }
+}
