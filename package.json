@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/robobibb/steve_bot#readme",
   "dependencies": {
-    "express": "^4.15.3",
-    "telegram-node-bot": "^4.0.5"
+    "node-telegram-bot-api": "^0.27.1",
   }
 }
