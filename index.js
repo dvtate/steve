@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const TOKEN = process.env.TELEGRAM_TOKEN || 'api key';
+const TOKEN = process.env.TELEGRAM_TOKEN;
 const TelegramBot = require("node-telegram-bot-api");
 const request = require('request');
 const bot = new TelegramBot(TOKEN, { polling: true });
@@ -13,21 +13,20 @@ bot.onText(/\/help/, function(msg) {
 	+ "/cat - gives a random cat picture\n"
 	+ "/echo <message> - steve repeats <message>\n"
 	+ "/ping - tests the connection and speed\n"
-	+ "/join - helps you get into our group chats\n");
+	+ "/join - helps you get into our group chats\n"
+	+ "/coinflip - flips a coin and sends the result\n"
+	+ "/random - random number generator numbers come after for ranges\n");
 });
 
-// the want a random cat pic
-bot.onText(/\/cat/, function onPhotoText(msg) {
-	// From file path
-	const photo = `${__dirname}/../test/data/photo.gif`;
-	const url = "http://lorempixel.com/400/200/cats/"
-	const img = request(url);
+// send a random cat pic
+bot.onText(/\/cat/, function(msg) {
+	const img = request("http://lorempixel.com/400/200/cats/");
 	bot.sendPhoto(msg.chat.id, img, { caption: "look at the kitty!" });
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") likes /cat's");
 });
 
 // Matches /echo [whatever]
-bot.onText(/\/echo (.+)/, function onEchoText(msg, match) {
+bot.onText(/\/echo (.+)/, function(msg, match) {
   const resp = match[1];
   bot.sendMessage(msg.chat.id, resp);
   console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") echo'd");
@@ -54,14 +53,14 @@ bot.onText(/\/join/, function onJoinRequest(msg) {
 		},
 		reply_to_message_id : msg.message_id
 	};
-	bot.sendMessage(msg.chat.id, 'Which chat do you want to join?', opts);
+	bot.sendMessage(msg.chat.id, "Which chat do you want to join?", opts);
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") requested to join");
 });
 
 
 
 // Handle callback queries
-bot.on('callback_query', function onCallbackQuery(callbackQuery) {
+bot.on("callback_query", function(callbackQuery) {
 	const action = callbackQuery.data;
 	const msg = callbackQuery.message;
 	const usr = callbackQuery.from;
@@ -100,6 +99,27 @@ bot.onText(/\/coinflip/, function(msg) {
 	else
 		bot.sendMessage(msg.chat.id, "tails");
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") flipped a coin.");
+});
+
+// random number generator
+bot.onText(/\/random (.+)/, function onEchoText(msg, match) {
+	const args = match[1];
+	var lims = args.split(" ");
+	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" +
+				msg.from.username + ") random :: " + lims);
+
+	if (lims.length == 1) {
+		const min = 0;
+		const max = Math.floor(Number(lims[0]))
+		bot.sendMessage(msg.chat.id, "random number = " + (Math.floor(Math.random() * (max - min)) + min));
+	} else if (lims.length == 2) {
+		const min = Math.ceil(Number(lims[1]));
+		const max = Math.floor(Number(lims[0]));
+		bot.sendMessage(msg.chat.id, "random number = " + (Math.floor(Math.random() * (max - min)) + min));
+	} else {
+		bot.sendMessage(msg.chat.id, "invalid limits for /random ");
+	}
+
 });
 
 
