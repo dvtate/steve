@@ -89,11 +89,18 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery) {
 
 	bot.editMessageText(text, opts);
 
+	// 147617508 = @ridderhoff
 	bot.forwardMessage("147617508", msg.chat.id, msg.reply_to_message.message_id);
-	bot.sendMessage("147617508", "hi");
+ });
+
+// coin flip
+bot.onText(/\/coinflip/, function(msg) {
+	if (Math.random() > 0.5)
+		bot.sendMessage(msg.chat.id, "heads");
+	else
+		bot.sendMessage(msg.chat.id, "tails");
+	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") flipped a coin.");
 });
-
-
 
 
 
@@ -114,4 +121,3 @@ function shutup(msg) {
 }
 bot.onText(/steve shutup/, shutup);
 bot.onText(/shutup steve/, shutup);
-
