@@ -16,6 +16,7 @@ bot.onText(/\/help/, function(msg) {
 	+ "/join - helps you get into our group chats\n"
 	+ "/coinflip - flips a coin and sends the result\n"
 	+ "/random - random number generator numbers come after for ranges\n");
+	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") asked for /help");
 });
 
 // send a random cat pic
@@ -133,11 +134,14 @@ bot.onText(/is steve a human?/i, function (msg) {
 	bot.sendMessage(msg.chat.id, "Yes", { reply_to_message_id : msg.message_id });
 	const img = request("http://www.seosmarty.com/wp-content/uploads/2009/05/captcha-7.jpg");
 	bot.sendPhoto(msg.chat.id, img, { caption: "Are YOU a human? proove it!" });
+	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") suspects I'm an AI");
 });
 
 // ofc it doesnt follow instructions
 function shutup(msg) {
 	bot.sendMessage(msg.chat.id, "No thx", { reply_to_message_id : msg.message_id });
+	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") told me to shutup");
 }
 bot.onText(/steve shutup/, shutup);
 bot.onText(/shutup steve/, shutup);
+
