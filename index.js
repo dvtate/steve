@@ -41,7 +41,6 @@ bot.onText(/\/ping/, function onPing(msg) {
 });
 
 
-
 // user wants to join a chat
 bot.onText(/\/join/, function onJoinRequest(msg) {
 	const opts = {
@@ -123,8 +122,25 @@ bot.onText(/\/random (.+)/, function onEchoText(msg, match) {
 
 });
 
-
-
+// logs are useful for debugging
+bot.onText(/\/log (.+)/, function(msg, match){
+	const args = match[1];
+	if (args == "__chat_id") {
+		bot.sendMessage(msg.chat.id, "logged chat id = " + msg.chat.id);
+		console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") logged chatid: " + msg.chat.id);
+	} else if (args == "__msg_id") {
+		if (!msg.reply_to_message) {
+			bot.sendMessage("Error: message isn't a reply.");
+			console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") failed to make a log");
+		} else {
+			bot.sendMessage(msg.chat.id, "logged message id = " + msg.reply_to_message.message_id)
+			console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") logged msg_id: " + msg.reply_to_message.message_id);
+		}
+	} else {
+		bot.sendMessage(msg.chat.id, "Wrote a log - \"" + args + "\"");
+		console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") wrote a log: \"" + args + "\"");
+	}
+});
 
 // figuring out when people are talking about me...
 
