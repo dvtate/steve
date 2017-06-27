@@ -3,7 +3,7 @@ A bot for RoboBibb's telegram groupchat. This bot is programmed for node.js and 
 
 ## Commands 
 - `/ping` - replies `pong` as soon as possible (for testing connection [speed])
-- `/echo <message>` - repeats <message>
+- `/echo <message>` - repeats `<message>`
 - `/cat` - sends a random cat picture
 - `/join` - helps user get into team group chats
 - `/help` - shows help dialogue
