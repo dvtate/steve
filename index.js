@@ -6,6 +6,9 @@ const request = require('request');
 const bot = new TelegramBot(TOKEN, { polling: true });
 
 
+var chat_states = [];
+
+
 // help dialog
 bot.onText(/\/help/, function(msg) {
 	bot.sendMessage(msg.chat.id, "Steve is RoboBibb's telegram automation bot. "
@@ -102,9 +105,9 @@ bot.onText(/\/coinflip/, function(msg) {
 });
 
 // random number generator
-bot.onText(/\/random (.+)/, function onEchoText(msg, match) {
+bot.onText(/\/random(.+)?/, function onEchoText(msg, match) {
 	const args = match[1];
-	var lims = args.split(" ");
+	var lims = args.split(/ |,/);
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" +
 				msg.from.username + ") random :: " + lims);
 
@@ -117,7 +120,8 @@ bot.onText(/\/random (.+)/, function onEchoText(msg, match) {
 		const max = Math.floor(Number(lims[0]));
 		bot.sendMessage(msg.chat.id, "random number = " + (Math.floor(Math.random() * (max - min)) + min));
 	} else {
-		bot.sendMessage(msg.chat.id, "invalid limits for /random ");
+		bot.sendMessage(msg.chat.id, "`/random <num1>` -> random number (0 <= n < num1)\n"
+									+"`/random <num1> <num2>` -> random number (num1 <= n <= num2");
 	}
 
 });
@@ -142,22 +146,43 @@ bot.onText(/\/log (.+)/, function(msg, match){
 	}
 });
 
-// figuring out when people are talking about me...
+
+
+// figuring out when people are talking to/about me...
 
 
 // just to confuse people
-bot.onText(/is steve a human?/i, function (msg) {
+bot.onText(/is steve (?:a\s)?human\?/i, function (msg) {
 	bot.sendMessage(msg.chat.id, "Yes", { reply_to_message_id : msg.message_id });
 	const img = request("http://www.seosmarty.com/wp-content/uploads/2009/05/captcha-7.jpg");
 	bot.sendPhoto(msg.chat.id, img, { caption: "Are YOU a human? proove it!" });
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") suspects I'm an AI");
 });
 
-// ofc it doesnt follow instructions
-function shutup(msg) {
+
+// ofc we follow instructions
+bot.onText(/shutup steve|steve shutup/, function shutup(msg) {
 	bot.sendMessage(msg.chat.id, "No thx", { reply_to_message_id : msg.message_id });
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") told me to shutup");
-}
-bot.onText(/steve shutup/, shutup);
-bot.onText(/shutup steve/, shutup);
+});
 
+// hey siri
+bot.onText(/^(?:hey\s)?steve(?:\.|\?|\!)?$/i, function (msg){
+	bot.sendMessage(msg.chat.id, "I have been summoned");
+	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") got my attention.");
+});
+
+// this is a reference to 2001 space oddysey
+bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?make me a sandwich/i, function (msg) {
+	bot.sendAudio(msg.chat.id, "assets/cantdo.mp3",	{
+			caption : "I'm afraid I can't do that...",
+			reply_to_message_id : msg.message_id
+	});
+	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") wants a sandwich");
+});
+/*
+bot.onText(/\/newcommand/, function(msg) {
+	const args = msg.text.split("\n");
+
+});
+*/
