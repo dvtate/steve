@@ -1,13 +1,25 @@
 "use strict";
 
+const request = require("request");
+const fs = require("fs");
+
 const TOKEN = process.env.TELEGRAM_TOKEN;
 const TelegramBot = require("node-telegram-bot-api");
-const request = require('request');
 const bot = new TelegramBot(TOKEN, { polling: true });
 
+// chats
+const officialChatID = "-1001065686661";
+const mainChatID = "-1001065686661";
 
-var chat_states = [];
-
+// returns true if the given user id is in our 2 main chats
+function isTeamMember(userId) {
+	return bot.getChatMember(officialChatID, userId).then(
+			function (val) { return val.status != "left"); },
+			function (val) { return false; })
+		|| bot.getChatMember(mainChatID, userId).then(
+			function (val) { return val.status != "left"); },
+			function (val) { return false; })
+}
 
 // help dialog
 bot.onText(/\/help/, function(msg) {
@@ -148,7 +160,20 @@ bot.onText(/\/log (.+)/, function(msg, match){
 
 
 
-// figuring out when people are talking to/about me...
+// Welcome new members :)
+bot.on("new_chat_participant", function (msg) {
+	console.log("new user(s):");
+	msg.new_chat_members.forEach(function(new_member) {
+		bot.sendMessage(msg.chat.id, "Welcome to " + msg.chat.title + ", " + new_member.first_name + "!");
+		console.log("   " + new_member.first_name + " " + new_member.last_name + " (@" + new_member.username + "), ");
+	});
+
+});
+
+
+
+
+/// emulating humans
 
 
 // just to confuse people
@@ -167,7 +192,7 @@ bot.onText(/shutup steve|steve shutup/, function shutup(msg) {
 });
 
 // hey siri
-bot.onText(/^(?:hey\s)?steve(?:\.|\?|\!)?$/i, function (msg){
+bot.onText(/^(?:hey\s|hi\s)?steve(?:\.|\?|\!)?$/i, function (msg){
 	bot.sendMessage(msg.chat.id, "I have been summoned");
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") got my attention.");
 });
@@ -175,14 +200,36 @@ bot.onText(/^(?:hey\s)?steve(?:\.|\?|\!)?$/i, function (msg){
 // this is a reference to 2001 space oddysey
 bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?make me a sandwich/i, function (msg) {
 	bot.sendAudio(msg.chat.id, "assets/cantdo.mp3",	{
-			caption : "I'm afraid I can't do that...",
-			reply_to_message_id : msg.message_id
+		caption : "I'm afraid I can't do that...",
+		reply_to_message_id : msg.message_id
 	});
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") wants a sandwich");
 });
-/*
-bot.onText(/\/newcommand/, function(msg) {
-	const args = msg.text.split("\n");
 
+bot.onText(/\/newreply/, function(msg) {
+	const args = msg.text.split("\n");
+	if (isTeamMember(msg.from.id)) {
+
+		if (args.length < 2) {
+			bot.sendMessage(msg.chat.id, "malformed /newcommand, are you supposed to be doing this?")
+		} else {
+			if (args[0] == "/newreply adv") {
+
+			} else if (args[0] == "/newreply") {
+				// format the info
+				//
+				/* append it to file
+				fs.appendFile('assets/user_commands.txt', 'data to append', function (err) {
+				  if (err) throw err;
+				  console.log('Saved!');
+				});*/
+
+				// attempt PR on GH???
+			}
+		}
+
+	} else {
+		bot.sendMessage(msg.chat.id, "You are not authorized to complete this action")
+
+	}
 });
-*/
