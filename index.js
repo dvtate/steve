@@ -11,15 +11,6 @@ const bot = new TelegramBot(TOKEN, { polling: true });
 const officialChatID = "-1001065686661";
 const mainChatID = "-1001065686661";
 
-// returns true if the given user id is in our 2 main chats
-function isTeamMember(userId) {
-	return bot.getChatMember(officialChatID, userId).then(
-			function (val) { return val.status != "left"; },
-			function (val) { return false; })
-		|| bot.getChatMember(mainChatID, userId).then(
-			function (val) { return val.status != "left"; },
-			function (val) { return false; })
-}
 
 // help dialog
 bot.onText(/\/help/, function(msg) {
@@ -206,30 +197,53 @@ bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?make me a sandwich/i, function (msg
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") wants a sandwich");
 });
 
-bot.onText(/\/newreply/, function(msg) {
+
+function addCommand(msg) {
 	const args = msg.text.split("\n");
-	if (isTeamMember(msg.from.id)) {
-
-		if (args.length < 2) {
-			bot.sendMessage(msg.chat.id, "malformed /newcommand, are you supposed to be doing this?")
-		} else {
-			if (args[0] == "/newreply adv") {
-
-			} else if (args[0] == "/newreply") {
-				// format the info
-				//
-				/* append it to file
-				fs.appendFile('assets/user_commands.txt', 'data to append', function (err) {
-				  if (err) throw err;
-				  console.log('Saved!');
-				});*/
-
-				// attempt PR on GH???
-			}
-		}
-
+	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") tried to make a new command");
+	if (args.length < 2) {
+		bot.sendMessage(msg.chat.id, "malformed /newcommand, are you supposed to be doing this?")
 	} else {
-		bot.sendMessage(msg.chat.id, "You are not authorized to complete this action")
+		if (args[0] == "/newreply adv") {
 
+		} else if (args[0] == "/newreply") {
+			// format the info
+			//
+			/* append it to file
+			fs.appendFile('assets/user_commands.txt', 'data to append', function (err) {
+			  if (err) throw err;
+			  console.log('Saved!');
+			});*/
+
+			// attempt PR on GH???
+		}
 	}
+
+}
+
+bot.onText(/\/newreply/, function(msg) {
+
+	// I'm sorry that javascript is so retarded making this nearly illegible
+	bot.getChatMember(officialChatID, msg.from.id).then(
+		function (usr_ret0) {
+			if (usr_ret0.status != "left") {
+				addCommand(msg);
+			} else {
+				bot.getChatMember(mainChatID, msg.from.id).then(
+					function (usr_ret1) {
+						if (usr_ret1.status != "left") {
+							addCommand(msg);
+						} else {
+							bot.sendMessage("you are not authorized to run this command")
+						}
+					}, function (tst) {
+						console.log("GGGGGGGGGGGG");
+					}
+				);
+			}
+		}, function (tst) {
+			console.log("FFFFFFFFFFFFFFF");
+		}
+	);
+
 });
