@@ -223,27 +223,21 @@ function addCommand(msg) {
 
 bot.onText(/\/newreply/, function(msg) {
 
-	// I'm sorry that javascript is so retarded making this nearly illegible
-	bot.getChatMember(officialChatID, msg.from.id).then(
-		function (usr_ret0) {
+	// NOTE(technohacker): This good enough?
+    // I'm sorry that javascript is so retarded making this nearly illegible
+	bot.getChatMember(officialChatID, msg.from.id)
+        .then(usr_ret0 => {
 			if (usr_ret0.status != "left") {
 				addCommand(msg);
 			} else {
-				bot.getChatMember(mainChatID, msg.from.id).then(
-					function (usr_ret1) {
+				bot.getChatMember(mainChatID, msg.from.id)
+                    .then(usr_ret1 => {
 						if (usr_ret1.status != "left") {
 							addCommand(msg);
 						} else {
-							bot.sendMessage("you are not authorized to run this command")
+							bot.sendMessage("you are not authorized to run this command");
 						}
-					}, function (tst) {
-						console.log("GGGGGGGGGGGG");
-					}
-				);
+					}).catch(err => console.log("GGGGGGGGGGGG"));
 			}
-		}, function (tst) {
-			console.log("FFFFFFFFFFFFFFF");
-		}
-	);
-
+		}).catch(err => console.log("FFFFFFFFFFFFFFF"));
 });
