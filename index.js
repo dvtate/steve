@@ -14,10 +14,10 @@ const mainChatID = "-1001065686661";
 // returns true if the given user id is in our 2 main chats
 function isTeamMember(userId) {
 	return bot.getChatMember(officialChatID, userId).then(
-			function (val) { return val.status != "left"); },
+			function (val) { return val.status != "left"; },
 			function (val) { return false; })
 		|| bot.getChatMember(mainChatID, userId).then(
-			function (val) { return val.status != "left"); },
+			function (val) { return val.status != "left"; },
 			function (val) { return false; })
 }
 
