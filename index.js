@@ -202,7 +202,7 @@ function addCommand(msg) {
 	const args = msg.text.split("\n");
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") tried to make a new command");
 	if (args.length < 2) {
-		bot.sendMessage(msg.chat.id, "malformed /newcommand, are you supposed to be doing this?")
+		bot.sendMessage(msg.chat.id, "malformed /newreply, are you supposed to be doing this?")
 	} else {
 		if (args[0] == "/newreply adv") {
 
@@ -223,8 +223,7 @@ function addCommand(msg) {
 
 bot.onText(/\/newreply/, function(msg) {
 
-	// NOTE(technohacker): This good enough?
-    // I'm sorry that javascript is so retarded making this nearly illegible
+	// arrow functions are baller
 	bot.getChatMember(officialChatID, msg.from.id)
         .then(usr_ret0 => {
 			if (usr_ret0.status != "left") {
@@ -235,9 +234,12 @@ bot.onText(/\/newreply/, function(msg) {
 						if (usr_ret1.status != "left") {
 							addCommand(msg);
 						} else {
-							bot.sendMessage("you are not authorized to run this command");
+							console.log(msg.from.first_name + " " + msg.from.last_name
+							+ " (@" + msg.from.username + ") wasn't allowed to make a command");
+							bot.sendMessage(msg.chat.id, "you are not authorized to run this command");
 						}
-					}).catch(err => console.log("GGGGGGGGGGGG"));
+					}).catch(err => console.log("strange error: 1A"));
 			}
-		}).catch(err => console.log("FFFFFFFFFFFFFFF"));
+		}).catch(err => console.log("strange error: 1B"));
+
 });
