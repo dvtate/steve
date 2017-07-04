@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "a telegram bot for RoboBibb",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/robobibb/steve_bot.git"
@@ -21,6 +18,6 @@
   },
   "homepage": "https://github.com/robobibb/steve_bot#readme",
   "dependencies": {
-    "node-telegram-bot-api": "^0.27.1",
+    "node-telegram-bot-api": "^0.27.1"
   }
 }
