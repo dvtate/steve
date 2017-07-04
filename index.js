@@ -11,6 +11,10 @@ const bot = new TelegramBot(TOKEN, { polling: true });
 const officialChatID = "-1001065686661";
 const mainChatID = "-1001065686661";
 
+const codeChatID = "-1001070098331";
+//const botCharID = "";
+
+
 
 // help dialog
 bot.onText(/\/help/, function(msg) {
@@ -54,7 +58,8 @@ bot.onText(/\/join/, function onJoinRequest(msg) {
 			inline_keyboard: [
 				[ { text: "RoboBibb Offical", callback_data: "offical" } ],
 				[ { text: "Programming team", callback_data: "code" } ],
-				[ { text: "Website team", callback_data: "web" } ]
+				[ { text: "Website team", callback_data: "web" } ],
+				[ { text: "Bot Spammers", callback_data: "bots" } ]
 			]
 		},
 		reply_to_message_id : msg.message_id
@@ -76,7 +81,7 @@ bot.on("callback_query", function(callbackQuery) {
 	};
 	let text;
 
-	// from '/join 4941'
+	// from '/join'
 	if (action === "offical") {
 		//bot.sendMessage(msg.chat.id, "contact @ridderhoff and he will add you to the offical chat.");
 		text = "@ridderhoff has been contacted and will try to add you to the chat"
@@ -90,11 +95,14 @@ bot.on("callback_query", function(callbackQuery) {
 		//bot.sendMessage(msg.chat.id, "click here to join the website chat: https://t.me/joinchat/AAAAAEDoGWJ1t0xW1tzjzQ");
 		text = "click here to join the website chat: https://t.me/joinchat/AAAAAEDoGWJ1t0xW1tzjzQ";
 		console.log(usr.first_name + " " + usr.last_name + " (@" + usr.username + ") wants to join web team");
+	} else if (action === "bots") {
+		text = "click here to join the bot spam chat: https://t.me/joinchat/CMx25A4N48cfJuFRTTdwPg";
+		console.log(usr.first_name + " " + usr.last_name + " (@" + usr.username + ") wants to join bot spammers");
 	}
 
 	bot.editMessageText(text, opts);
 
-	// 147617508 = @ridderhoff
+	// 147617508 = @ridderhoff (Tate) (gh@dvtate)
 	bot.forwardMessage("147617508", msg.chat.id, msg.reply_to_message.message_id);
  });
 
@@ -142,6 +150,23 @@ bot.onText(/\/log (.+)/, function(msg, match){
 		} else {
 			bot.sendMessage(msg.chat.id, "logged message id = " + msg.reply_to_message.message_id)
 			console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") logged msg_id: " + msg.reply_to_message.message_id);
+		}
+	} else if (args == "__from_id") {
+		if (!msg.reply_to_message) {
+			bot.sendMessage(
+				msg.chat.id,
+				"logged user id = " + msg.from.id,
+				{ reply_to_message_id : msg.message_id }
+			);
+			console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") logged user_id: " + msg.from.id);
+
+		} else {
+			bot.sendMessage(
+				msg.chat.id,
+				"logged user id = " + msg.reply_to_message.from.id,
+				{ reply_to_message_id : msg.reply_to_message.message_id }
+			);
+			console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") logged user_id: " + msg.reply_to_message.from.id);
 		}
 	} else {
 		bot.sendMessage(msg.chat.id, "Wrote a log - \"" + args + "\"");
@@ -225,12 +250,12 @@ bot.onText(/\/newreply/, function(msg) {
 
 	// arrow functions are baller
 	bot.getChatMember(officialChatID, msg.from.id)
-        .then(usr_ret0 => {
+		.then(usr_ret0 => {
 			if (usr_ret0.status != "left") {
 				addCommand(msg);
 			} else {
 				bot.getChatMember(mainChatID, msg.from.id)
-                    .then(usr_ret1 => {
+					.then(usr_ret1 => {
 						if (usr_ret1.status != "left") {
 							addCommand(msg);
 						} else {
@@ -241,5 +266,4 @@ bot.onText(/\/newreply/, function(msg) {
 					}).catch(err => console.log("strange error: 1A"));
 			}
 		}).catch(err => console.log("strange error: 1B"));
-
 });
