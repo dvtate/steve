@@ -232,14 +232,21 @@ function addCommand(msg) {
 		if (args[0] == "/newreply adv") {
 
 		} else if (args[0] == "/newreply") {
-			// format the info
-			//
-			/* append it to file
+
+			/** how these will work
+			* - take their prompt, and escape all chars
+			* - add it to user_cmds.txt
+			* - add their resp to user_resps.txt
+			* - these will be called in the /hey steve/ event
+			*/
+
+			/*
+						// format the info
+
 			fs.appendFile('assets/user_commands.txt', 'data to append', function (err) {
 			  if (err) throw err;
 			  console.log('Saved!');
 			});*/
-
 			// attempt PR on GH???
 		}
 	}
