@@ -13,7 +13,7 @@ printf " done\n"
 
 # clone the newest version of steve from github
 echo "cloning the newest version of steve..."
-cd ..
+cd ".."
 git clone https://github.com/robobibb/robobibb-steve-bot
 
 # setup new steve
@@ -27,7 +27,7 @@ printf "killing current instance of Steve..."
 # these could make unintended victims
 pkill -f steve.sh
 pkill -f node index.js
-printf " done"
+printf " done\n"
 
 # restart bot
 echo "reviving Steve..."
