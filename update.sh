@@ -30,17 +30,15 @@ printf "done\n"
 echo "Re-configuring Steve similar to old one...
 cd "robobibb-steve-bot"
 chmod +x setup.sh steve.sh update.sh
-./setup.sh
+sh "setup.sh"
 
 # Kill current steve
 printf "Killing current instance of Steve..."
-
-# NOTE: these could make unintended victims...
 pkill -f "steve.sh"
-pkill -f "node index.js" # doesn't really work...
+pkill -f "sh steve.sh"
 printf " done\n"
 
 # make a new steve as fast as possible to minimize downtime
 echo "Reviving Steve..."
-./steve.sh
+sh "steve.sh"
 
