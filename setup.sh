@@ -1,7 +1,7 @@
 #!/bin/sh
 
-## This script automatically sets everything up for you so
-## to be run upon cloneing the repo
+## This script automatically sets everything up for you
+## to be run upon cloning the repo
 
 ## make everything runable
 printf "marking scripts as runable..."
@@ -17,8 +17,11 @@ if [ -z "$TELEGRAM_TOKEN" ]; then
 fi
 
 # put token into steve.sh
+printf "inserting token into steve.sh... "
 sed -i "s/^export TELEGRAM_TOKEN=.*/export TELEGRAM_TOKEN=${TELEGRAM_TOKEN}/" steve.sh
+printf "done\n"
 
 # install dependencies
 echo "installing dependencies..."
 npm install --save node-telegram-bot-api
+echo "installed dependencies"
