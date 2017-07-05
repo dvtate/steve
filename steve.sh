@@ -9,22 +9,25 @@ export TELEGRAM_TOKEN=406827913:AAFB6_g45axPoH15us0dnAVdTIhkBVd7nZg
 
 # gets run after Steve is killed
 function cleanup {
-	printf "\nSteve - Goodbye\n"
+	printf "Killing Steve... "
 	kill $STEVE_PID
+	printf "done\n"
 }
 
 # run cleanup before exiting
 trap cleanup EXIT
 
 # gets run before Steve is started
-echo "Steve - Hello"
+printf "Spawning Steve... "
 
 # start steve & mark his PID
 node index.js & 
 STEVE_PID=$!
 
+printf "done\n"
+
 # wait for eternity... unless they kill me...
 cat
 
 # this should never get run
-echo "error in  steve.sh -1"
+echo "Steve -> error -> cat abuse..."
