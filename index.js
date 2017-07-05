@@ -168,6 +168,9 @@ bot.onText(/\/log (.+)/, function(msg, match){
 			);
 			console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") logged user_id: " + msg.reply_to_message.from.id);
 		}
+	} else if (args == "__msg_") {
+		bot.sendMessage(msg.chat.id, "logged message object");
+		console.log(msg);
 	} else {
 		bot.sendMessage(msg.chat.id, "Wrote a log - \"" + args + "\"");
 		console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") wrote a log: \"" + args + "\"");
@@ -181,16 +184,32 @@ bot.on("new_chat_participant", function (msg) {
 	console.log("new user(s):");
 	msg.new_chat_members.forEach(function(new_member) {
 		bot.sendMessage(msg.chat.id, "Welcome to " + msg.chat.title + ", " + new_member.first_name + "!");
-		console.log("   " + new_member.first_name + " " + new_member.last_name + " (@" + new_member.username + "), ");
+		console.log("   " + new_member.first_name + " " + new_member.last_name + " (@" + new_member.username + "), joined  ");
 	});
+
+});
+
+var updating = false;
+// update steve to latest version
+bot.onText(/\/update/, function (msg) {
+	bot.sendMessage(msg.chat.id, "Updating my source code from https://github.com/robobibb/robobibb-steve-bot... There should be zero downtime");
+	console.log("spawning update.sh...");
+
+	updating = true;
+	// run command `sh update.sh` which will update Steve
+	require('child_process').spawn("sh", ["update.sh"], {stdio: "inherit"});
+	console.log("spawned");
+
 
 });
 
 
 
 
-/// emulating humans
 
+
+
+/// emulating humans
 
 // just to confuse people
 bot.onText(/is steve (?:a\s)?human\?/i, function (msg) {
