@@ -9,13 +9,14 @@ echo "There should be zero noticeable down time..."
 # move old version of steve to another directory
 printf "\nBacking up old version of Steve... "
 
-# we should already be in the old bot's directory
-mv ../$(basename $(pwd)) ../steve_old
+curname=$(basename $(pwd))
+cd ..
+mv "$curname" "steve_old/"
+
 printf "done\n"
 
 # clone the newest version of steve from github
-echo "cloning the newest version of Steve... "
-cd "../"
+echo "Cloning the newest version of Steve... "
 git clone "https://github.com/robobibb/robobibb-steve-bot"
 
 # get bot token from the old steve.sh
@@ -26,18 +27,20 @@ export TELEGRAM_TOKEN=$(cat "steve_old/steve.sh" | grep "export TELEGRAM_TOKEN="
 printf "done\n"
 
 # setup new Steve
-cd robobibb-steve-bot
+echo "Re-configuring Steve similar to old one...
+cd "robobibb-steve-bot"
 chmod +x setup.sh steve.sh update.sh
 ./setup.sh
 
 # Kill current steve
-printf "killing current instance of Steve..."
+printf "Killing current instance of Steve..."
 
 # NOTE: these could make unintended victims...
 pkill -f "steve.sh"
-pkill -f "node index.js"
+pkill -f "node index.js" # doesn't really work...
 printf " done\n"
 
 # make a new steve as fast as possible to minimize downtime
-echo "reviving Steve..."
+echo "Reviving Steve..."
 ./steve.sh
+
