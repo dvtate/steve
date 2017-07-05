@@ -27,7 +27,7 @@ export TELEGRAM_TOKEN=$(cat "steve_old/steve.sh" | grep "export TELEGRAM_TOKEN="
 printf "done\n"
 
 # setup new Steve
-echo "Re-configuring Steve similar to old one...
+echo "Re-configuring Steve similar to old one..."
 cd "robobibb-steve-bot"
 chmod +x setup.sh steve.sh update.sh
 sh "setup.sh"
