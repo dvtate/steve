@@ -189,18 +189,23 @@ bot.on("new_chat_participant", function (msg) {
 
 });
 
-var updating = false;
+
+var updating = false; // only one update process at a time
 // update steve to latest version
 bot.onText(/\/update/, function (msg) {
 	bot.sendMessage(msg.chat.id, "Updating my source code from https://github.com/robobibb/robobibb-steve-bot... There should be zero downtime");
-	console.log("spawning update.sh...");
+	if (!updating) {
+		console.log("spawning update.sh...");
+		updating = true;
 
-	updating = true;
-	// run command `sh update.sh` which will update Steve
-	require('child_process').spawn("sh", ["update.sh"], {stdio: "inherit"});
-	console.log("spawned");
+		// run command `sh update.sh` which will update Steve, eventually killing this version of him
+		const child = require('child_process').spawn("sh", ["update.sh"], {
+			detached: true, stdio: "inherit"
+		});
+		child.unref();
 
-
+		console.log("spawned");
+	}
 });
 
 
