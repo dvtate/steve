@@ -199,10 +199,7 @@ bot.onText(/\/update/, function (msg) {
 		updating = true;
 
 		// run command `sh update.sh` which will update Steve, eventually killing this version of him
-		const child = require('child_process').spawn("nohup sh", ["update.sh"], {
-			detached: true, stdio: "inherit"
-		});
-		child.unref();
+		require("child_process").fork("./update.sh");
 
 		console.log("spawned");
 	}
