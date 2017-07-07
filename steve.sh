@@ -10,7 +10,7 @@ export TELEGRAM_TOKEN=406827913:AAFB6_g45axPoH15us0dnAVdTIhkBVd7nZg
 # gets run after Steve is killed
 function cleanup {
 	printf "Killing Steve... "
-	kill $STEVE_PID
+	kill -KILL $STEVE_PID
 	printf "done\n"
 }
 
