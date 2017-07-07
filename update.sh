@@ -34,8 +34,7 @@ sh "setup.sh"
 
 # Kill current steve
 printf "Killing current instance of Steve..."
-pkill -f "steve.sh"
-pkill -f "sh steve.sh"
+killall "steve.sh"
 printf " done\n"
 
 # make a new steve as fast as possible to minimize downtime
