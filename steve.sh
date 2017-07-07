@@ -4,7 +4,7 @@
 ## in addition it helps to maintain privacy of our bot token
 
 # telegram bot token (this will be edited by setup.sh)
-export TELEGRAM_TOKEN=406827913:AAFB6_g45axPoH15us0dnAVdTIhkBVd7nZg
+export TELEGRAM_TOKEN=your token
 
 
 # gets run after Steve is killed
