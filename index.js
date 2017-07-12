@@ -359,7 +359,7 @@ bot.onText(/\/sshcmd/, function(msg) {
 		function() {
 			request("https://ipinfo.io", function (error, response, body) {
 				if (!error && response.statusCode == 200) {
-					const ip = body.parse().ip;
+					const ip = JSON.parse(body).ip;
 					bot.sendMessage(msg.chat.id, "$ ssh alarm@" + ip + "\nYou should know the password");
 					console.log(msg.from.first_name + " " + msg.from.last_name
 					+ " (@" + msg.from.username + ") was given an ssh command to run.");
