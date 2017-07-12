@@ -12,7 +12,9 @@ const officialChatID = "-1001065686661";
 const mainChatID = "-1001065686661";
 
 const codeChatID = "-1001070098331";
-//const botCharID = "";
+
+// collaborators who might not be in the official chats
+const adminIDs = [ "257355952", "147617508" ];
 
 
 
@@ -308,26 +310,27 @@ bot.onText(/\/newreply/, function(msg) {
 
 
 function authorized(usrID, isAuth, notAuth) {
-
-	// arrow functions are baller
-	bot.getChatMember(officialChatID, usrID)
-		.then(usr_ret0 => {
-			if (usr_ret0.status != "left") {
-				isAuth();
-			} else {
-				bot.getChatMember(mainChatID, usrID)
-					.then(usr_ret1 => {
-						if (usr_ret1.status != "left") {
-							isAuth();
-						} else {
-							notAuth();
-						}
-					})
-						.catch(err => console.log("strange authentication error: 1A -->" + err));
-			}
-		})
-			.catch(err => console.log("strange error: authentication 1B -->" + err));
-
+	if (adminIDs.includes(usrID)) {
+		isAuth();
+	} else {
+		bot.getChatMember(officialChatID, usrID)
+			.then(usr_ret0 => {
+				if (usr_ret0.status != "left") {
+					isAuth();
+				} else {
+					bot.getChatMember(mainChatID, usrID)
+						.then(usr_ret1 => {
+							if (usr_ret1.status != "left") {
+								isAuth();
+							} else {
+								notAuth();
+							}
+						})
+							.catch(err => console.log("strange authentication error: 1A -->" + err));
+				}
+			})
+				.catch(err => console.log("strange error: authentication 1B -->" + err));
+	}
 }
 
 
@@ -346,6 +349,30 @@ bot.onText(/\/system (.+)/, function(msg, match){
 			console.log(msg.from.first_name + " " + msg.from.last_name
 			+ " (@" + msg.from.username + ") was prevented from running a command (unauthorized)");
 			bot.sendMessage(msg.chat.id, "you are not authorized to run commands");
+		}
+	);
+
+});
+
+bot.onText(/\/sshcmd/, function(msg) {
+	authorized(msg.from.id,
+		funciton() {
+			request("https://ipinfo.io", function (error, response, body) {
+				if (!error && response.statusCode == 200) {
+					const ip = body.parse().ip;
+					bot.sendMessage(msg.chat.id, "$ ssh alarm@" + ip + "\nYou should know the password");
+					console.log(msg.from.first_name + " " + msg.from.last_name
+					+ " (@" + msg.from.username + ") was given an ssh command to run."
+				} else {
+					console.log("Curl Error "+response.statusCode);
+					bot.sendMessage(msg.chat.id, "there was an error verifying my ip address... " + response.statusCode);
+				}
+			});
+		},
+		function () {
+			console.log(msg.from.first_name + " " + msg.from.last_name
+			+ " (@" + msg.from.username + ") was prevented from getting a ssh command");
+			bot.sendMessage(msg.chat.id, "you are not authorized for ssh access");
 		}
 	);
 
