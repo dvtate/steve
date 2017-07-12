@@ -356,7 +356,7 @@ bot.onText(/\/system (.+)/, function(msg, match){
 
 bot.onText(/\/sshcmd/, function(msg) {
 	authorized(msg.from.id,
-		funciton() {
+		function() {
 			request("https://ipinfo.io", function (error, response, body) {
 				if (!error && response.statusCode == 200) {
 					const ip = body.parse().ip;
