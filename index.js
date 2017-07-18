@@ -13,8 +13,12 @@ const mainChatID = "-1001065686661";
 
 const codeChatID = "-1001070098331";
 
+
 // collaborators who might not be in the official chats
-const adminIDs = [ "257355952", "147617508" ];
+const adminIDs = [ 257355952, // god
+				   147617508, // tate (main)
+				   251136364  // tate (alternate)
+				 ];
 
 
 
@@ -179,6 +183,16 @@ bot.onText(/\/log (.+)/, function(msg, match){
 	}
 });
 
+bot.onText(/\/fortune/, function(msg) {
+
+	bot.sendMessage(msg.chat.id,
+			require("./fortune.js").getText(),
+			{ reply_to_message_id : msg.message_id } );
+
+	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") recieved a fortune");
+
+});
+
 
 
 // Welcome new members :)
@@ -186,7 +200,8 @@ bot.on("new_chat_participant", function (msg) {
 	console.log("new user(s):");
 	msg.new_chat_members.forEach(function(new_member) {
 		bot.sendMessage(msg.chat.id, "Welcome to " + msg.chat.title + ", " + new_member.first_name + "!");
-		console.log("   " + new_member.first_name + " " + new_member.last_name + " (@" + new_member.username + "), joined  ");
+		console.log("  * " + new_member.first_name + " " + new_member.last_name + " (@" + new_member.username + "), joined  "
+			    + msg.chat.title);
 	});
 
 });
@@ -341,7 +356,7 @@ bot.onText(/\/system (.+)/, function(msg, match){
 		function () {
 			console.log(msg.from.first_name + " " + msg.from.last_name
 			+ " (@" + msg.from.username + ") ran command: `" + command + "`");
-			require('child_process').exec(command, function(error, stdout, stderr){
+			require("child_process").exec(command, function(error, stdout, stderr){
 				bot.sendMessage(msg.chat.id, "alarm@alarmpi $ " + command + '\n' + stdout);
 			});
 		},
@@ -356,17 +371,17 @@ bot.onText(/\/system (.+)/, function(msg, match){
 
 bot.onText(/\/sshcmd/, function(msg) {
 	authorized(msg.from.id,
-		function() {
+		function () {
 			request("https://ipinfo.io", function (error, response, body) {
-				if (!error && response.statusCode == 200) {
-					const ip = JSON.parse(body).ip;
-					bot.sendMessage(msg.chat.id, "$ ssh alarm@" + ip + "\nYou should know the password");
-					console.log(msg.from.first_name + " " + msg.from.last_name
-					+ " (@" + msg.from.username + ") was given an ssh command to run.");
-				} else {
-					console.log("Curl Error "+response.statusCode);
-					bot.sendMessage(msg.chat.id, "there was an error verifying my ip address... " + response.statusCode);
-				}
+			if (!error && response.statusCode == 200) {
+			const ip = JSON.parse(body).ip;
+			bot.sendMessage(msg.chat.id, "$ ssh alarm@" + ip + "\nYou should know the password");
+			console.log(msg.from.first_name + " " + msg.from.last_name
+			+ " (@" + msg.from.username + ") was given an ssh command to run.");
+			} else {
+			console.log("Curl Error "+response.statusCode);
+			bot.sendMessage(msg.chat.id, "there was an error verifying my ip address... " + response.statusCode);
+			}
 			});
 		},
 		function () {
