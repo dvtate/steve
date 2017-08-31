@@ -16,9 +16,20 @@ if [ -z "$TELEGRAM_TOKEN" ]; then
 	read TELEGRAM_TOKEN
 fi
 
+
+# if token wasn't exported by update.sh or steve.sh
+# then we need to prompt the user for it
+if [ -z "$GH_TOKEN" ]; then
+	# get bot token
+	printf "Enter your GitHub API token: "
+	read GH_TOKEN
+fi
+
+
 # put token into steve.sh
 printf "inserting token into steve.sh... "
 sed -i "s/^export TELEGRAM_TOKEN=.*/export TELEGRAM_TOKEN=${TELEGRAM_TOKEN}/" steve.sh
+sed -i "s/^export GH_TOKEN=.*/export GH_TOKEN=${GH_TOKEN}/" steve.sh
 printf "done\n"
 
 # install dependencies

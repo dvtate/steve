@@ -6,6 +6,8 @@
 # telegram bot token (this will be edited by setup.sh)
 export TELEGRAM_TOKEN=your token
 
+# github API token
+export GH_TOKEN=your token
 
 # gets run after Steve is killed
 function cleanup {
