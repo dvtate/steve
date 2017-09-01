@@ -34,7 +34,7 @@ bot.onText(/\/help/, function(msg) {
 	+ "/log - log a value/message (ie- `__chat_id`, `__from_id`, `__msg_id`, `__msg_`)\n"
 	+ "/system - runs a command on the system (use with caution)\n"
 	+ "/fortune - opens a fortune cookie\n"
-	+ "/sshcmd - get a command to run to ssh into the server\n\n
+	+ "/sshcmd - get a command to run to ssh into the server\n\n"
 	+ "more at: https://github.com/robobibb/robobibb-steve-bot/");
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") asked for /help");
 });
