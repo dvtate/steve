@@ -21,7 +21,6 @@ const adminIDs = [
 		 ];
 
 
-
 // help dialog
 bot.onText(/\/help/, function(msg) {
 	bot.sendMessage(msg.chat.id, "Steve is RoboBibb's telegram automation bot. "
@@ -125,6 +124,25 @@ bot.onText(/\/coinflip/, function(msg) {
 	else
 		bot.sendMessage(msg.chat.id, "tails");
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") flipped a coin.");
+});
+
+// gives our sm links
+bot.onText(/\/website/, function (msg) {
+	bot.sentMessage(msg.chat,
+			"Check out our social media accounts:\n"
+			+ "FaceBook: https://fb.com/teamrobobibb/\n"
+			+ "Twitter: https://twitter.com/FRC4941\n"
+			+ "Instagram: https://t.co/K8QYQHTEgu\n"
+			+ "GitHub: https://github.com/RoboBibb/\n"
+			+ "Email: frcteam4941@gmail.com / code4941@gmail.com",
+			{ reply_to_message_id : msg.message_id });
+});
+
+// gives our website link
+bot.onText(/\/website/, function (msg) {
+	bot.sentMessage(msg.chat,
+			"Check out our website: https://robobibb.github.io/",
+			{ reply_to_message_id : msg.message_id });
 });
 
 // random number generator
