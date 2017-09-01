@@ -15,10 +15,10 @@ const codeChatID = "-1001070098331";
 
 
 // collaborators who might not be in the official chats
-const adminIDs = [ 257355952, // god
-				   147617508, // tate (main)
-				   251136364  // tate (alternate)
-				 ];
+const adminIDs = [
+		   147617508, // tate (main)
+		   251136364  // tate (alternate)
+		 ];
 
 
 
@@ -31,7 +31,12 @@ bot.onText(/\/help/, function(msg) {
 	+ "/ping - tests the connection and speed\n"
 	+ "/join - helps you get into our group chats\n"
 	+ "/coinflip - flips a coin and sends the result\n"
-	+ "/random - random number generator numbers come after for ranges\n");
+	+ "/random - random number generator numbers come after for ranges\n"
+	+ "/log - log a value/message (ie- `__chat_id`, `__from_id`, `__msg_id`, `__msg_`)\n"
+	+ "/system - runs a command on the system (use with caution)\n"
+	+ "/fortune - opens a fortune cookie\n"
+	+ "/sshcmd - get a command to run to ssh into the server\n\n
+	+ "more at: https://github.com/robobibb/robobibb-steve-bot/");
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") asked for /help");
 });
 
@@ -41,6 +46,7 @@ bot.onText(/\/cat/, function(msg) {
 	bot.sendPhoto(msg.chat.id, img, { caption: "look at the kitty!" });
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") likes /cat's");
 });
+
 
 // Matches /echo [whatever]
 bot.onText(/\/echo (.+)/, function(msg, match) {
