@@ -36,3 +36,4 @@ printf "done\n"
 echo "installing dependencies..."
 npm install --save node-telegram-bot-api github
 echo "installed dependencies"
+

@@ -1,15 +1,26 @@
-/// Contains all the fortunes that one could recieve... 
-/// this file will grow with time
+/// This module gets all the fortunes from assets/fortunes.txt
 
+// reads the list of fortunes from the file
+module.exports.updateFortunesList = function(){
+        module.exports.fortunes = require("fs").readFileSync("./assets/fortunes.txt")
+        	.toString().split(/<quote>/).map(quote => quote.trim());
+        return module.exports.fortunes;
+}
+
+// get the list of fortunes
+module.exports.fortunes = module.exports.updateFortunesList();
+
+// pick a random fortune
 module.exports.getText = function() {
-	const fortunes = [
-		"So tell me, where I should go?\nto the left where nothing is right...\nor to the right where nothing is left...",
-		"Look at you, hacker, a pathetic creature of meat and bone. How can you challenge a perfect immortal machine?",
-		"How beautiful it is to do nothing and then rest afterward.",
-		"With my luck, I'll probably be reincarnated as me.",
-		"Think before sharing with others.",
-		"More good code has been written in languages denounced as \"bad\" than in languages proclaimed \"wonderful\" -- much more.\n-- Bjarne Stroustrup"
-	];
+        return module.exports.fortunes[
+        	Math.floor(Math.random() * module.exports.fortunes.length)
+        ];
+}
 
-	return fortunes[Math.floor(Math.random() * fortunes.length)];
+// add a fortune to the file
+module.exports.addFortune = function (quote) {
+	require("fs").appendFile("./assets/fortunes.txt", "<quote>\n" + quote, function (err) {
+		if (err) throw err;
+		console.log("Added a fortune!");
+	});
 }

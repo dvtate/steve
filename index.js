@@ -127,8 +127,8 @@ bot.onText(/\/coinflip/, function(msg) {
 });
 
 // gives our sm links
-bot.onText(/\/website/, function (msg) {
-	bot.sentMessage(msg.chat,
+bot.onText(/\/sm/, function (msg) {
+	bot.sendMessage(msg.chat.id,
 			"Check out our social media accounts:\n"
 			+ "FaceBook: https://fb.com/teamrobobibb/\n"
 			+ "Twitter: https://twitter.com/FRC4941\n"
@@ -136,13 +136,17 @@ bot.onText(/\/website/, function (msg) {
 			+ "GitHub: https://github.com/RoboBibb/\n"
 			+ "Email: frcteam4941@gmail.com / code4941@gmail.com",
 			{ reply_to_message_id : msg.message_id });
+
+	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") asked for our social media.");
 });
 
 // gives our website link
 bot.onText(/\/website/, function (msg) {
-	bot.sentMessage(msg.chat,
+	bot.sendMessage(msg.chat.id,
 			"Check out our website: https://robobibb.github.io/",
 			{ reply_to_message_id : msg.message_id });
+
+	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") asked for website URL.");
 });
 
 // random number generator
