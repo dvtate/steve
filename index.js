@@ -15,8 +15,7 @@ const codeChatID = "-1001070098331";
 
 
 // collaborators who might not be in the official chats
-const adminIDs = [
-		   147617508, // tate (main)
+const adminIDs = [ 147617508, // tate (main)
 		   251136364  // tate (alternate)
 		 ];
 
@@ -221,6 +220,16 @@ bot.onText(/\/fortune/, function(msg) {
 
 });
 
+
+bot.onText(/\/addfortune (.+)/, function(msg, match) {
+	require("./fortune.js").addFortune(match[1]);
+	bot.sendMessage(msg.chat.id,
+			"Added fortune: " + match[1],
+			{ reply_to_message_id : msg.message_id } );
+
+	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") added a fortune");
+
+});
 
 
 // Welcome new members :)

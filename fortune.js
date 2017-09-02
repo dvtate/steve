@@ -22,5 +22,6 @@ module.exports.addFortune = function (quote) {
 	require("fs").appendFile("./assets/fortunes.txt", "<quote>\n" + quote, function (err) {
 		if (err) throw err;
 		console.log("Added a fortune!");
+		module.exports.updateFortunesList();
 	});
 }
