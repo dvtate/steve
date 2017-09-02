@@ -33,6 +33,7 @@ bot.onText(/\/help/, function(msg) {
 	+ "/log - log a value/message (ie- `__chat_id`, `__from_id`, `__msg_id`, `__msg_`)\n"
 	+ "/system - runs a command on the system (use with caution)\n"
 	+ "/fortune - opens a fortune cookie\n"
+	+ "/addfortune <fortune message> - adds a fortune to the pool\n"
 	+ "/sshcmd - get a command to run to ssh into the server\n\n"
 	+ "more at: https://github.com/robobibb/robobibb-steve-bot/");
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") asked for /help");
@@ -210,6 +211,7 @@ bot.onText(/\/log (.+)/, function(msg, match){
 	}
 });
 
+// similar to the fortune terminal command
 bot.onText(/\/fortune/, function(msg) {
 
 	bot.sendMessage(msg.chat.id,
@@ -220,7 +222,7 @@ bot.onText(/\/fortune/, function(msg) {
 
 });
 
-
+// adds a fortune to our list
 bot.onText(/\/addfortune (.+)/, function(msg, match) {
 	require("./fortune.js").addFortune(match[1]);
 	bot.sendMessage(msg.chat.id,
@@ -232,6 +234,7 @@ bot.onText(/\/addfortune (.+)/, function(msg, match) {
 });
 
 
+
 // Welcome new members :)
 bot.on("new_chat_participant", function (msg) {
 	console.log("new user(s):");
@@ -240,7 +243,6 @@ bot.on("new_chat_participant", function (msg) {
 		console.log("  * " + new_member.first_name + " " + new_member.last_name + " (@" + new_member.username + "), joined  "
 			    + msg.chat.title);
 	});
-
 });
 
 
