@@ -32,7 +32,8 @@ Like many things on the internet, uptime is very important. In order to update t
 - `/system <command>` runs a command on the system (requires authorization)
 - `/sshcmd` gives a ssh command to run (requires authorization)
 - `/fortune` sends an interesting quote/fortune
-  
+- `/addfortune <fortune message>` add your own fortune message
+
 *Authorization: being in one of the team's main chats or being a designated Admin
 ## Responses:
 - "is steve a human?" - replies "yes" and asks person who was wondering to complete a captcha
