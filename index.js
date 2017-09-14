@@ -34,13 +34,14 @@ bot.onText(/\/help/, function(msg) {
 	+ "/system - runs a command on the system (use with caution)\n"
 	+ "/fortune - opens a fortune cookie\n"
 	+ "/addfortune <fortune message> - adds a fortune to the pool\n"
-	+ "/sshcmd - get a command to run to ssh into the server\n\n"
+	+ "/sshcmd - get a command to run to ssh into the server\n"
+	+ "/vaporwave <text> - converts normal text to full-width text\n\n"
 	+ "more at: https://github.com/robobibb/robobibb-steve-bot/");
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") asked for /help");
 });
 
 // send a random cat pic
-bot.onText(/\/cat/, function(msg) {
+bot.onText(/^\/cat/, function(msg) {
 	const img = request("http://lorempixel.com/400/200/cats/");
 	bot.sendPhoto(msg.chat.id, img, { caption: "look at the kitty!" });
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") likes /cat's");
@@ -48,7 +49,7 @@ bot.onText(/\/cat/, function(msg) {
 
 
 // Matches /echo [whatever]
-bot.onText(/\/echo (.+)/, function(msg, match) {
+bot.onText(/^\/echo (.+)/, function(msg, match) {
   const resp = match[1];
   bot.sendMessage(msg.chat.id, resp);
   console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") echo'd");
@@ -56,14 +57,14 @@ bot.onText(/\/echo (.+)/, function(msg, match) {
 
 
 // ping response testing
-bot.onText(/\/ping/, function onPing(msg) {
+bot.onText(/^\/ping/, function onPing(msg) {
 	bot.sendMessage(msg.chat.id, "pong");
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") ping'd");
 });
 
 
 // user wants to join a chat
-bot.onText(/\/join/, function onJoinRequest(msg) {
+bot.onText(/^\/join/, function onJoinRequest(msg) {
 	const opts = {
 		reply_markup: {
 			inline_keyboard: [
@@ -118,7 +119,7 @@ bot.on("callback_query", function(callbackQuery) {
  });
 
 // coin flip
-bot.onText(/\/coinflip/, function(msg) {
+bot.onText(/^\/coinflip/, function(msg) {
 	if (Math.random() > 0.5)
 		bot.sendMessage(msg.chat.id, "heads");
 	else
@@ -127,7 +128,7 @@ bot.onText(/\/coinflip/, function(msg) {
 });
 
 // gives our sm links
-bot.onText(/\/sm/, function (msg) {
+bot.onText(/^\/sm/, function (msg) {
 	bot.sendMessage(msg.chat.id,
 			"Check out our social media accounts:\n"
 			+ "FaceBook: https://fb.com/teamrobobibb/\n"
@@ -141,7 +142,7 @@ bot.onText(/\/sm/, function (msg) {
 });
 
 // gives our website link
-bot.onText(/\/website/, function (msg) {
+bot.onText(/^\/website/, function (msg) {
 	bot.sendMessage(msg.chat.id,
 			"Check out our website: https://robobibb.github.io/",
 			{ reply_to_message_id : msg.message_id });
@@ -150,7 +151,7 @@ bot.onText(/\/website/, function (msg) {
 });
 
 // random number generator
-bot.onText(/\/random(.+)?/, function onEchoText(msg, match) {
+bot.onText(/^\/random(.+)?/, function onEchoText(msg, match) {
 	const args = match[1];
 	var lims = args.split(/ |,/);
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" +
@@ -172,7 +173,7 @@ bot.onText(/\/random(.+)?/, function onEchoText(msg, match) {
 });
 
 // logs are useful for debugging
-bot.onText(/\/log (.+)/, function(msg, match){
+bot.onText(/^\/log (.+)/, function(msg, match){
 	const args = match[1];
 	if (args == "__chat_id") {
 		bot.sendMessage(msg.chat.id, "logged chat id = " + msg.chat.id);
@@ -212,7 +213,7 @@ bot.onText(/\/log (.+)/, function(msg, match){
 });
 
 // similar to the fortune terminal command
-bot.onText(/\/fortune/, function(msg) {
+bot.onText(/^\/fortune/, function(msg) {
 
 	bot.sendMessage(msg.chat.id,
 			require("./fortune.js").getText(),
@@ -223,7 +224,7 @@ bot.onText(/\/fortune/, function(msg) {
 });
 
 // adds a fortune to our list
-bot.onText(/\/addfortune (.+)/, function(msg, match) {
+bot.onText(/^\/addfortune (.+)/, function(msg, match) {
 	require("./fortune.js").addFortune(match[1]);
 	bot.sendMessage(msg.chat.id,
 			"Added fortune: " + match[1],
@@ -234,7 +235,7 @@ bot.onText(/\/addfortune (.+)/, function(msg, match) {
 });
 
 // gives vaporwave equivalent text
-bot.onText(/\/vaporwave (.+)/, function(msg, match) {
+bot.onText(/^\/vaporwave (.+)/, function(msg, match) {
 	bot.sendMessage(msg.chat.id,
 		require("./vaporwave.js").toVaporwave(match[1]),
 		{ reply_to_message_id : msg.message_id });
@@ -257,7 +258,7 @@ bot.on("new_chat_participant", function (msg) {
 
 var updating = false; // only one update process at a time
 // update steve to latest version
-bot.onText(/\/update/, function (msg) {
+bot.onText(/^\/update/, function (msg) {
 	bot.sendMessage(msg.chat.id, "Updating my source code from https://github.com/robobibb/robobibb-steve-bot... There should be zero downtime");
 	if (!updating) {
 		console.log("spawning update.sh...");
@@ -279,7 +280,7 @@ bot.onText(/\/update/, function (msg) {
 /// emulating humans
 
 // just to confuse people
-bot.onText(/is steve (?:a\s)?human\?/i, function (msg) {
+bot.onText(/^is steve (?:a\s)?human\?/i, function (msg) {
 	bot.sendMessage(msg.chat.id, "Yes", { reply_to_message_id : msg.message_id });
 	const img = request("http://www.seosmarty.com/wp-content/uploads/2009/05/captcha-7.jpg");
 	bot.sendPhoto(msg.chat.id, img, { caption: "Are YOU a human? proove it!" });
@@ -339,7 +340,7 @@ function addCommand(msg) {
 
 }
 
-bot.onText(/\/newreply/, function(msg) {
+bot.onText(/^\/newreply/, function(msg) {
 /*
 	// arrow functions are baller
 	bot.getChatMember(officialChatID, msg.from.id)
@@ -398,7 +399,7 @@ function authorized(usrID, isAuth, notAuth) {
 
 
 /// interface to the server
-bot.onText(/\/system (.+)/, function(msg, match){
+bot.onText(/^\/system (.+)/, function(msg, match){
 	const command = match[1];
 	authorized(msg.from.id,
 		function () {
@@ -417,7 +418,7 @@ bot.onText(/\/system (.+)/, function(msg, match){
 
 });
 
-bot.onText(/\/sshcmd/, function(msg) {
+bot.onText(/^\/sshcmd/, function(msg) {
 	authorized(msg.from.id,
 		function () {
 			request("https://ipinfo.io", function (error, response, body) {
