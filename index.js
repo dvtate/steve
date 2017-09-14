@@ -233,6 +233,13 @@ bot.onText(/\/addfortune (.+)/, function(msg, match) {
 
 });
 
+// gives vaporwave equivalent text
+bot.onText(/\/vaporwave (.+)/, function(msg, match) {
+	bot.sendMessage(msg.chat.id,
+		require("./vaporwave.js").toVaporwave(match[1]),
+		{ reply_to_message_id : msg.message_id });
+});
+
 
 
 // Welcome new members :)
