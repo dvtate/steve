@@ -238,6 +238,8 @@ bot.onText(/\/vaporwave (.+)/, function(msg, match) {
 	bot.sendMessage(msg.chat.id,
 		require("./vaporwave.js").toVaporwave(match[1]),
 		{ reply_to_message_id : msg.message_id });
+
+	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") converted text to vaporwave");
 });
 
 
