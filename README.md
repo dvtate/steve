@@ -33,6 +33,7 @@ Like many things on the internet, uptime is very important. In order to update t
 - `/sshcmd` gives a ssh command to run (requires authorization)
 - `/fortune` sends an interesting quote/fortune
 - `/addfortune <fortune message>` add your own fortune message
+- `/vaporwave <text>` converts to full-width text
 
 *Authorization: being in one of the team's main chats or being a designated Admin
 ## Responses:
