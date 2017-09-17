@@ -35,7 +35,8 @@ bot.onText(/\/help/, function(msg) {
 	+ "/fortune - opens a fortune cookie\n"
 	+ "/addfortune <fortune message> - adds a fortune to the pool\n"
 	+ "/sshcmd - get a command to run to ssh into the server\n"
-	+ "/vaporwave <text> - converts normal text to full-width text\n\n"
+	+ "/vaporwave <text> - converts normal text to full-width text\n"
+	+ "/xkcd - gives a random XKCD comic strip\n\n"
 	+ "more at: https://github.com/robobibb/robobibb-steve-bot/");
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") asked for /help");
 });
@@ -47,11 +48,27 @@ bot.onText(/^\/cat/, function(msg) {
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") likes /cat's");
 });
 
+// sends a random XKCD comic strip
+bot.onText(/^\/xkcd/, function(msg) {
+	request("https://c.xkcd.com/random/comic/", function (error, response, body) {
+		if (error) {
+			console.log("/xkcd - error: ", error);
+			console.log("\tstatusCode:", response && response.statusCode);
+		}
+		const imgurl = body.match(/<div id="comic">\n<img src="(.+?)"\s/)[1];
+		const cstrip = request("https:" + imgurl);
+		bot.sendPhoto(msg.chat.id, cstrip, {
+			reply_to_message_id : msg.message_id,
+			caption : body.match(/<div id="ctitle">(.+?)<\/div>/)[1]
+		});
+		console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") read /xkcd");
+	});
+});
 
 // Matches /echo [whatever]
 bot.onText(/^\/echo (.+)/, function(msg, match) {
   const resp = match[1];
-  bot.sendMessage(msg.chat.id, resp);
+  bot.sendMessage(msg.chat.id, resp, { reply_to_message_id : msg.message_id });
   console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") echo'd");
 });
 
@@ -71,7 +88,8 @@ bot.onText(/^\/join/, function onJoinRequest(msg) {
 				[ { text: "RoboBibb Offical", callback_data: "offical" } ],
 				[ { text: "Programming team", callback_data: "code" } ],
 				[ { text: "Website team", callback_data: "web" } ],
-				[ { text: "Bot Spammers", callback_data: "bots" } ]
+				[ { text: "Bot Spammers", callback_data: "bots" } ],
+				[ { text: "Proxy/VPN Users", callback_data: "proxy" } ]
 			]
 		},
 		reply_to_message_id : msg.message_id
@@ -110,6 +128,9 @@ bot.on("callback_query", function(callbackQuery) {
 	} else if (action === "bots") {
 		text = "click here to join the bot spam chat: https://t.me/joinchat/CMx25A4N48cfJuFRTTdwPg";
 		console.log(usr.first_name + " " + usr.last_name + " (@" + usr.username + ") wants to join bot spammers");
+	} else if (action === "proxy") {
+		text = "click here to get passed the firewall: https://t.me/joinchat/CMx25EC8RpXQvjLa8cMmVA";
+		console.log(usr.first_name + " " + usr.last_name + " (@" + usr.username + ") wants to join MaconShadowsocks society");
 	}
 
 	bot.editMessageText(text, opts);
@@ -302,7 +323,7 @@ bot.onText(/^(?:hey\s|hi\s)?steve(?:\.|\?|\!)?$/i, function (msg){
 
 // this is a reference to 2001 space oddysey
 bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?make me a sandwich/i, function (msg) {
-	bot.sendAudio(msg.chat.id, "assets/cantdo.mp3",	{
+	bot.sendAudio(msg.chat.id, "assets/sound_files/cantdo.mp3",	{
 		caption : "I'm afraid I can't do that...",
 		reply_to_message_id : msg.message_id
 	});
