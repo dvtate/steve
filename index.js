@@ -15,9 +15,8 @@ const codeChatID = "-1001070098331";
 
 
 // collaborators who might not be in the official chats
-const adminIDs = [ 147617508, // tate (main)
-		   251136364  // tate (alternate)
-		 ];
+const adminIDs = [ 147617508 // tate (main)
+		 		 ];
 
 
 // help dialog
@@ -36,7 +35,8 @@ bot.onText(/\/help/, function(msg) {
 	+ "/addfortune <fortune message> - adds a fortune to the pool\n"
 	+ "/sshcmd - get a command to run to ssh into the server\n"
 	+ "/vaporwave <text> - converts normal text to full-width text\n"
-	+ "/xkcd - gives a random XKCD comic strip\n\n"
+	+ "/xkcd - gives a random XKCD comic strip\n"
+	+ "/msg <user/chat id #> <message> - sends a message to the given chat\n\n"
 	+ "more at: https://github.com/robobibb/robobibb-steve-bot/");
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") asked for /help");
 });
@@ -66,7 +66,7 @@ bot.onText(/^\/xkcd/, function(msg) {
 });
 
 // Matches /echo [whatever]
-bot.onText(/^\/echo (.+)/, function(msg, match) {
+bot.onText(/^\/echo ([\S\s]+)/, function(msg, match) {
   const resp = match[1];
   bot.sendMessage(msg.chat.id, resp, { reply_to_message_id : msg.message_id });
   console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") echo'd");
@@ -79,6 +79,21 @@ bot.onText(/^\/ping/, function onPing(msg) {
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") ping'd");
 });
 
+
+bot.onText(/^\/poll/, function (msg) {
+	const repID = msg.reply_to_message ? msg.reply_to_message.message_id : msg.message_id;
+	const opts = {
+		reply_markup : {
+			inline_keyboard: [
+				[ 	{ text: "+1", callback_data: "upvote" },
+					{ text: "-1", callback_data: "downvote" } ],
+				[ { text: "¯\_(ツ)_/¯", callback_data: "idc" } ]
+			]
+		},
+		reply_to_message_id : repID
+	};
+	bot.sendMessage(msg.chat.id, "vote here:\n +1 : 0\n -1 : 0\n ±0 : 0", opts);
+});
 
 // user wants to join a chat
 bot.onText(/^\/join/, function onJoinRequest(msg) {
@@ -107,46 +122,97 @@ bot.on("callback_query", function(callbackQuery) {
 	const usr = callbackQuery.from;
 	const opts = {
 		chat_id: msg.chat.id,
-		message_id: msg.message_id,
+		message_id: msg.message_id
 	};
-	let text;
 
 	// from '/join'
 	if (action === "offical") {
 		//bot.sendMessage(msg.chat.id, "contact @ridderhoff and he will add you to the offical chat.");
-		text = "@ridderhoff has been contacted and will try to add you to the chat"
+		const text = "@ridderhoff has been contacted and will try to add you to the chat"
+		bot.editMessageText(text, opts);
 		bot.sendMessage("147617508", usr.first_name + " " + usr.last_name + " (@" + usr.username + ") wants to join offical");
+
+		// 147617508 = @ridderhoff (Tate) (gh@dvtate)
+		bot.forwardMessage("147617508", msg.chat.id, msg.reply_to_message.message_id);
+
 		console.log(usr.first_name + " " + usr.last_name + " (@" + usr.username + ") wants to join offical");
+
 	} else if (action === "code") {
 		//bot.sendMessage(msg.chat.id, "click here to join the programming chat: https://t.me/joinchat/AAAAAD_IZ5v-FtjYBUT0cA");
-		text = "Click here to join the programming chat: https://t.me/joinchat/AAAAAD_IZ5v-FtjYBUT0cA"
+		const text = "Click here to join the programming chat: https://t.me/joinchat/AAAAAD_IZ5v-FtjYBUT0cA"
 		console.log(usr.first_name + " " + usr.last_name + " (@" + usr.username + ") wants to join programming");
+		bot.editMessageText(text, opts);
 	} else if (action === "web") {
 		//bot.sendMessage(msg.chat.id, "click here to join the website chat: https://t.me/joinchat/AAAAAEDoGWJ1t0xW1tzjzQ");
-		text = "click here to join the website chat: https://t.me/joinchat/AAAAAEDoGWJ1t0xW1tzjzQ";
+		const text = "click here to join the website chat: https://t.me/joinchat/AAAAAEDoGWJ1t0xW1tzjzQ";
 		console.log(usr.first_name + " " + usr.last_name + " (@" + usr.username + ") wants to join web team");
+		bot.editMessageText(text, opts);
 	} else if (action === "bots") {
-		text = "click here to join the bot spam chat: https://t.me/joinchat/CMx25A4N48cfJuFRTTdwPg";
+		const text = "click here to join the bot spam chat: https://t.me/joinchat/CMx25A4N48cfJuFRTTdwPg";
 		console.log(usr.first_name + " " + usr.last_name + " (@" + usr.username + ") wants to join bot spammers");
+		bot.editMessageText(text, opts);
 	} else if (action === "proxy") {
-		text = "click here to get passed the firewall: https://t.me/joinchat/CMx25EC8RpXQvjLa8cMmVA";
+		const text = "click here to get passed the firewall: https://t.me/joinchat/CMx25EC8RpXQvjLa8cMmVA";
 		console.log(usr.first_name + " " + usr.last_name + " (@" + usr.username + ") wants to join MaconShadowsocks society");
+		bot.editMessageText(text, opts);
 	}
 
-	bot.editMessageText(text, opts);
+	// from /poll
+	else if (action === "upvote") {
+		const upNum = parseInt(msg.text.match(/\+1 : ([0-9]+?)\n/)[1]);
 
-	// 147617508 = @ridderhoff (Tate) (gh@dvtate)
-	bot.forwardMessage("147617508", msg.chat.id, msg.reply_to_message.message_id);
- });
+		const opts = {
+			reply_markup : {
+				inline_keyboard: [
+					[ 	{ text: "+1", callback_data: "upvote" },
+						{ text: "-1", callback_data: "downvote" } ],
+					[ { text: "¯\_(ツ)_/¯", callback_data: "idc" } ]
+				]
+			},
+			chat_id: msg.chat.id,
+			message_id: msg.message_id
+		};
 
-// coin flip
-bot.onText(/^\/coinflip/, function(msg) {
-	if (Math.random() > 0.5)
-		bot.sendMessage(msg.chat.id, "heads");
-	else
-		bot.sendMessage(msg.chat.id, "tails");
-	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") flipped a coin.");
+
+		bot.editMessageText(msg.text.replace(/\+1 : [0-9]+/, "+1 : " + (upNum + 1)), opts);
+
+	} else if (action == "downvote") {
+		const downNum = parseInt(msg.text.match(/\-1 : ([0-9]+?)\n/)[1]);
+
+		const opts = {
+			reply_markup : {
+				inline_keyboard: [
+					[ 	{ text: "+1", callback_data: "upvote" },
+						{ text: "-1", callback_data: "downvote" } ],
+					[ { text: "¯\_(ツ)_/¯", callback_data: "idc" } ]
+				]
+			},
+			chat_id: msg.chat.id,
+			message_id: msg.message_id
+		};
+		bot.editMessageText(msg.text.replace(/-1 : [0-9]+/, "-1 : " + (downNum + 1)), opts);
+
+	} else if (action == "idc") {
+		const idcNum = parseInt(msg.text.match(/±0 : ([0-9]+?)\n/)[1]);
+
+		const opts = {
+			reply_markup : {
+				inline_keyboard: [
+					[ 	{ text: "+1", callback_data: "upvote" },
+						{ text: "-1", callback_data: "downvote" } ],
+					[ { text: "¯\_(ツ)_/¯", callback_data: "idc" } ]
+				]
+			},
+			chat_id: msg.chat.id,
+			message_id: msg.message_id
+		};
+		bot.editMessageText(msg.text.replace(/±0 : [0-9]+/, "±0 : " + (idcNum + 1)), opts);
+
+	}
+
+
 });
+
 
 // gives our sm links
 bot.onText(/^\/sm/, function (msg) {
@@ -172,25 +238,40 @@ bot.onText(/^\/website/, function (msg) {
 });
 
 // random number generator
-bot.onText(/^\/random(.+)?/, function onEchoText(msg, match) {
+bot.onText(/^\/random (.+)?/, function onEchoText(msg, match) {
 	const args = match[1];
-	var lims = args.split(/ |,/);
+	var lims = args.split(/ |,|\n/);
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" +
 				msg.from.username + ") random :: " + lims);
 
+	var rand;
 	if (lims.length == 1) {
 		const min = 0;
 		const max = Math.floor(Number(lims[0]))
-		bot.sendMessage(msg.chat.id, "random number = " + (Math.floor(Math.random() * (max - min)) + min));
+		rand = (Math.floor(Math.random() * (max - min)) + min);
 	} else if (lims.length == 2) {
 		const min = Math.ceil(Number(lims[1]));
 		const max = Math.floor(Number(lims[0]));
-		bot.sendMessage(msg.chat.id, "random number = " + (Math.floor(Math.random() * (max - min)) + min));
-	} else {
+		rand = (Math.floor(Math.random() * (max - min)) + min);
+	} else
+		rand = NaN;
+
+
+	if (rand == NaN)
 		bot.sendMessage(msg.chat.id, "`/random <num1>` -> random number (0 <= n < num1)\n"
 									+"`/random <num1> <num2>` -> random number (num1 <= n <= num2");
-	}
+	else
+		bot.sendMessage(msg.chat.id, "random number = " + rand);
 
+});
+
+// coin flip
+bot.onText(/^\/coinflip/, function(msg) {
+	if (Math.random() > 0.5)
+		bot.sendMessage(msg.chat.id, "heads");
+	else
+		bot.sendMessage(msg.chat.id, "tails");
+	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") flipped a coin.");
 });
 
 // logs are useful for debugging
@@ -233,6 +314,20 @@ bot.onText(/^\/log (.+)/, function(msg, match){
 	}
 });
 
+bot.onText(/^\/msg ([\S\s]+)/, function(msg, match) {
+	const args = match[1].split(/ |,|\n/);
+	if (args.length < 2) {
+		bot.sendMessage(msg.chat.id, "The correct syntax for /msg is as follows:\n"
+						+ " /msg <user id number> <message contents>",
+						{ reply_to_message_id : msg.message_id } );
+	} else {
+		bot.sendMessage(args[0], args[1] + "\n\n**MSG From user#" + msg.from.id + " via /msg.**");
+		bot.sendMessage(msg.chat.id, "Message sent.", { reply_to_message_id : msg.message_id } );
+		console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") sent a /msg to " + args[1]);
+	}
+
+});
+
 // similar to the fortune terminal command
 bot.onText(/^\/fortune/, function(msg) {
 
@@ -245,7 +340,7 @@ bot.onText(/^\/fortune/, function(msg) {
 });
 
 // adds a fortune to our list
-bot.onText(/^\/addfortune (.+)/, function(msg, match) {
+bot.onText(/^\/addfortune ([\S\s]+)/, function(msg, match) {
 	require("./fortune.js").addFortune(match[1]);
 	bot.sendMessage(msg.chat.id,
 			"Added fortune: " + match[1],
