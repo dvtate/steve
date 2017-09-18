@@ -29,11 +29,12 @@ Like many things on the internet, uptime is very important. In order to update t
   + if message is `__msg_` it logs the entire message object to stdout
   + anthing else gets writen to the logs in stdout so that sysadmin can see their message.
 - `/update` - runs `update.sh` and updates Steve's code.
-- `/system <command>` runs a command on the system (requires authorization)
-- `/sshcmd` gives a ssh command to run (requires authorization)
-- `/fortune` sends an interesting quote/fortune
-- `/addfortune <fortune message>` add your own fortune message
-- `/vaporwave <text>` converts to full-width text
+- `/system <command>` - runs a command on the system (requires authorization)
+- `/sshcmd` - gives a ssh command to run (requires authorization)
+- `/fortune` - sends an interesting quote/fortune
+- `/addfortune <fortune message>` - add your own fortune message
+- `/vaporwave <text>` - converts to full-width text
+- `/xkcd` - sends a random xkcd comic
 
 *Authorization: being in one of the team's main chats or being a designated Admin
 ## Responses:
