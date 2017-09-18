@@ -35,6 +35,7 @@ Like many things on the internet, uptime is very important. In order to update t
 - `/addfortune <fortune message>` - add your own fortune message
 - `/vaporwave <text>` - converts to full-width text
 - `/xkcd` - sends a random xkcd comic
+- `/poll` - makes a voteable poll for your message. (+1,-1, ±0)
 
 *Authorization: being in one of the team's main chats or being a designated Admin
 ## Responses:
