@@ -87,7 +87,7 @@ bot.onText(/^\/poll/, function (msg) {
 			inline_keyboard: [
 				[ 	{ text: "+1", callback_data: "upvote" },
 					{ text: "-1", callback_data: "downvote" } ],
-				[ { text: "¯\_(ツ)_/¯", callback_data: "idc" } ]
+				[ { text: "¯\\_(ツ)_/¯", callback_data: "idc" } ]
 			]
 		},
 		reply_to_message_id : repID
@@ -166,7 +166,7 @@ bot.on("callback_query", function(callbackQuery) {
 				inline_keyboard: [
 					[ 	{ text: "+1", callback_data: "upvote" },
 						{ text: "-1", callback_data: "downvote" } ],
-					[ { text: "¯\_(ツ)_/¯", callback_data: "idc" } ]
+					[ { text: "¯\\_(ツ)_/¯", callback_data: "idc" } ]
 				]
 			},
 			chat_id: msg.chat.id,
@@ -184,7 +184,7 @@ bot.on("callback_query", function(callbackQuery) {
 				inline_keyboard: [
 					[ 	{ text: "+1", callback_data: "upvote" },
 						{ text: "-1", callback_data: "downvote" } ],
-					[ { text: "¯\_(ツ)_/¯", callback_data: "idc" } ]
+					[ { text: "¯\\_(ツ)_/¯", callback_data: "idc" } ]
 				]
 			},
 			chat_id: msg.chat.id,
@@ -193,20 +193,20 @@ bot.on("callback_query", function(callbackQuery) {
 		bot.editMessageText(msg.text.replace(/-1 : [0-9]+/, "-1 : " + (downNum + 1)), opts);
 
 	} else if (action == "idc") {
-		const idcNum = parseInt(msg.text.match(/±0 : ([0-9]+?)\n/)[1]);
+		const idcNum = parseInt(msg.text.match(/0 : ([0-9]+?)/)[1]);
 
 		const opts = {
 			reply_markup : {
 				inline_keyboard: [
 					[ 	{ text: "+1", callback_data: "upvote" },
 						{ text: "-1", callback_data: "downvote" } ],
-					[ { text: "¯\_(ツ)_/¯", callback_data: "idc" } ]
+					[ { text: "¯\\_(ツ)_/¯", callback_data: "idc" } ]
 				]
 			},
 			chat_id: msg.chat.id,
 			message_id: msg.message_id
 		};
-		bot.editMessageText(msg.text.replace(/±0 : [0-9]+/, "±0 : " + (idcNum + 1)), opts);
+		bot.editMessageText(msg.text.replace(/0 : [0-9]+/, "0 : " + (idcNum + 1)), opts);
 
 	}
 
