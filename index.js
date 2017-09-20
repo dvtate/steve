@@ -569,15 +569,19 @@ bot.onText(/^\/sshcmd/, function(msg) {
 	authorized(msg.from.id,
 		function () {
 			request("https://ipinfo.io", function (error, response, body) {
-			if (!error && response.statusCode == 200) {
-			const ip = JSON.parse(body).ip;
-			bot.sendMessage(msg.chat.id, "$ ssh alarm@" + ip + "\nYou should know the password");
-			console.log(msg.from.first_name + " " + msg.from.last_name
-			+ " (@" + msg.from.username + ") was given an ssh command to run.");
-			} else {
-			console.log("Curl Error "+response.statusCode);
-			bot.sendMessage(msg.chat.id, "there was an error verifying my ip address... " + response.statusCode);
-			}
+				if (!error && response.statusCode == 200) {
+
+					bot.sendMessage(msg.chat.id, "$ ssh alarm@"
+									+ JSON.parse(body).ip
+									+ "\nYou should know the password");
+
+					console.log(msg.from.first_name + " " + msg.from.last_name
+								+ " (@" + msg.from.username
+								+ ") was given an ssh command to run.");
+				} else {
+					console.log("Curl Error "+response.statusCode);
+					bot.sendMessage(msg.chat.id, "there was an error verifying my ip address... " + response.statusCode);
+				}
 			});
 		},
 		function () {
