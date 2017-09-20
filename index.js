@@ -44,16 +44,42 @@ bot.onText(/\/help/, function(msg) {
 // send a random cat pic
 bot.onText(/^\/cat/, function(msg) {
 	const img = request("http://lorempixel.com/400/200/cats/");
-	bot.sendPhoto(msg.chat.id, img, { caption: "look at the kitty!" });
+	bot.sendPhoto(msg.chat.id, img, { caption : "look at the kitty!" });
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") likes /cat's");
 });
 
 // sends a random XKCD comic strip
-bot.onText(/^\/xkcd/, function(msg) {
+bot.onText(/^\/xkcd$/, function(msg) {
 	request("https://c.xkcd.com/random/comic/", function (error, response, body) {
 		if (error) {
 			console.log("/xkcd - error: ", error);
 			console.log("\tstatusCode:", response && response.statusCode);
+			bot.sendMessage(msg.chat.id, "xkcd appears to be down right now :/", { reply_to_message_id : msg.message_id });
+			return;
+		}
+		const imgurl = body.match(/<div id="comic">\n<img src="(.+?)"\s/)[1];
+		const cstrip = request("https:" + imgurl);
+		bot.sendPhoto(msg.chat.id, cstrip, {
+			reply_to_message_id : msg.message_id,
+			caption : body.match(/<div id="ctitle">(.+?)<\/div>/)[1]
+		});
+		console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") read /xkcd");
+	});
+});
+
+// sends a random XKCD comic strip
+bot.onText(/^\/xkcd ([\S\s]+)/, function(msg,match) {
+	request("https://xkcd.com/" + match[1], function (error, response, body) {
+		if (error) {
+			console.log("/xkcd - error: ", error);
+			console.log("\tstatusCode:", response && response.statusCode);
+			bot.sendMessage(msg.chat.id, "xkcd appears to be down right now :/", { reply_to_message_id : msg.message_id });
+			return;
+		}
+		if (!body.match(/<div id="comic">\n<img src="(.+?)"\s/)) {
+			console.log("invalid /xkcd number");
+			bot.sendMessage(msg.chat.id, "invalid xkcd comic number", { reply_to_message_id : msg.message_id });
+			return;
 		}
 		const imgurl = body.match(/<div id="comic">\n<img src="(.+?)"\s/)[1];
 		const cstrip = request("https:" + imgurl);
@@ -321,9 +347,11 @@ bot.onText(/^\/msg ([\S\s]+)/, function(msg, match) {
 						+ " /msg <user id number> <message contents>",
 						{ reply_to_message_id : msg.message_id } );
 	} else {
-		bot.sendMessage(args[0], args[1] + "\n\n**MSG From user#" + msg.from.id + " via /msg.**");
+		bot.sendMessage(args[0], args[1] + "\n\n**From user#" + msg.from.id + " via /msg.**", {
+			parse_mode : "markdown"
+		});
 		bot.sendMessage(msg.chat.id, "Message sent.", { reply_to_message_id : msg.message_id } );
-		console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") sent a /msg to " + args[1]);
+		console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") sent a /msg to " + args[0] + " : " + args[1]);
 	}
 
 });
@@ -333,7 +361,10 @@ bot.onText(/^\/fortune/, function(msg) {
 
 	bot.sendMessage(msg.chat.id,
 			require("./fortune.js").getText(),
-			{ reply_to_message_id : msg.message_id } );
+			{
+				reply_to_message_id : msg.message_id,
+				parse_mode : "markdown"
+			} );
 
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") recieved a fortune");
 
