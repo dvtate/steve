@@ -412,7 +412,7 @@ bot.onText(/^\/update/, function (msg) {
 		updating = true;
 
 		// run command `sh update.sh` which will update Steve, eventually killing this version of him
-		require("child_process").fork("./update.sh");
+		require("child_process").fork("ecec update.sh");
 
 		console.log("spawned");
 	}
