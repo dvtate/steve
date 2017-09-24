@@ -412,13 +412,14 @@ bot.onText(/^\/update/, function (msg) {
 		updating = true;
 
 		// run command `sh update.sh` which will update Steve, eventually killing this instance
-		var script = require('child_process').exec('sh update.sh',
+		var script = require("child_process").exec("sys update.sh",
         (error, stdout, stderr) => {
             console.log(`${stdout}`);
             console.log(`${stderr}`);
             if (error !== null) {
                 console.log(`exec error: ${error}`);
             }
+            process.exit();
         });
 
 		console.log("spawned");
