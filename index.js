@@ -410,7 +410,7 @@ var updating = false; // only one update process at a time
 bot.onText(/^\/update/, function (msg) {
 	if (!updating) {
 		bot.sendMessage(msg.chat.id,
-						"Updating my source code from https://github.com/robobibb/robobibb-steve-bot... There should be zero downtime"
+						"Updating my source code from https://github.com/robobibb/robobibb-steve-bot... There should be zero downtime",
 						{reply_to_message_id : msg.message_id });
 		console.log("spawning update.sh...");
 		updating = true;
