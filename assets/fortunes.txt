@@ -53,3 +53,6 @@ I wanna do math<quote>
 <quote>
 It's certainly easier to implement bad security and make it illegal for anyone to notice than it is to implement good security.
  — Bruce Schneier
+<quote>
+The only part of the government that's actually listening is the NSA.<quote>
+Go to sleep!
