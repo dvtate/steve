@@ -403,11 +403,15 @@ bot.on("new_chat_participant", function (msg) {
 });
 
 
+
+
 var updating = false; // only one update process at a time
 // update steve to latest version
 bot.onText(/^\/update/, function (msg) {
-	bot.sendMessage(msg.chat.id, "Updating my source code from https://github.com/robobibb/robobibb-steve-bot... There should be zero downtime");
 	if (!updating) {
+		bot.sendMessage(msg.chat.id,
+						"Updating my source code from https://github.com/robobibb/robobibb-steve-bot... There should be zero downtime"
+						{reply_to_message_id : msg.message_id });
 		console.log("spawning update.sh...");
 		updating = true;
 
@@ -419,12 +423,17 @@ bot.onText(/^\/update/, function (msg) {
             if (error !== null) {
                 console.log(`exec error: ${error}`);
             }
+            console.log("committing seppuku...");
             process.exit();
         });
 
 		console.log("spawned");
+	} else {
+		bot.sendMessage(msg.chat.id, "There is already an update in progress",
+			{reply_to_message_id : msg.message_id });
 	}
 });
+
 
 
 
