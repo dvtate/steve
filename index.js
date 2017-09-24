@@ -424,7 +424,6 @@ bot.onText(/^\/update/, function (msg) {
                 console.log(`exec error: ${error}`);
             }
             console.log("committing seppuku...");
-            process.exit();
         });
 
 		console.log("spawned");
