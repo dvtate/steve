@@ -16,15 +16,15 @@ if [ -z "$TELEGRAM_TOKEN" ]; then
 	read TELEGRAM_TOKEN
 fi
 
-
-# if token wasn't exported by update.sh or steve.sh
+: '
+# if token wasnt exported by update.sh or steve.sh
 # then we need to prompt the user for it
 if [ -z "$GH_TOKEN" ]; then
 	# get bot token
 	printf "Enter your GitHub API token: "
 	read GH_TOKEN
 fi
-
+'
 
 # put token into steve.sh
 printf "inserting token into steve.sh... "
@@ -36,4 +36,3 @@ printf "done\n"
 echo "installing dependencies..."
 npm install --save node-telegram-bot-api github
 echo "installed dependencies"
-
