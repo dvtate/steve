@@ -29,4 +29,5 @@ echo "Re-configuring Steve similar to old one..."
 sh "setup.sh"
 
 # kill and revive steve
-printf "respawning steve..." && sys "killall steve.sh && ./steve.sh"
+printf "spawning new steve..."
+sys "./steve.sh"
