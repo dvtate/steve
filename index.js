@@ -411,8 +411,15 @@ bot.onText(/^\/update/, function (msg) {
 		console.log("spawning update.sh...");
 		updating = true;
 
-		// run command `sh update.sh` which will update Steve, eventually killing this version of him
-		require("child_process").fork("ecec update.sh");
+		// run command `sh update.sh` which will update Steve, eventually killing this instance
+		var script = require('child_process').exec('sh hi.sh',
+        (error, stdout, stderr) => {
+            console.log(`${stdout}`);
+            console.log(`${stderr}`);
+            if (error !== null) {
+                console.log(`exec error: ${error}`);
+            }
+        });
 
 		console.log("spawned");
 	}
