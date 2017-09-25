@@ -19,6 +19,7 @@ module.exports.getText = function() {
 
 // add a fortune to the file
 module.exports.addFortune = function (quote, from) {
+	// add quote to fortune file
 	require("fs").appendFile("./assets/fortunes.txt", "<quote>\n" + quote, function (err) {
 		if (err) throw err;
 		console.log("Added a fortune!");
