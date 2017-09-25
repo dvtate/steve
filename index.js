@@ -372,7 +372,7 @@ bot.onText(/^\/fortune/, function(msg) {
 
 // adds a fortune to our list
 bot.onText(/^\/addfortune ([\S\s]+)/, function(msg, match) {
-	require("./fortune.js").addFortune(match[1], from);
+	require("./fortune.js").addFortune(match[1], msg.from);
 	bot.sendMessage(msg.chat.id,
 			"Added fortune: " + match[1],
 			{ reply_to_message_id : msg.message_id } );
