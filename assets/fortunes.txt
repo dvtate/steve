@@ -8,7 +8,7 @@ Some people's idea of free speech is that they are free to say what they like, b
  -- Sir Winston Churchill<quote>
 I'm a millenial so I don't believe in lables.<quote>
 What comes around goes around.<quote>
-Feel free to add your own fortunes using /addfortune <your fortune here><quote>
+Feel free to add your own fortunes using /addfortune your fortune<quote>
 You will never achieve success ;)<quote>
 Tomorrow will include chocolate of the good variety.
 <quote>
@@ -55,4 +55,6 @@ It's certainly easier to implement bad security and make it illegal for anyone t
  — Bruce Schneier
 <quote>
 The only part of the government that's actually listening is the NSA.<quote>
-Go to sleep!
+Go to sleep!<quote>
+You must think your being productive today, please reconsider.<quote>
+You won't have homework tomorrow
