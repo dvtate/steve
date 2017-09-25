@@ -11,15 +11,18 @@ rm -rf "robobibb-steve-bot"
 git clone "git+ssh://git@github.com/robobibb/robobibb-steve-bot.git"
 cd "robobibb-steve-bot"
 
- "updating fortunes.txt... "
 # make changes
+printf "updating fortunes.txt... "
 cat "../assets/fortunes.txt" > "assets/fortunes.txt"
+echo "done"
 
 # commit changes
 git add "assets/fortunes.txt"
-git commit -m "update fortunes"
+git commit -m $1
 git push
 
 # cleanup
 cd ".."
 rm -rf "robobibb-steve-bot"
+
+

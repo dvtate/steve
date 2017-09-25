@@ -18,10 +18,20 @@ module.exports.getText = function() {
 }
 
 // add a fortune to the file
-module.exports.addFortune = function (quote) {
+module.exports.addFortune = function (quote, from) {
 	require("fs").appendFile("./assets/fortunes.txt", "<quote>\n" + quote, function (err) {
 		if (err) throw err;
 		console.log("Added a fortune!");
 		module.exports.updateFortunesList();
+
+		// commit new fortunes to the github
+		var script = require("child_process").exec("sys push_fortunes.sh \"fortune from " + from.first_name + "\"",
+			(error, stdout, stderr) => {
+				console.log(`${stdout}`);
+				console.log(`${stderr}`);
+				if (error !== null) {
+					console.log(`exec error: ${error}`);
+				}
+		});
 	});
 }
