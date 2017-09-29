@@ -36,7 +36,7 @@ bot.onText(/\/help/, function(msg) {
 	+ "/addfortune <fortune message> - adds a fortune to the pool\n"
 	+ "/sshcmd - get a command to run to ssh into the server\n"
 	+ "/vaporwave <text> - converts normal text to full-width text\n"
-	+ "/xkcd - gives a random XKCD comic strip\n"
+	+ "/xkcd - [number] gives a random XKCD comic strip\n"
 	+ "/msg <user/chat id #> <message> - sends a message to the given chat\n\n"
 	+ "more at: https://github.com/robobibb/robobibb-steve-bot/");
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") asked for /help");
@@ -151,6 +151,7 @@ bot.onText(/^\/8ball/, msg => {
 		default: txt = "My psychic side isn't working right now, please try again."; break;
 	}
 	bot.sendMessage(msg.chat.id, txt, {reply_to_message_id: msg.message_id});
+	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") shook /8ball");
 });
 
 // Handle callback queries
