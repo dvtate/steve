@@ -27,6 +27,7 @@ bot.onText(/\/help/, function(msg) {
 	+ "/echo <message> - steve repeats <message>\n"
 	+ "/ping - tests the connection and speed\n"
 	+ "/join - helps you get into our group chats\n"
+	+ "/8ball <question> - answers 'Yes', 'No' or 'Maybe' to your question (accept with a pinch of salt)\n"
 	+ "/coinflip - flips a coin and sends the result\n"
 	+ "/random - random number generator numbers come after for ranges\n"
 	+ "/log - log a value/message (ie- `__chat_id`, `__from_id`, `__msg_id`, `__msg_`)\n"
@@ -139,7 +140,18 @@ bot.onText(/^\/join/, function onJoinRequest(msg) {
 	console.log(msg.from.first_name + " " + msg.from.last_name + " (@" + msg.from.username + ") requested to join");
 });
 
-
+// user wants an 8-ball response
+bot.onText(/^\/8ball/, msg => {
+	// Get number between 1-3, map to responses
+	let msg;
+	switch (Math.floor(Math.random() * 3) + 1) {
+		case 1: msg = "Yes"; break;
+		case 2: msg = "No"; break;
+		case 3: msg = "Maybe"; break;
+		default: msg = "My psychic side isn't working right now, please try again."; break;
+	}
+	bot.sendMessage(msg.chat.id, msg, {reply_to_message_id: msg.message_id});
+});
 
 // Handle callback queries
 bot.on("callback_query", function(callbackQuery) {

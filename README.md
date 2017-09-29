@@ -29,6 +29,7 @@ Like many things on the internet, uptime is very important. In order to update t
   + if message is `__msg_` it logs the entire message object to stdout
   + anthing else gets writen to the logs in stdout so that sysadmin can see their message.
 - `/update` - runs `update.sh` and updates Steve's code.
+- `/8ball <message>` - responds with "Yes", "No" or "Maybe" (accept with a pinch of salt).
 - `/system <command>` - runs a command on the system (requires authorization)
 - `/sshcmd` - gives a ssh command to run (requires authorization)
 - `/fortune` - sends an interesting quote/fortune
