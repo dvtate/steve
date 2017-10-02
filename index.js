@@ -464,6 +464,11 @@ bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?make me a sandwich/i, function (msg
 	logWithUserDetails(msg, "wants a sandwich");
 });
 
+// Sudo fun ;P
+bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?sudo make me a sandwich/i, function (msg) {
+	bot.sendMessage(msg.chat.id, "You're a sandwich!");
+	logWithUserDetails(msg, "wants a sandwich");
+});
 
 function addCommand(msg) {
 	const args = msg.text.split("\n");
