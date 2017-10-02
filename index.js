@@ -228,7 +228,7 @@ bot.on("callback_query", function(callbackQuery) {
 
 		bot.editMessageText(msg.text.replace(/\+1 : [0-9]+/, "+1 : " + (upNum + 1)), opts);
 
-	} else if (action == "downvote") {
+	} else if (action === "downvote") {
 		const downNum = parseInt(msg.text.match(/\-1 : ([0-9]+?)\n/)[1]);
 
 		const opts = {
@@ -244,7 +244,7 @@ bot.on("callback_query", function(callbackQuery) {
 		};
 		bot.editMessageText(msg.text.replace(/-1 : [0-9]+/, "-1 : " + (downNum + 1)), opts);
 
-	} else if (action == "idc") {
+	} else if (action === "idc") {
 		const idcNum = parseInt(msg.text.match(/0 : ([0-9]+?)/)[1]);
 
 		const opts = {
@@ -296,16 +296,17 @@ bot.onText(/^\/random (.+)?/, function onEchoText(msg, match) {
 	logWithUserDetails(msg, `random :: ${lims}`);
 
 	var rand;
-	if (lims.length == 1) {
+	if (lims.length === 1) {
 		const min = 0;
 		const max = Math.floor(Number(lims[0]))
 		rand = (Math.floor(Math.random() * (max - min)) + min);
-	} else if (lims.length == 2) {
+	} else if (lims.length === 2) {
 		const min = Math.ceil(Number(lims[1]));
 		const max = Math.floor(Number(lims[0]));
 		rand = (Math.floor(Math.random() * (max - min)) + min);
-	} else
+	} else {
 		rand = NaN;
+	}
 
 	if (rand === NaN) {
 		bot.sendMessage(msg.chat.id, `
@@ -329,10 +330,10 @@ bot.onText(/^\/coinflip/, msg => {
 // logs are useful for debugging
 bot.onText(/^\/log (.+)/, (msg, match) => {
 	const args = match[1];
-	if (args == "__chat_id") {
-	} else if (args == "__msg_id") {
+	if (args === "__chat_id") {
 		bot.sendMessage(msg.chat.id, `logged chat id = ${msg.chat.id}`);
 		logWithUserDetails(msg, `logged chat id: ${msg.chat.id}`);
+	} else if (args === "__msg_id") {
 		if (!msg.reply_to_message) {
 			bot.sendMessage("Error: message isn't a reply.");
 			logWithUserDetails(msg, "failed to make a log");
@@ -340,7 +341,7 @@ bot.onText(/^\/log (.+)/, (msg, match) => {
 			bot.sendMessage(msg.chat.id, `logged message id = ${msg.reply_to_message.message_id}`);
 			logWithUserDetails(msg, `logged msg id: ${msg.reply_to_message.message_id}`);
 		}
-	} else if (args == "__from_id") {
+	} else if (args === "__from_id") {
 		if (!msg.reply_to_message) {
 			bot.sendMessage(msg.chat.id, `logged user id = ${msg.from.id}`, { reply_to_message_id : msg.message_id });
 			logWithUserDetails(msg, `logged user id: ${msg.from.id}`);
@@ -348,7 +349,7 @@ bot.onText(/^\/log (.+)/, (msg, match) => {
 			bot.sendMessage(msg.chat.id, `logged user id = ${msg.reply_to_message.from.id}`, { reply_to_message_id : msg.reply_to_message.message_id });
 			logWithUserDetails(msg, `logged user id: ${msg.reply_to_message.from.id}`);
 		}
-	} else if (args == "__msg_") {
+	} else if (args === "__msg_") {
 		bot.sendMessage(msg.chat.id, "logged message object");
 		console.log(msg);
 	} else {
@@ -491,9 +492,9 @@ function addCommand(msg) {
 	if (args.length < 2) {
 		bot.sendMessage(msg.chat.id, "malformed /newreply, are you supposed to be doing this?")
 	} else {
-		if (args[0] == "/newreply adv") {
+		if (args[0] === "/newreply adv") {
 
-		} else if (args[0] == "/newreply") {
+		} else if (args[0] === "/newreply") {
 
 			/** how these will work
 			* - take their prompt, and escape all chars
