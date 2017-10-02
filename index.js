@@ -13,10 +13,9 @@ const mainChatID = "-1001065686661";
 
 const codeChatID = "-1001070098331";
 
-
 // collaborators who might not be in the official chats
 const adminIDs = [ 147617508 // tate (main)
-		 		 ];
+				 ];
 
 // Function to simplify logging
 function logWithUserDetails(msg, logMessage) {
@@ -114,7 +113,6 @@ bot.onText(/^\/ping/, function onPing(msg) {
 	bot.sendMessage(msg.chat.id, "pong");
 	logWithUserDetails(msg, "ping'd");
 });
-
 
 bot.onText(/^\/poll/, function (msg) {
 	const repID = msg.reply_to_message ? msg.reply_to_message.message_id : msg.message_id;
@@ -225,7 +223,6 @@ bot.on("callback_query", function(callbackQuery) {
 			message_id: msg.message_id
 		};
 
-
 		bot.editMessageText(msg.text.replace(/\+1 : [0-9]+/, "+1 : " + (upNum + 1)), opts);
 
 	} else if (action === "downvote") {
@@ -259,16 +256,11 @@ bot.on("callback_query", function(callbackQuery) {
 			message_id: msg.message_id
 		};
 		bot.editMessageText(msg.text.replace(/0 : [0-9]+/, "0 : " + (idcNum + 1)), opts);
-
 	}
-
-
 });
-
 
 // gives our sm links
 bot.onText(/^\/sm/, function (msg) {
-
 	bot.sendMessage(msg.chat.id,`
 			Check out our social media accounts:
 			  FaceBook: https://fb.com/teamrobobibb/
@@ -374,7 +366,6 @@ bot.onText(/^\/msg ([\S\s]+)/, (msg, match) => {
 		bot.sendMessage(msg.chat.id, "Message sent.", { reply_to_message_id : msg.message_id } );
 		logWithUserDetails(`sent a /msg to ${args[0]} : ${args[1]}`);
 	}
-
 });
 
 // similar to the fortune terminal command
@@ -402,20 +393,15 @@ bot.onText(/^\/vaporwave (.+)/, (msg, match) => {
 	logWithUserDetails(msg, "converted text to vaporwave");
 });
 
-
-
 // Welcome new members :)
 bot.on("new_chat_participant", function (msg) {
 	console.log("new user(s):");
 	msg.new_chat_members.forEach(function(new_member) {
 		bot.sendMessage(msg.chat.id, `Welcome to ${msg.chat.title}, ${new_member.first_name}!`);
 		console.log("  * " + new_member.first_name + " " + new_member.last_name + " (@" + new_member.username + "), joined  "
-			    + msg.chat.title);
+				+ msg.chat.title);
 	});
 });
-
-
-
 
 var updating = false; // only one update process at a time
 // update steve to latest version
@@ -429,14 +415,14 @@ bot.onText(/^\/update/, function (msg) {
 
 		// run command `sh update.sh` which will update Steve, eventually killing this instance
 		var script = require("child_process").exec("sys update.sh",
-        (error, stdout, stderr) => {
-            console.log(`${stdout}`);
-            console.log(`${stderr}`);
-            if (error !== null) {
-                console.log(`exec error: ${error}`);
-            }
-            console.log("committing seppuku...");
-        });
+		(error, stdout, stderr) => {
+			console.log(`${stdout}`);
+			console.log(`${stderr}`);
+			if (error !== null) {
+				console.log(`exec error: ${error}`);
+			}
+			console.log("committing seppuku...");
+		});
 
 		console.log("spawned");
 	} else {
@@ -444,13 +430,6 @@ bot.onText(/^\/update/, function (msg) {
 			{reply_to_message_id : msg.message_id });
 	}
 });
-
-
-
-
-
-
-
 
 /// emulating humans
 
@@ -545,8 +524,6 @@ bot.onText(/^\/newreply/, msg => {
 		);
 });
 
-
-
 function authorized(usrID, isAuth, notAuth) {
 	if (adminIDs.includes(usrID)) {
 		isAuth();
@@ -564,10 +541,10 @@ function authorized(usrID, isAuth, notAuth) {
 								notAuth();
 							}
 						})
-							.catch(err => console.log("strange authentication error: 1A -->" + err));
+						.catch(err => console.log("strange authentication error: 1A --> ", err));
 				}
 			})
-				.catch(err => console.log("strange error: authentication 1B -->" + err));
+			.catch(err => console.log("strange error: authentication 1B -->", err));
 	}
 }
 
@@ -616,5 +593,4 @@ bot.onText(/^\/sshcmd/, msg => {
 			bot.sendMessage(msg.chat.id, "you are not authorized for ssh access");
 		}
 	);
-
 });
