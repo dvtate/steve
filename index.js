@@ -19,33 +19,34 @@ const adminIDs = [ 147617508 // tate (main)
 
 // Function to simplify logging
 function logWithUserDetails(msg, logMessage) {
-	console.log(`${msg.from.first_name} ${msg.from.last_name} (@${msg.from.username}) ${logMessage}`);
+	const timestamp = require("node-datetime").create().format("[Y-m-d@H:M:S]");
+	console.log(`${timestamp}: ${msg.from.first_name} ${msg.from.last_name} (@${msg.from.username}) ${logMessage}`);
 }
 
 // help dialog
 bot.onText(/\/help/, msg => {
 	bot.sendMessage(msg.chat.id, `
-		Steve is RoboBibb's telegram automation bot
-		He provides some useful funcitons and some useless ones
+Steve is RoboBibb's telegram automation bot
+He provides some useful funcitons and some useless ones
 
-		/cat - gives a random cat picture
-		/echo <message> - steve repeats <message>
-		/ping - tests the connection and speed
-		/join - helps you get into our group chats
-		/8ball <question> - answers 'Yes', 'No' or 'Maybe' to your question (accept with a pinch of salt)
-		/coinflip - flips a coin and sends the result
-		/random - random number generator numbers come after for ranges
-		/log - log a value/message (ie- "__chat_id", "__from_id", "__msg_id", "__msg_")
-		/system - runs a command on the system (use with caution)
-		/fortune - opens a fortune cookie
-		/addfortune <fortune message> - adds a fortune to the pool
-		/sshcmd - get a command to run to ssh into the server
-		/vaporwave <text> - converts normal text to full-width text
-		/xkcd - gives a random XKCD comic strip
-		/msg <user/chat id #> <message> - sends a message to the given chat
+/cat - gives a random cat picture
+/echo <message> - steve repeats <message>
+/ping - tests the connection and speed
+/join - helps you get into our group chats
+/8ball <question> - answers 'Yes', 'No' or 'Maybe' to your question (accept with a pinch of salt)
+/coinflip - flips a coin and sends the result
+/random - random number generator numbers come after for ranges
+/log - log a value/message (ie- "__chat_id", "__from_id", "__msg_id", "__msg_")
+/system - runs a command on the system (use with caution)
+/fortune - opens a fortune cookie
+/addfortune <fortune message> - adds a fortune to the pool
+/sshcmd - get a command to run to ssh into the server
+/vaporwave <text> - converts normal text to full-width text
+/xkcd - gives a random XKCD comic strip
+/msg <user/chat id #> <message> - sends a message to the given chat
 
-		More at: https://github.com/robobibb/robobibb-steve-bot/
-	`);
+More at: https://github.com/robobibb/robobibb-steve-bot/
+`);
 	logWithUserDetails(msg, "asked for help");
 });
 
@@ -53,7 +54,7 @@ bot.onText(/\/help/, msg => {
 bot.onText(/^\/cat/, msg => {
 	const img = request("http://lorempixel.com/400/200/cats/");
 	bot.sendPhoto(msg.chat.id, img, { caption : "look at the kitty!" });
-	logWithUserDetails(msg, "likes '/cat's");
+	logWithUserDetails(msg, "likes /cat's");
 });
 
 // sends a random XKCD comic strip
@@ -278,7 +279,7 @@ bot.onText(/^\/website/, function (msg) {
 			"Check out our website: https://robobibb.github.io/",
 			{ reply_to_message_id : msg.message_id });
 
-	logWithUserDetails(msg, "asked for website URL");
+	logWithUserDetails(msg, "asked for /website URL");
 });
 
 // random number generator
@@ -301,10 +302,10 @@ bot.onText(/^\/random (.+)?/, function onEchoText(msg, match) {
 	}
 
 	if (rand === NaN) {
-		bot.sendMessage(msg.chat.id, `
-			'/random <num1>' -> random number (0 <= n < num1)
-			'/random <num1> <num2>' -> random number (num1 <= n <= num2)
-		`);
+		bot.sendMessage(msg.chat.id, "\
+'/random <num1>' -> random number (0 <= n < num1)\n\
+'/random <num1> <num2>' -> random number (num1 <= n <= num2)");
+
 	} else {
 		bot.sendMessage(msg.chat.id, `random number = ${rand}`);
 	}
@@ -354,8 +355,8 @@ bot.onText(/^\/msg ([\S\s]+)/, (msg, match) => {
 	const args = match[1].split(/ |,|\n/);
 	if (args.length < 2) {
 		bot.sendMessage(msg.chat.id, `
-		The correct syntax for /msg is as follows:
-			/msg <user id number> <message contents>
+The correct syntax for /msg is as follows:
+	/msg <user id number> <message contents>
 		`, { reply_to_message_id : msg.message_id });
 	} else {
 		bot.sendMessage(args[0], `
@@ -563,9 +564,7 @@ bot.onText(/^\/system (.+)/, (msg, match) => {
 			require("child_process")
 				.exec(command,
 					(error, stdout, stderr) => bot.sendMessage(msg.chat.id,
-						`alarm@alarmpi $ ${command}
-						${stdout}
-					`)
+						`steve@robobibb-server $ ${command}\n${stdout}`);
 				);
 		},
 		() => {
