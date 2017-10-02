@@ -24,7 +24,7 @@ function logWithUserDetails(msg, logMessage) {
 }
 
 // help dialog
-bot.onText(/\/help/, function(msg) {
+bot.onText(/\/help/, msg => {
 	bot.sendMessage(msg.chat.id, `
 		Steve is RoboBibb's telegram automation bot
 		He provides some useful funcitons and some useless ones
@@ -51,15 +51,15 @@ bot.onText(/\/help/, function(msg) {
 });
 
 // send a random cat pic
-bot.onText(/^\/cat/, function(msg) {
+bot.onText(/^\/cat/, msg => {
 	const img = request("http://lorempixel.com/400/200/cats/");
 	bot.sendPhoto(msg.chat.id, img, { caption : "look at the kitty!" });
 	logWithUserDetails(msg, "likes '/cat's");
 });
 
 // sends a random XKCD comic strip
-bot.onText(/^\/xkcd$/, function(msg) {
-	request("https://c.xkcd.com/random/comic/", function (error, response, body) {
+bot.onText(/^\/xkcd$/, msg => {
+	request("https://c.xkcd.com/random/comic/", (error, response, body) => {
 		if (error) {
 			console.log(`/xkcd - error: ${error}`);
 			console.log(`    statusCode: ${response && response.statusCode}`);
@@ -76,8 +76,8 @@ bot.onText(/^\/xkcd$/, function(msg) {
 	});
 });
 
-// sends a random XKCD comic strip
-bot.onText(/^\/xkcd ([\S\s]+)/, function(msg,match) {
+// sends a specific XKCD comic strip
+bot.onText(/^\/xkcd ([\S\s]+)/, (msg, match) => {
 	let url = `https://xkcd.com/${match[1] === "latest" ? "" : match[1]}`
 	request(url, (error, response, body) => {
 		if (error) {
@@ -102,12 +102,12 @@ bot.onText(/^\/xkcd ([\S\s]+)/, function(msg,match) {
 });
 
 // Matches /echo [whatever]
-bot.onText(/^\/echo ([\S\s]+)/, function(msg, match) {
-  const resp = match[1];
-  bot.sendMessage(msg.chat.id, resp, { reply_to_message_id : msg.message_id });
-});
+bot.onText(/^\/echo ([\S\s]+)/, (msg, match) => {
+	const resp = match[1];
+	bot.sendMessage(msg.chat.id, resp, { reply_to_message_id : msg.message_id });
 
 	logWithUserDetails(msg, "echo'd");
+});
 
 // ping response testing
 bot.onText(/^\/ping/, function onPing(msg) {
@@ -318,7 +318,7 @@ bot.onText(/^\/random (.+)?/, function onEchoText(msg, match) {
 });
 
 // coin flip
-bot.onText(/^\/coinflip/, function(msg) {
+bot.onText(/^\/coinflip/, msg => {
 	if (Math.random() > 0.5)
 		bot.sendMessage(msg.chat.id, "heads");
 	else
@@ -327,7 +327,7 @@ bot.onText(/^\/coinflip/, function(msg) {
 });
 
 // logs are useful for debugging
-bot.onText(/^\/log (.+)/, function(msg, match){
+bot.onText(/^\/log (.+)/, (msg, match) => {
 	const args = match[1];
 	if (args == "__chat_id") {
 	} else if (args == "__msg_id") {
@@ -357,7 +357,7 @@ bot.onText(/^\/log (.+)/, function(msg, match){
 	}
 });
 
-bot.onText(/^\/msg ([\S\s]+)/, function(msg, match) {
+bot.onText(/^\/msg ([\S\s]+)/, (msg, match) => {
 	const args = match[1].split(/ |,|\n/);
 	if (args.length < 2) {
 		bot.sendMessage(msg.chat.id, `
@@ -377,28 +377,23 @@ bot.onText(/^\/msg ([\S\s]+)/, function(msg, match) {
 });
 
 // similar to the fortune terminal command
-bot.onText(/^\/fortune/, function(msg) {
-
-	bot.sendMessage(msg.chat.id,
-			require("./fortune.js").getText(),
-			{
-				reply_to_message_id : msg.message_id,
-				parse_mode : "markdown"
-			} );
-
-
+bot.onText(/^\/fortune/, msg => {
+	bot.sendMessage(msg.chat.id, require("./fortune").getText(), {
+		reply_to_message_id : msg.message_id,
+		parse_mode : "markdown"
+	});
 	logWithUserDetails(msg, "recieved a fortune");
 });
 
 // adds a fortune to our list
-bot.onText(/^\/addfortune ([\S\s]+)/, function(msg, match) {
+bot.onText(/^\/addfortune ([\S\s]+)/, (msg, match) => {
 	require("./fortune.js").addFortune(match[1], msg.from);
 	bot.sendMessage(msg.chat.id, `Added fortune: ${match[1]}`, { reply_to_message_id : msg.message_id });
 	logWithUserDetails(msg, "added a fortune");
 });
 
 // gives vaporwave equivalent text
-bot.onText(/^\/vaporwave (.+)/, function(msg, match) {
+bot.onText(/^\/vaporwave (.+)/, (msg, match) => {
 	bot.sendMessage(msg.chat.id,
 		require("./vaporwave.js").toVaporwave(match[1]),
 		{ reply_to_message_id : msg.message_id });
@@ -520,7 +515,7 @@ function addCommand(msg) {
 
 }
 
-bot.onText(/^\/newreply/, function(msg) {
+bot.onText(/^\/newreply/, msg => {
 /*
 	// arrow functions are baller
 	bot.getChatMember(officialChatID, msg.from.id)
@@ -541,9 +536,8 @@ bot.onText(/^\/newreply/, function(msg) {
 			}
 		}).catch(err => console.log("strange error: 1B"));
 */
-		authorized(msg.from.id,
-			function () { addCommand(msg); },
-			function () {
+		authorized(msg.from.id, () => addCommand(msg),
+			() => {
 				logWithUserDetails(msg, "wasn't allowed to make a command");
 				bot.sendMessage(msg.chat.id, "you are not authorized to run this command");
 			}
@@ -578,28 +572,31 @@ function authorized(usrID, isAuth, notAuth) {
 
 
 /// interface to the server
-bot.onText(/^\/system (.+)/, function(msg, match){
+bot.onText(/^\/system (.+)/, (msg, match) => {
 	const command = match[1];
 	authorized(msg.from.id,
-		function () {
-			require("child_process").exec(command, function(error, stdout, stderr){
-				bot.sendMessage(msg.chat.id, "alarm@alarmpi $ " + command + '\n' + stdout);
-			});
+		() => {
 			logWithUserDetails(msg, `ran command: "${command}"`);
+			require("child_process")
+				.exec(command,
+					(error, stdout, stderr) => bot.sendMessage(msg.chat.id,
+						`alarm@alarmpi $ ${command}
+						${stdout}
+					`)
+				);
 		},
-		function () {
+		() => {
 			logWithUserDetails(msg, "was prevented from running a command (unauthorized)");
 			bot.sendMessage(msg.chat.id, "you are not authorized to run commands");
 		}
 	);
-
 });
 
-bot.onText(/^\/sshcmd/, function(msg) {
+bot.onText(/^\/sshcmd/, msg => {
 	authorized(msg.from.id,
-		function () {
-			request("https://ipinfo.io", function (error, response, body) {
-				if (!error && response.statusCode == 200) {
+		() => {
+			request("https://ipinfo.io", (error, response, body) => {
+				if (!error && response.statusCode === 200) {
 
 					bot.sendMessage(msg.chat.id, `
 						$ ssh alarm@${JSON.parse(body).ip}
@@ -613,7 +610,7 @@ bot.onText(/^\/sshcmd/, function(msg) {
 				}
 			});
 		},
-		function () {
+		() => {
 			logWithUserDetails(msg, "was prevented from getting an SSH command");
 			bot.sendMessage(msg.chat.id, "you are not authorized for ssh access");
 		}
