@@ -14,11 +14,12 @@ const mainChatID = "-1001065686661";
 const codeChatID = "-1001070098331";
 
 // collaborators who might not be in the official chats
-const adminIDs = [ 147617508 // tate (main)
-				 ];
+const adminIDs = [ 147617508 // tate (dvtate)
+				   46580443  // k3 (technohacker)
+			   ];
 
 // Function to simplify logging
-function logWithUserDetails(msg, logMessage) {
+function logCmd(msg, logMessage) {
 	const timestamp = require("node-datetime").create().format("[Y-m-d@H:M:S]");
 	console.log(`${timestamp}: ${msg.from.first_name} ${msg.from.last_name} (@${msg.from.username}) ${logMessage}`);
 }
@@ -47,14 +48,14 @@ He provides some useful funcitons and some useless ones
 
 More at: https://github.com/robobibb/robobibb-steve-bot/
 `);
-	logWithUserDetails(msg, "asked for help");
+	logCmd(msg, "asked for help");
 });
 
 // send a random cat pic
 bot.onText(/^\/cat/, msg => {
 	const img = request("http://lorempixel.com/400/200/cats/");
 	bot.sendPhoto(msg.chat.id, img, { caption : "look at the kitty!" });
-	logWithUserDetails(msg, "likes /cat's");
+	logCmd(msg, "likes /cat's");
 });
 
 // sends a random XKCD comic strip
@@ -72,7 +73,7 @@ bot.onText(/^\/xkcd$/, msg => {
 			reply_to_message_id : msg.message_id,
 			caption : body.match(/<div id="ctitle">(.+?)<\/div>/)[1]
 		});
-		logWithUserDetails(msg, "read /xkcd");
+		logCmd(msg, "read /xkcd");
 	});
 });
 
@@ -97,7 +98,7 @@ bot.onText(/^\/xkcd ([\S\s]+)/, (msg, match) => {
 			reply_to_message_id : msg.message_id,
 			caption : body.match(/<div id="ctitle">(.+?)<\/div>/)[1]
 		});
-		logWithUserDetails(msg, "read /xkcd");
+		logCmd(msg, "read /xkcd");
 	});
 });
 
@@ -106,13 +107,13 @@ bot.onText(/^\/echo ([\S\s]+)/, (msg, match) => {
 	const resp = match[1];
 	bot.sendMessage(msg.chat.id, resp, { reply_to_message_id : msg.message_id });
 
-	logWithUserDetails(msg, "echo'd");
+	logCmd(msg, "echo'd");
 });
 
 // ping response testing
 bot.onText(/^\/ping/, function onPing(msg) {
 	bot.sendMessage(msg.chat.id, "pong");
-	logWithUserDetails(msg, "ping'd");
+	logCmd(msg, "ping'd");
 });
 
 bot.onText(/^\/poll/, function (msg) {
@@ -150,7 +151,7 @@ bot.onText(/^\/join/, function onJoinRequest(msg) {
 		reply_to_message_id : msg.message_id
 	};
 	bot.sendMessage(msg.chat.id, "Which chat do you want to join?", opts);
-	logWithUserDetails(msg, "requested to join");
+	logCmd(msg, "requested to join");
 });
 
 // user wants an 8-ball response
@@ -164,7 +165,7 @@ bot.onText(/^\/8ball/, msg => {
 		default: txt = "My psychic side isn't working right now, please try again."; break;
 	}
 	bot.sendMessage(msg.chat.id, txt, {reply_to_message_id: msg.message_id});
-	logWithUserDetails(msg, "shook /8ball");
+	logCmd(msg, "shook /8ball");
 });
 
 // Handle callback queries
@@ -187,24 +188,24 @@ bot.on("callback_query", function(callbackQuery) {
 		// 147617508 = @ridderhoff (Tate) (gh@dvtate)
 		bot.forwardMessage("147617508", msg.chat.id, msg.reply_to_message.message_id);
 
-		logWithUserDetails(msg, "wants to join official");
+		logCmd(msg, "wants to join official");
 	} else if (action === "code") {
 		//bot.sendMessage(msg.chat.id, "click here to join the programming chat: https://t.me/joinchat/AAAAAD_IZ5v-FtjYBUT0cA");
 		const text = "Click here to join the programming chat: https://t.me/joinchat/AAAAAD_IZ5v-FtjYBUT0cA";
-		logWithUserDetails(msg, "wants to join programming");
+		logCmd(msg, "wants to join programming");
 		bot.editMessageText(text, opts);
 	} else if (action === "web") {
 		//bot.sendMessage(msg.chat.id, "click here to join the website chat: https://t.me/joinchat/AAAAAEDoGWJ1t0xW1tzjzQ");
 		const text = "click here to join the website chat: https://t.me/joinchat/AAAAAEDoGWJ1t0xW1tzjzQ";
-		logWithUserDetails(msg, "wants to join web team");
+		logCmd(msg, "wants to join web team");
 		bot.editMessageText(text, opts);
 	} else if (action === "bots") {
 		const text = "click here to join the bot spam chat: https://t.me/joinchat/CMx25A4N48cfJuFRTTdwPg";
-		logWithUserDetails(msg, "wants to join bot spammers");
+		logCmd(msg, "wants to join bot spammers");
 		bot.editMessageText(text, opts);
 	} else if (action === "proxy") {
 		const text = "click here to get passed the firewall: https://t.me/joinchat/CMx25EC8RpXQvjLa8cMmVA";
-		logWithUserDetails(msg, "wants to join MaconShadowsocks society");
+		logCmd(msg, "wants to join MaconShadowsocks society");
 		bot.editMessageText(text, opts);
 	}
 
@@ -270,7 +271,7 @@ bot.onText(/^\/sm/, function (msg) {
 			  GitHub: https://github.com/RoboBibb/
 			  Email: frcteam4941@gmail.com / code4941@gmail.com
 	`, { reply_to_message_id : msg.message_id });
-	logWithUserDetails(msg, "asked for our social media");
+	logCmd(msg, "asked for our social media");
 });
 
 // gives our website link
@@ -279,14 +280,14 @@ bot.onText(/^\/website/, function (msg) {
 			"Check out our website: https://robobibb.github.io/",
 			{ reply_to_message_id : msg.message_id });
 
-	logWithUserDetails(msg, "asked for /website URL");
+	logCmd(msg, "asked for /website URL");
 });
 
 // random number generator
 bot.onText(/^\/random (.+)?/, function onEchoText(msg, match) {
 	const args = match[1];
 	var lims = args.split(/ |,|\n/);
-	logWithUserDetails(msg, `random :: ${lims}`);
+	logCmd(msg, `random :: ${lims}`);
 
 	var rand;
 	if (lims.length === 1) {
@@ -317,7 +318,7 @@ bot.onText(/^\/coinflip/, msg => {
 		bot.sendMessage(msg.chat.id, "heads");
 	else
 		bot.sendMessage(msg.chat.id, "tails");
-	logWithUserDetails(msg, "flipped a coin");
+	logCmd(msg, "flipped a coin");
 });
 
 // logs are useful for debugging
@@ -325,29 +326,29 @@ bot.onText(/^\/log (.+)/, (msg, match) => {
 	const args = match[1];
 	if (args === "__chat_id") {
 		bot.sendMessage(msg.chat.id, `logged chat id = ${msg.chat.id}`);
-		logWithUserDetails(msg, `logged chat id: ${msg.chat.id}`);
+		logCmd(msg, `logged chat id: ${msg.chat.id}`);
 	} else if (args === "__msg_id") {
 		if (!msg.reply_to_message) {
 			bot.sendMessage("Error: message isn't a reply.");
-			logWithUserDetails(msg, "failed to make a log");
+			logCmd(msg, "failed to make a log");
 		} else {
 			bot.sendMessage(msg.chat.id, `logged message id = ${msg.reply_to_message.message_id}`);
-			logWithUserDetails(msg, `logged msg id: ${msg.reply_to_message.message_id}`);
+			logCmd(msg, `logged msg id: ${msg.reply_to_message.message_id}`);
 		}
 	} else if (args === "__from_id") {
 		if (!msg.reply_to_message) {
 			bot.sendMessage(msg.chat.id, `logged user id = ${msg.from.id}`, { reply_to_message_id : msg.message_id });
-			logWithUserDetails(msg, `logged user id: ${msg.from.id}`);
+			logCmd(msg, `logged user id: ${msg.from.id}`);
 		} else {
 			bot.sendMessage(msg.chat.id, `logged user id = ${msg.reply_to_message.from.id}`, { reply_to_message_id : msg.reply_to_message.message_id });
-			logWithUserDetails(msg, `logged user id: ${msg.reply_to_message.from.id}`);
+			logCmd(msg, `logged user id: ${msg.reply_to_message.from.id}`);
 		}
 	} else if (args === "__msg_") {
 		bot.sendMessage(msg.chat.id, "logged message object");
 		console.log(msg);
 	} else {
 		bot.sendMessage(msg.chat.id, `Wrote a log -  "${args}"`);
-		logWithUserDetails(msg, `wrote a log: "${args}"`);
+		logCmd(msg, `wrote a log: "${args}"`);
 	}
 });
 
@@ -365,7 +366,7 @@ The correct syntax for /msg is as follows:
 			**From user#${msg.from.id} via /msg.**"
 		`, { parse_mode : "markdown" });
 		bot.sendMessage(msg.chat.id, "Message sent.", { reply_to_message_id : msg.message_id } );
-		logWithUserDetails(`sent a /msg to ${args[0]} : ${args[1]}`);
+		logCmd(`sent a /msg to ${args[0]} : ${args[1]}`);
 	}
 });
 
@@ -375,14 +376,14 @@ bot.onText(/^\/fortune/, msg => {
 		reply_to_message_id : msg.message_id,
 		parse_mode : "markdown"
 	});
-	logWithUserDetails(msg, "recieved a fortune");
+	logCmd(msg, "recieved a fortune");
 });
 
 // adds a fortune to our list
 bot.onText(/^\/addfortune ([\S\s]+)/, (msg, match) => {
 	require("./fortune.js").addFortune(match[1], msg.from);
 	bot.sendMessage(msg.chat.id, `Added fortune: ${match[1]}`, { reply_to_message_id : msg.message_id });
-	logWithUserDetails(msg, "added a fortune");
+	logCmd(msg, "added a fortune");
 });
 
 // gives vaporwave equivalent text
@@ -391,7 +392,7 @@ bot.onText(/^\/vaporwave (.+)/, (msg, match) => {
 		require("./vaporwave.js").toVaporwave(match[1]),
 		{ reply_to_message_id : msg.message_id });
 
-	logWithUserDetails(msg, "converted text to vaporwave");
+	logCmd(msg, "converted text to vaporwave");
 });
 
 // Welcome new members :)
@@ -440,20 +441,20 @@ bot.onText(/^is steve (?:a\s)?human\?/i, function (msg) {
 	const img = request("http://www.seosmarty.com/wp-content/uploads/2009/05/captcha-7.jpg");
 	bot.sendPhoto(msg.chat.id, img, { caption: "Are YOU a human? proove it!" });
 
-	logWithUserDetails(msg, "suspects I'm an AI");
+	logCmd(msg, "suspects I'm an AI");
 });
 
 
 // ofc we follow instructions
 bot.onText(/shutup steve|steve shutup/, function shutup(msg) {
 	bot.sendMessage(msg.chat.id, "No thx", { reply_to_message_id : msg.message_id });
-	logWithUserDetails(msg, "told me to shut up");
+	logCmd(msg, "told me to shut up");
 });
 
 // hey siri
 bot.onText(/^(?:hey\s|hi\s)?steve(?:\.|\?|\!)?$/i, function (msg){
 	bot.sendMessage(msg.chat.id, "I have been summoned");
-	logWithUserDetails(msg, "got my attention");
+	logCmd(msg, "got my attention");
 });
 
 // this is a reference to 2001 space oddysey
@@ -462,18 +463,18 @@ bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?make me a sandwich/i, function (msg
 		caption : "I'm afraid I can't do that...",
 		reply_to_message_id : msg.message_id
 	});
-	logWithUserDetails(msg, "wants a sandwich");
+	logCmd(msg, "wants a sandwich");
 });
 
 // Sudo fun ;P
 bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?sudo make me a sandwich/i, function (msg) {
 	bot.sendMessage(msg.chat.id, "You're a sandwich!");
-	logWithUserDetails(msg, "wants a sandwich");
+	logCmd(msg, "wants a sandwich");
 });
 
 function addCommand(msg) {
 	const args = msg.text.split("\n");
-	logWithUserDetails(msg, "tried to make a new command");
+	logCmd(msg, "tried to make a new command");
 	if (args.length < 2) {
 		bot.sendMessage(msg.chat.id, "malformed /newreply, are you supposed to be doing this?")
 	} else {
@@ -524,7 +525,7 @@ bot.onText(/^\/newreply/, msg => {
 */
 		authorized(msg.from.id, () => addCommand(msg),
 			() => {
-				logWithUserDetails(msg, "wasn't allowed to make a command");
+				logCmd(msg, "wasn't allowed to make a command");
 				bot.sendMessage(msg.chat.id, "you are not authorized to run this command");
 			}
 		);
@@ -560,7 +561,7 @@ bot.onText(/^\/system (.+)/, (msg, match) => {
 	const command = match[1];
 	authorized(msg.from.id,
 		() => {
-			logWithUserDetails(msg, `ran command: "${command}"`);
+			logCmd(msg, `ran command: "${command}"`);
 			require("child_process")
 				.exec(command,
 					(error, stdout, stderr) => bot.sendMessage(msg.chat.id,
@@ -568,7 +569,7 @@ bot.onText(/^\/system (.+)/, (msg, match) => {
 				);
 		},
 		() => {
-			logWithUserDetails(msg, "was prevented from running a command (unauthorized)");
+			logCmd(msg, "was prevented from running a command (unauthorized)");
 			bot.sendMessage(msg.chat.id, "you are not authorized to run commands");
 		}
 	);
@@ -585,7 +586,7 @@ bot.onText(/^\/sshcmd/, msg => {
 						You should know the password
 					`);
 
-					logWithUserDetails(msg, "was given an SSH command to run");
+					logCmd(msg, "was given an SSH command to run");
 				} else {
 					console.log("Curl Error:", response.statusCode);
 					bot.sendMessage(msg.chat.id, `there was an error verifying my ip address... ${response.statusCode}`);
@@ -593,7 +594,7 @@ bot.onText(/^\/sshcmd/, msg => {
 			});
 		},
 		() => {
-			logWithUserDetails(msg, "was prevented from getting an SSH command");
+			logCmd(msg, "was prevented from getting an SSH command");
 			bot.sendMessage(msg.chat.id, "you are not authorized for ssh access");
 		}
 	);
