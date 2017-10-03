@@ -396,7 +396,7 @@ bot.onText(/^\/vaporwave (.+)/, (msg, match) => {
 });
 
 // Welcome new members :)
-bot.on("new_chat_participant", function (msg) {
+bot.on("new_chat_participant", msg => {
 	console.log("new user(s):");
 	msg.new_chat_members.forEach(function(new_member) {
 		bot.sendMessage(msg.chat.id, `Welcome to ${msg.chat.title}, ${new_member.first_name}!`);
@@ -407,7 +407,7 @@ bot.on("new_chat_participant", function (msg) {
 
 var updating = false; // only one update process at a time
 // update steve to latest version
-bot.onText(/^\/update/, function (msg) {
+bot.onText(/^\/update/, msg => {
 	if (!updating) {
 		bot.sendMessage(msg.chat.id,
 						"Updating my source code from https://github.com/robobibb/robobibb-steve-bot... There should be zero downtime",
@@ -436,7 +436,7 @@ bot.onText(/^\/update/, function (msg) {
 /// emulating humans
 
 // just to confuse people
-bot.onText(/^is steve (?:a\s)?human\?/i, function (msg) {
+bot.onText(/^is steve (?:a\s)?human\?/i, msg => {
 	bot.sendMessage(msg.chat.id, "Yes", { reply_to_message_id : msg.message_id });
 	const img = request("http://www.seosmarty.com/wp-content/uploads/2009/05/captcha-7.jpg");
 	bot.sendPhoto(msg.chat.id, img, { caption: "Are YOU a human? proove it!" });
@@ -446,19 +446,19 @@ bot.onText(/^is steve (?:a\s)?human\?/i, function (msg) {
 
 
 // ofc we follow instructions
-bot.onText(/shutup steve|steve shutup/, function shutup(msg) {
+bot.onText(/shutup steve|steve shutup/, msg => {
 	bot.sendMessage(msg.chat.id, "No thx", { reply_to_message_id : msg.message_id });
 	logCmd(msg, "told me to shut up");
 });
 
 // hey siri
-bot.onText(/^(?:hey\s|hi\s)?steve(?:\.|\?|\!)?$/i, function (msg){
-	bot.sendMessage(msg.chat.id, "I have been summoned");
+bot.onText(/^(?:hey\s|hi\s)?steve(?:\.|\?|\!)?$/i, msg => {
+	bot.sendMessage(msg.chat.id, "wuddup");
 	logCmd(msg, "got my attention");
 });
 
 // this is a reference to 2001 space oddysey
-bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?make me a sandwich/i, function (msg) {
+bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?make me a sandwich/i, msg => {
 	bot.sendAudio(msg.chat.id, "assets/sound_files/cantdo.mp3",	{
 		caption : "I'm afraid I can't do that...",
 		reply_to_message_id : msg.message_id
@@ -467,9 +467,10 @@ bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?make me a sandwich/i, function (msg
 });
 
 // Sudo fun ;P
-bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?sudo make me a sandwich/i, function (msg) {
-	bot.sendMessage(msg.chat.id, "You're a sandwich!");
-	logCmd(msg, "wants a sandwich");
+bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?sudo make me a sandwich/i, msg => {
+	bot.sendMessage(msg.chat.id, "You're a sandwich!",
+		{ reply_to_message_id : msg.message_id });
+	logCmd(msg, "wants a sandwich (sudo)");
 });
 
 function addCommand(msg) {
