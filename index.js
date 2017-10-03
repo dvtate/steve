@@ -14,7 +14,7 @@ const mainChatID = "-1001065686661";
 const codeChatID = "-1001070098331";
 
 // collaborators who might not be in the official chats
-const adminIDs = [ 147617508 // tate (dvtate)
+const adminIDs = [ 147617508, // tate (dvtate)
 				   46580443  // k3 (technohacker)
 			   ];
 
