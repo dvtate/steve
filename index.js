@@ -565,7 +565,28 @@ bot.onText(/^\/system (.+)/, (msg, match) => {
 			require("child_process")
 				.exec(command,
 					(error, stdout, stderr) => bot.sendMessage(msg.chat.id,
-						`steve@robobibb-server $ ${command}\n${stdout}`);
+						`steve@robobibb-server $ ${command}\n${stdout}`)
+				);
+		},
+		() => {
+			logCmd(msg, "was prevented from running a command (unauthorized)");
+			bot.sendMessage(msg.chat.id, "you are not authorized to run commands");
+		}
+	);
+});
+
+/// interface to the server
+bot.onText(/^\/system (.+)/, (msg, match) => {
+	const command = match[1];
+	authorized(msg.from.id,
+		() => {
+			logCmd(msg, `ran command: "${command}"`);
+			require("child_process")
+				.exec(command,
+					(error, stdout, stderr) => bot.sendMessage(msg.chat.id,
+						`steve@robobibb-server $ ${command}
+${stdout}
+`					)
 				);
 		},
 		() => {
