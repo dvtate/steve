@@ -25,10 +25,11 @@ function logCmd(msg, logMessage) {
 }
 
 // help dialog
-bot.onText(/\/help/, msg => {
+bot.onText(/\/help(?:@robobibb_bot)/, msg => {
 	bot.sendMessage(msg.chat.id, `
-Steve is RoboBibb's telegram automation bot
-He provides some useful funcitons and some useless ones
+Steve is RoboBibb\'s telegram automation bot
+He automates a variety of tasks an gives useful information
+
 
 /cat - gives a random cat picture
 /echo <message> - steve repeats <message>
@@ -48,18 +49,18 @@ He provides some useful funcitons and some useless ones
 
 More at: https://github.com/robobibb/robobibb-steve-bot/
 `);
-	logCmd(msg, "asked for help");
+	logCmd(msg, "asked for /help");
 });
 
 // send a random cat pic
-bot.onText(/^\/cat/, msg => {
+bot.onText(/^\/cat(?:@robobibb_bot)/, msg => {
 	const img = request("http://lorempixel.com/400/200/cats/");
 	bot.sendPhoto(msg.chat.id, img, { caption : "look at the kitty!" });
 	logCmd(msg, "likes /cat's");
 });
 
 // sends a random XKCD comic strip
-bot.onText(/^\/xkcd$/, msg => {
+bot.onText(/^\/xkcd(?:@robobibb_bot)$/, msg => {
 	request("https://c.xkcd.com/random/comic/", (error, response, body) => {
 		if (error) {
 			console.log(`/xkcd - error: ${error}`);
@@ -78,7 +79,7 @@ bot.onText(/^\/xkcd$/, msg => {
 });
 
 // sends a specific XKCD comic strip
-bot.onText(/^\/xkcd ([\S\s]+)/, (msg, match) => {
+bot.onText(/^\/xkcd(?:@robobibb_bot) ([\S\s]+)/, (msg, match) => {
 	let url = `https://xkcd.com/${match[1] === "latest" ? "" : match[1]}`
 	request(url, (error, response, body) => {
 		if (error) {
@@ -103,20 +104,20 @@ bot.onText(/^\/xkcd ([\S\s]+)/, (msg, match) => {
 });
 
 // Matches /echo [whatever]
-bot.onText(/^\/echo ([\S\s]+)/, (msg, match) => {
+bot.onText(/^\/echo(?:@robobibb_bot) ([\S\s]+)/, (msg, match) => {
 	const resp = match[1];
 	bot.sendMessage(msg.chat.id, resp, { reply_to_message_id : msg.message_id });
 
-	logCmd(msg, "echo'd");
+	logCmd(msg, "/echo'd text");
 });
 
 // ping response testing
-bot.onText(/^\/ping/, function onPing(msg) {
+bot.onText(/^\/ping(?:@robobibb_bot)/, function onPing(msg) {
 	bot.sendMessage(msg.chat.id, "pong");
 	logCmd(msg, "ping'd");
 });
 
-bot.onText(/^\/poll/, function (msg) {
+bot.onText(/^\/poll(?:@robobibb_bot)/, function (msg) {
 	const repID = msg.reply_to_message ? msg.reply_to_message.message_id : msg.message_id;
 	const opts = {
 		reply_markup : {
@@ -137,7 +138,7 @@ bot.onText(/^\/poll/, function (msg) {
 });
 
 // user wants to join a chat
-bot.onText(/^\/join/, function onJoinRequest(msg) {
+bot.onText(/^\/join(?:@robobibb_bot)/, function onJoinRequest(msg) {
 	const opts = {
 		reply_markup: {
 			inline_keyboard: [
@@ -155,7 +156,7 @@ bot.onText(/^\/join/, function onJoinRequest(msg) {
 });
 
 // user wants an 8-ball response
-bot.onText(/^\/8ball/, msg => {
+bot.onText(/^\/8ball(?:@robobibb_bot)/, msg => {
 	// Get number between 1-3, map to responses
 	let txt;
 	switch (Math.floor(Math.random() * 3) + 1) {
@@ -172,6 +173,10 @@ bot.onText(/^\/8ball/, msg => {
 bot.on("callback_query", function(callbackQuery) {
 	const action = callbackQuery.data;
 	const msg = callbackQuery.message;
+	if (!msg) {
+		console.log("ERROR: callback_query: msg undefined");
+		return;
+	}
 	const usr = callbackQuery.from;
 	const opts = {
 		chat_id: msg.chat.id,
@@ -262,7 +267,7 @@ bot.on("callback_query", function(callbackQuery) {
 });
 
 // gives our sm links
-bot.onText(/^\/sm/, function (msg) {
+bot.onText(/^\/sm(?:@robobibb_bot)/, function (msg) {
 	bot.sendMessage(msg.chat.id,`
 			Check out our social media accounts:
 			  FaceBook: https://fb.com/teamrobobibb/
@@ -275,7 +280,7 @@ bot.onText(/^\/sm/, function (msg) {
 });
 
 // gives our website link
-bot.onText(/^\/website/, function (msg) {
+bot.onText(/^\/website(?:@robobibb_bot)/, function (msg) {
 	bot.sendMessage(msg.chat.id,
 			"Check out our website: https://robobibb.github.io/",
 			{ reply_to_message_id : msg.message_id });
@@ -284,7 +289,7 @@ bot.onText(/^\/website/, function (msg) {
 });
 
 // random number generator
-bot.onText(/^\/random (.+)?/, function onEchoText(msg, match) {
+bot.onText(/^\/random(?:@robobibb_bot) (.+)?/, function onEchoText(msg, match) {
 	const args = match[1];
 	var lims = args.split(/ |,|\n/);
 	logCmd(msg, `random :: ${lims}`);
@@ -313,7 +318,7 @@ bot.onText(/^\/random (.+)?/, function onEchoText(msg, match) {
 });
 
 // coin flip
-bot.onText(/^\/coinflip/, msg => {
+bot.onText(/^\/coinflip(?:@robobibb_bot)/, msg => {
 	if (Math.random() > 0.5)
 		bot.sendMessage(msg.chat.id, "heads");
 	else
@@ -322,7 +327,7 @@ bot.onText(/^\/coinflip/, msg => {
 });
 
 // logs are useful for debugging
-bot.onText(/^\/log (.+)/, (msg, match) => {
+bot.onText(/^\/log(?:@robobibb_bot) (.+)/, (msg, match) => {
 	const args = match[1];
 	if (args === "__chat_id") {
 		bot.sendMessage(msg.chat.id, `logged chat id = ${msg.chat.id}`);
@@ -352,7 +357,7 @@ bot.onText(/^\/log (.+)/, (msg, match) => {
 	}
 });
 
-bot.onText(/^\/msg ([\S\s]+)/, (msg, match) => {
+bot.onText(/^\/msg(?:@robobibb_bot) ([\S\s]+)/, (msg, match) => {
 	const args = match[1].split(/ |,|\n/);
 	if (args.length < 2) {
 		bot.sendMessage(msg.chat.id, `
@@ -371,7 +376,7 @@ The correct syntax for /msg is as follows:
 });
 
 // similar to the fortune terminal command
-bot.onText(/^\/fortune/, msg => {
+bot.onText(/^\/fortune(?:@robobibb_bot)/, msg => {
 	bot.sendMessage(msg.chat.id, require("./fortune").getText(), {
 		reply_to_message_id : msg.message_id,
 		parse_mode : "markdown"
@@ -380,14 +385,14 @@ bot.onText(/^\/fortune/, msg => {
 });
 
 // adds a fortune to our list
-bot.onText(/^\/addfortune ([\S\s]+)/, (msg, match) => {
+bot.onText(/^\/addfortune(?:@robobibb_bot) ([\S\s]+)/, (msg, match) => {
 	require("./fortune.js").addFortune(match[1], msg.from);
 	bot.sendMessage(msg.chat.id, `Added fortune: ${match[1]}`, { reply_to_message_id : msg.message_id });
 	logCmd(msg, "added a fortune");
 });
 
 // gives vaporwave equivalent text
-bot.onText(/^\/vaporwave (.+)/, (msg, match) => {
+bot.onText(/^\/vaporwave(?:@robobibb_bot) (.+)/, (msg, match) => {
 	bot.sendMessage(msg.chat.id,
 		require("./vaporwave.js").toVaporwave(match[1]),
 		{ reply_to_message_id : msg.message_id });
@@ -407,7 +412,7 @@ bot.on("new_chat_participant", msg => {
 
 var updating = false; // only one update process at a time
 // update steve to latest version
-bot.onText(/^\/update/, msg => {
+bot.onText(/^\/update(?:@robobibb_bot)/, msg => {
 	if (!updating) {
 		bot.sendMessage(msg.chat.id,
 						"Updating my source code from https://github.com/robobibb/robobibb-steve-bot... There should be zero downtime",
@@ -436,7 +441,7 @@ bot.onText(/^\/update/, msg => {
 /// emulating humans
 
 // just to confuse people
-bot.onText(/^is steve (?:a\s)?human\?/i, msg => {
+bot.onText(/^is steve (?:a\s)?(human|bot)\?/i, msg => {
 	bot.sendMessage(msg.chat.id, "Yes", { reply_to_message_id : msg.message_id });
 	const img = request("http://www.seosmarty.com/wp-content/uploads/2009/05/captcha-7.jpg");
 	bot.sendPhoto(msg.chat.id, img, { caption: "Are YOU a human? proove it!" });
@@ -446,7 +451,7 @@ bot.onText(/^is steve (?:a\s)?human\?/i, msg => {
 
 
 // ofc we follow instructions
-bot.onText(/shutup steve|steve shutup/, msg => {
+bot.onText(/^shutup steve|steve shutup/, msg => {
 	bot.sendMessage(msg.chat.id, "No thx", { reply_to_message_id : msg.message_id });
 	logCmd(msg, "told me to shut up");
 });
@@ -503,7 +508,7 @@ function addCommand(msg) {
 
 }
 
-bot.onText(/^\/newreply/, msg => {
+bot.onText(/^\/newreply(?:@robobibb_bot)/, msg => {
 /*
 	// arrow functions are baller
 	bot.getChatMember(officialChatID, msg.from.id)
@@ -558,7 +563,7 @@ function authorized(usrID, isAuth, notAuth) {
 
 
 /// interface to the server
-bot.onText(/^\/system (.+)/, (msg, match) => {
+bot.onText(/^\/system(?:@robobibb_bot) (.+)/, (msg, match) => {
 	const command = match[1];
 	authorized(msg.from.id,
 		() => {
@@ -577,7 +582,7 @@ bot.onText(/^\/system (.+)/, (msg, match) => {
 });
 
 /// interface to the server
-bot.onText(/^\/system (.+)/, (msg, match) => {
+bot.onText(/^\/system(?:@robobibb_bot) (.+)/, (msg, match) => {
 	const command = match[1];
 	authorized(msg.from.id,
 		() => {
@@ -597,7 +602,7 @@ ${stdout}
 	);
 });
 
-bot.onText(/^\/sshcmd/, msg => {
+bot.onText(/^\/sshcmd(?:@robobibb_bot)/, msg => {
 	authorized(msg.from.id,
 		() => {
 			request("https://ipinfo.io", (error, response, body) => {
@@ -620,4 +625,12 @@ bot.onText(/^\/sshcmd/, msg => {
 			bot.sendMessage(msg.chat.id, "you are not authorized for ssh access");
 		}
 	);
+});
+
+bot.onText(/postUpdate(?:@robobibb_bot) ([\S\s]+)/, (msg, match) => {
+	if (msg.reply_to_message.document.file_size > 30000000)
+		bot.sendMessage(msg.chat.from, "error: upload greater than 30mb, this is unsustainable"
+
+	const docID = msg.reply_to_message.document.file_id;
+
 });
