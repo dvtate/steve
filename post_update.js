@@ -1,11 +1,14 @@
-module.exports.MakeUpdate = function (msg, match, token) {
+module.exports.MakeUpdate = function (msg, category, token) {
 
 
 	if (msg.reply_to_message.document.file_size > 50000000)
 		bot.sendMessage(msg.chat.from,
 			"error: upload greater than 50mb, try putting videos and other large files on external sites. \
-If you need help feel free to contact @ridderhoff",
-			{ reply_to_message : msg.message_id });
+If you need help feel free to contact @ridderhoff", {
+			reply_to_message : msg.message_id
+		});
+
+
 
 	const download = require("download");
 
