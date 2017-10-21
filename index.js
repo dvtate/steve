@@ -113,7 +113,7 @@ bot.onText(/^\/echo(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
 
 // ping response testing
 bot.onText(/^\/ping(?:@robobibb_bot)?/, function onPing(msg) {
-	bot.sendMessage(msg.chat.id, "pong", { reply_to_message_id : msg.message_id });
+	bot.sendMessage(msg.chat.id, "pong");
 	logCmd(msg, "ping'd");
 });
 
@@ -413,41 +413,9 @@ bot.on("new_chat_participant", msg => {
 	});
 });
 
-var updating = false; // only one update process at a time
-// update steve to latest version
-bot.onText(/^\/update(?:@robobibb_bot)?/, msg => {
-	if (!updating) {
-		bot.sendMessage(msg.chat.id,
-						"Updating my source code from https://github.com/robobibb/robobibb-steve-bot... There should be zero downtime",
-						{reply_to_message_id : msg.message_id });
-		console.log("spawning update.sh...");
-		updating = true;
 
-		// run command `sh update.sh` which will update Steve, eventually killing this instance
-		/*var script = require("child_process").exec("sys update.sh",
-		(error, stdout, stderr) => {
-			console.log(`${stdout}`);
-			console.log(`${stderr}`);
-			if (error !== null) {
-				console.log(`exec error: ${error}`);
-			}
-			console.log("committing seppuku...");
-		});
-		*/
-		var script = require("child_process").spawn("sys", ["./update.sh"], {
-			detached : true,
-			stdio : [ "ignore", process.stdout, process.stderr]
-		});
-		setTimeout(1000, () => {
-			process.exit(0);
-		});
-		console.log("spawned");
 
-	} else {
-		bot.sendMessage(msg.chat.id, "There is already an update in progress",
-			{reply_to_message_id : msg.message_id });
-	}
-});
+
 
 /// emulating humans
 
@@ -548,6 +516,9 @@ bot.onText(/^\/newreply(?:@robobibb_bot)?/, msg => {
 		);
 });
 
+
+
+
 function authorized(usrID, isAuth, notAuth) {
 	if (adminIDs.includes(usrID)) {
 		isAuth();
@@ -638,13 +609,29 @@ bot.onText(/^\/sshcmd(?:@robobibb_bot)?/, msg => {
 	);
 });
 
-bot.onText(/post_update(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
+bot.onText(/postupdate(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
+
+	// no tag
 	if (match[1] != "all" && match[1] != "impact" && match[1] != "projects" && match[1] != "log") // invalid category
 		bot.sendMessage(msg.chat.id, "error: invalid category, use: all, impact, projects or log", {
 			reply_to_message : msg.message_id
 		});
+
+	// not a reply to a document
+	else if (!msg.reply_to_message.document)
+		bot.sendMessage(msg.chat.id,
+						"error: expected an update.zip file.",
+						{ reply_to_message_id : msg.message_id });
+
+	// seems good, check if they're authorized
 	else
-		require("./post_update").postUpdate(msg, match[1], TOKEN);
+		authorized(msg.from.id,
+			() => { require("./post_update").postUpdate(msg, match[1], TOKEN); },
+			() => {
+				bot.sendMessage(msg.chat.id, "error: unauthorized", {
+					reply_to_message_id : msg.message_id
+			});
+		});
 
 
 });
