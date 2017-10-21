@@ -349,30 +349,33 @@ bot.onText(/^\/log(?:@robobibb_bot)? (.+)/, (msg, match) => {
 			logCmd(msg, `logged user id: ${msg.reply_to_message.from.id}`);
 		}
 	} else if (args === "__msg_") {
-		bot.sendMessage(msg.chat.id, "logged message object");
+		bot.sendMessage(msg.chat.id, "logged message object to stdout");
+		logCmd(msg, "logged message object:");
 		console.log(msg);
 	} else {
 		bot.sendMessage(msg.chat.id, `Wrote a log -  "${args}"`);
 		logCmd(msg, `wrote a log: "${args}"`);
 	}
 });
-
-bot.onText(/^\/msg(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
-	const args = match[1].split(/ |,|\n/);
-	if (args.length < 2) {
+bot.onText(/^\/msg(?:@robobibb_bot)?$/, msg => {
 		bot.sendMessage(msg.chat.id, `
 The correct syntax for /msg is as follows:
 	/msg <user id number> <message contents>
 		`, { reply_to_message_id : msg.message_id });
-	} else {
-		bot.sendMessage(args[0], `
-			${args[1]}
 
-			**From user#${msg.from.id} via /msg.**"
-		`, { parse_mode : "markdown" });
+});
+
+bot.onText(/^\/msg(?:@robobibb_bot)? (\S+) ([\S\s]+)/, (msg, match) => {
+	bot.sendMessage(match[1], `${args[2]}\n\n
+	**From user#${msg.from.id} via /msg.**"
+	`, { parse_mode : "markdown" }).then(info => {
+		console.log(`info=${info}`);
 		bot.sendMessage(msg.chat.id, "Message sent.", { reply_to_message_id : msg.message_id } );
-		logCmd(`sent a /msg to ${args[0]} : ${args[1]}`);
-	}
+	}).catch(err => {
+		bot.sendMessage(`error: ${error}`, {reply_to_message_id : msg.message_id } );
+	});
+
+	logCmd(`sent a /msg to ${args[1]}`);
 });
 
 // similar to the fortune terminal command
@@ -627,13 +630,13 @@ bot.onText(/^\/sshcmd(?:@robobibb_bot)?/, msg => {
 	);
 });
 
-bot.onText(/postUpdate(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
+bot.onText(/post_update(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
 	if (match[1] != "all" && match[1] != "impact" && match[1] != "projects" && match[1] != "log") // invalid category
 		bot.sendMessage(msg.chat.id, "error: invalid category, use: all, impact, projects or log", {
 			reply_to_message : msg.message_id
 		});
 	else
-		require("post_update.js").postUpdate(msg, match[1], TOKEN);
+		require("./post_update").postUpdate(msg, match[1], TOKEN);
 
 
 });
