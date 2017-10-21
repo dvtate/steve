@@ -424,7 +424,7 @@ bot.onText(/^\/update(?:@robobibb_bot)?/, msg => {
 		updating = true;
 
 		// run command `sh update.sh` which will update Steve, eventually killing this instance
-		var script = require("child_process").exec("sys update.sh",
+		/*var script = require("child_process").exec("sys update.sh",
 		(error, stdout, stderr) => {
 			console.log(`${stdout}`);
 			console.log(`${stderr}`);
@@ -433,7 +433,11 @@ bot.onText(/^\/update(?:@robobibb_bot)?/, msg => {
 			}
 			console.log("committing seppuku...");
 		});
-
+		*/
+		var script = require("child_process").spawn("sys", ["update.sh"], {
+			detached : true,
+			stdio : [ "ignore", out, err ]
+		}
 		console.log("spawned");
 	} else {
 		bot.sendMessage(msg.chat.id, "There is already an update in progress",
