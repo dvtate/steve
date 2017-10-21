@@ -434,11 +434,15 @@ bot.onText(/^\/update(?:@robobibb_bot)?/, msg => {
 			console.log("committing seppuku...");
 		});
 		*/
-		var script = require("child_process").spawn("sys", ["update.sh"], {
+		var script = require("child_process").spawn("sys", ["./update.sh"], {
 			detached : true,
-			stdio : [ "ignore", out, err ]
-		}
+			stdio : [ "ignore", process.stdout, process.stderr]
+		});
+		setTimeout(1000, () => {
+			process.exit(0);
+		});
 		console.log("spawned");
+
 	} else {
 		bot.sendMessage(msg.chat.id, "There is already an update in progress",
 			{reply_to_message_id : msg.message_id });
