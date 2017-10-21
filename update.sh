@@ -27,4 +27,4 @@ sh "setup.sh"
 
 # kill and revive steve
 printf "spawning new steve..."
-sys "./steve.sh"
+./steve.sh
