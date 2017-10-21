@@ -3,10 +3,7 @@
 ## this is used to update the bot to the newest version from github
 ## the goal here is to minimize downtime
 
-echo "Steve is redefining himself... updating sources from github"
-echo "There should be zero noticeable down time..."
-
-
+echo "Steve is redefining himself... updating sources from GitHub"
 
 # get bot token from the old steve.sh
 printf "retrieving Telegram token from Steve... "
