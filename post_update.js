@@ -1,28 +1,75 @@
-module.exports.MakeUpdate = function (msg, category, token) {
+/// This module is used to post articles to robobibb.github.io/updates
+const fs = require("fs");
 
 
-	if (msg.reply_to_message.document.file_size > 50000000)
+module.exports.postUpdate = function (msg, bot, category, token) {
+
+	// if its too big a file...
+	if (msg.reply_to_message.document.file_size > 50000000) {
 		bot.sendMessage(msg.chat.from,
 			"error: upload greater than 50mb, try putting videos and other large files on external sites. \
-If you need help feel free to contact @ridderhoff", {
+If you still need help feel free to contact @ridderhoff", {
 			reply_to_message : msg.message_id
 		});
-
-
-
-	const download = require("download");
+		return;
+	}
 
 	bot.getFileLink(msg.reply_to_message.document.file_id).then(fileURL => {
-		console.log(fileURL);
-		download(fileURL).then(data => {
-	    		fs.writeFileSync(file, data);
+
+		// ws_setup.sh does the following
+		// clone website repo
+		// make the directory for the new file
+		// make dir.txt to tell us where the directory is
+		// unpack update.zip into the directory
+		require("child_process").spawnSync("sh", [ "ws_setup.sh", fileURL ], {stdio:"inherit"});
+
+		const dir = fs.readFileSync("dir.txt");
+
+		const body = fs.readFileSync(dir + "/body.html");
+		const title = fs.readFileSync(dir + "/title.txt");
+		const date = require("node-datetime").create().format("Y-m-d at H:M");
+		const summary = fs.readFileSync(dir + "/summary.txt");
+		const author = genAuthor(msg.from);
 
 
-		}).catch(error => {
-			bot.sendMessage(msg.chat.id, "error: file not found", {
-				reply_to_message : msg.message_id
-			});
-		});
+		// something missing?
+		if (!body || !title || !summary || !fs.existsSync(dir + "/thumb.png")) {
+			if (!body)
+				bot.sendMessage(msg.chat.id, "error: update.zip lacks body.html");
+			if (!title)
+				bot.sendMessage(msg.chat.id, "error: update.zip lacks title.txt");
+			if (!summary)
+				bot.sendMessage(msg.chat.id, "error: update.zip lacks summary.txt");
+			if (!fs.existsSync(dir + "/thumb.png"))
+				bot.sendMessage(msg.chat.id, "error: update.zip lacks thumb.png");
+			return;
+		}
+
+
+		// write our webpage
+		fs.writeFileSync(dir + "/index.html", genArticle(title, summary, author, date, body));
+
+		// add webpage to listing
+		var data = fs.readFile("robobibb.github.io/updates/index.html");
+
+
+		const listing = genListing(dir.match(/\/([0-9]+?)\/?$/)[1], title, summary);
+
+
+		var result = data.replace(/id="list_all">/, "id=\"list_all\">\n" + listing);
+
+		if (category != "all")
+			if (category == "impact")
+				result = result.replace(/id="list_impact">/, "id=\"list_impact\">\n" + listing);
+			else if (category == "projects")
+				result = result.replace(/id="list_projects">/, "id=\"list_projects\">\n" + listing);
+			else if (category == "logs")
+				result = result.replace(/id="list_logs">/, "id=\"list_logs\">\n" + listing);
+
+		fs.writeFileSync("robobibb.github.io/updates/index.html", result);
+
+		// remove unneeded files and commit
+		require("child_process").spawnSync("sh", [ "ws_cleanup.sh" ], { stdio: "inherit" });
 
 	}).catch(error => {
 		bot.sendMessage(msg.chat.id, "error: failed to create link", {
@@ -30,3 +77,75 @@ If you need help feel free to contact @ridderhoff", {
 		});
 	});
 }
+
+function genArticle(title, description, author, date, body) {
+	return `<!DOCTYPE html>
+<html>
+	<head>
+		<title>${title}</title>
+		<meta name="description" content="${description}"/>
+		<meta name="keywords" content="FRC robotics FIRST RoboBibb 4941 #4941 team howard high school bibb county robots macon"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<link rel="icon" type="image/jpg" href="https://robobibb.github.io/imgs/roboman.jpg" />
+		<link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css"/>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato"/>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+
+		<link rel="stylesheet" href="https://robobibb.github.io/styles/main.css" />
+		<link rel="stylesheet" href="https://robobibb.github.io/styles/update-pages.css" />
+		<script src="https://robobibb.github.io/scripts/main.js"></script>
+	</head>
+	<body>
+		<!-- Navbar -->
+		<div class="w3-top" id="navbarhere"></div>
+		<script>genNavBar("navbarhere");</script>
+
+		<!-- Page content -->
+		<div class="w3-content" id="pageBackground" style="max-width:2000px">
+			<div class="w3-container w3-content w3-center w3-padding-64" id="sheet" style="max-width:800px;border:1px solid grey">
+
+				<!-- Title -->
+				<div class="w3-content w3-center">
+					<h1>${title}</h1><hr/>
+					<h5>Submitted By ${author} on ${date}</h5>
+				</div>
+
+				<div class="update-body">
+					${body}
+				</div>
+		<!-- End Page Content -->
+			</div>
+		</div>
+
+
+		<!-- Footer -->
+		<footer id="dark-footer"></footer>
+		<script>genFooter();</script>
+
+	</body>
+</html>`;
+}
+
+function genAuthor(from) {
+	var ret = from.first_name;
+	if (from.last_name)
+		ret += " " from.last_name;
+	if (from.username)
+		ret += " (@" + from.username + ")";
+
+	return ret;
+}
+
+function genListing(dirnum, title, summary) {
+	return `<table><tr>
+	<td><a href="https://robobibb.github.io/updates/u/${dirnum}/">
+		<img class="update-thumb" src="https://robobibb.github.io/update/u/${dirnum}/thumb.png"/>
+	</a></td><td>
+		<a href="https://robobibb.github.io/updates/u/${dirnum}/"><h4 class="update-title">${title}</h4></a>
+		<p class="update-desc">${summary}</p>
+	</td>
+</tr></table></a>
+<hr/>`;
+
+} 

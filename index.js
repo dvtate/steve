@@ -1,4 +1,4 @@
-"use strict";
+	"use strict";
 
 const request = require("request");
 const fs = require("fs");
@@ -612,7 +612,7 @@ bot.onText(/^\/sshcmd(?:@robobibb_bot)?/, msg => {
 bot.onText(/postupdate(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
 
 	// no tag
-	if (match[1] != "all" && match[1] != "impact" && match[1] != "projects" && match[1] != "log") // invalid category
+	if (match[1] != "all" && match[1] != "impact" && match[1] != "projects" && match[1] != "logs") // invalid category
 		bot.sendMessage(msg.chat.id, "error: invalid category, use: all, impact, projects or log", {
 			reply_to_message : msg.message_id
 		});
@@ -626,7 +626,7 @@ bot.onText(/postupdate(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
 	// seems good, check if they're authorized
 	else
 		authorized(msg.from.id,
-			() => { require("./post_update").postUpdate(msg, match[1], TOKEN); },
+			() => { require("./post_update").postUpdate(msg, bot, match[1], TOKEN); },
 			() => {
 				bot.sendMessage(msg.chat.id, "error: unauthorized", {
 					reply_to_message_id : msg.message_id

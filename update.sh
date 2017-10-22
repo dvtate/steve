@@ -28,3 +28,4 @@ sh "setup.sh"
 # kill and revive steve
 printf "spawning new steve..."
 ./steve.sh
+

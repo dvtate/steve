@@ -5,7 +5,7 @@
 
 ## make everything runable
 printf "marking scripts as runable..."
-chmod +x setup.sh update.sh steve.sh push_fortunes.sh
+chmod +x setup.sh update.sh steve.sh push_fortunes.sh ws_setup.sh
 printf " done\n"
 
 # if token wasn't exported by update.sh or steve.sh
@@ -29,7 +29,7 @@ fi
 # put token into steve.sh
 printf "inserting token into steve.sh... "
 sed -i "s/^export TELEGRAM_TOKEN=.*/export TELEGRAM_TOKEN=${TELEGRAM_TOKEN}/" steve.sh
-sed -i "s/^export GH_TOKEN=.*/export GH_TOKEN=${GH_TOKEN}/" steve.sh
+#sed -i "s/^export GH_TOKEN=.*/export GH_TOKEN=${GH_TOKEN}/" steve.sh
 printf "done\n"
 
 # install dependencies

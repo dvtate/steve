@@ -25,8 +25,11 @@ module.exports.addFortune = function (quote, from) {
 		console.log("Added a fortune!");
 		module.exports.updateFortunesList();
 
+
+		console.log("sys ./push_fortunes.sh \"fortune from " + from.first_name + "\"");
+
 		// commit new fortunes to the github
-		var script = require("child_process").exec("sys ./push_fortunes.sh \"fortune from " + from.first_name + "\"",
+		var script = require("child_process").exec("sh push_fortunes.sh \'fortune from " + from.first_name + "\'",
 			(error, stdout, stderr) => {
 				console.log(`${stdout}`);
 				console.log(`${stderr}`);
