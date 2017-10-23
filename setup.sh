@@ -5,7 +5,7 @@
 
 ## make everything runable
 printf "marking scripts as runable..."
-chmod +x setup.sh update.sh steve.sh push_fortunes.sh ws_setup.sh
+chmod +x setup.sh update.sh steve.sh push_fortunes.sh ws_setup.sh ws_cleanup.sh
 printf " done\n"
 
 # if token wasn't exported by update.sh or steve.sh
@@ -34,5 +34,5 @@ printf "done\n"
 
 # install dependencies
 echo "installing dependencies..."
-npm install --save node-telegram-bot-api node-datetime
+npm install --save -g node-telegram-bot-api node-datetime
 echo "installed dependencies"
