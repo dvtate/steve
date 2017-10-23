@@ -23,40 +23,52 @@ If you still need help feel free to contact @ridderhoff", {
 		// unpack update.zip into the directory
 		require("child_process").spawnSync("sh", [ "ws_setup.sh", fileURL ], {stdio:"inherit"});
 
-		const dir = fs.readFileSync("dir.txt");
 
-		const body = fs.readFileSync(dir + "/body.html");
-		const title = fs.readFileSync(dir + "/title.txt");
+		var dir = fs.readFileSync("dir.txt", "utf8");
+		dir = `${dir}`.replace(/\n/, "");
+
+		console.log(`getting post content from ${dir}...`);
+
 		const date = require("node-datetime").create().format("Y-m-d at H:M");
-		const summary = fs.readFileSync(dir + "/summary.txt");
 		const author = genAuthor(msg.from);
 
+		try {
+			var title = fs.readFileSync(dir + "/title.txt", "utf8");
+			console.log(`title=${title}`);
+			var body = fs.readFileSync(dir + "/body.html", "utf8");
+			var summary = fs.readFileSync(dir + "/summary.txt", "utf8");
+		} catch (e) {
 
-		// something missing?
-		if (!body || !title || !summary || !fs.existsSync(dir + "/thumb.png")) {
+			console.log("error: something missing://///");
+			// something missing?
 			if (!body)
 				bot.sendMessage(msg.chat.id, "error: update.zip lacks body.html");
 			if (!title)
 				bot.sendMessage(msg.chat.id, "error: update.zip lacks title.txt");
 			if (!summary)
 				bot.sendMessage(msg.chat.id, "error: update.zip lacks summary.txt");
-			if (!fs.existsSync(dir + "/thumb.png"))
-				bot.sendMessage(msg.chat.id, "error: update.zip lacks thumb.png");
-			return;
+			throw e;
 		}
 
 
+		if (!fs.existsSync(dir + "/thumb.png"))
+			bot.sendMessage(msg.chat.id, "error: update.zip lacks thumb.png");
+
+
+		console.log("generating update from a template...");
 		// write our webpage
 		fs.writeFileSync(dir + "/index.html", genArticle(title, summary, author, date, body));
 
+		console.log("adding update to listing...");
+
 		// add webpage to listing
-		var data = fs.readFile("robobibb.github.io/updates/index.html");
+		var data = fs.readFileSync("robobibb.github.io/updates/index.html", "utf8");
 
 
-		const listing = genListing(dir.match(/\/([0-9]+?)\/?$/)[1], title, summary);
+		var listing = genListing(dir.match(/\/([0-9]+?)\/?$/)[1], title, summary);
 
 
-		var result = data.replace(/id="list_all">/, "id=\"list_all\">\n" + listing);
+		var result = `${data}`.replace(/id="list_all">/, "id=\"list_all\">\n" + listing);
 
 		if (category != "all")
 			if (category == "impact")
@@ -68,13 +80,16 @@ If you still need help feel free to contact @ridderhoff", {
 
 		fs.writeFileSync("robobibb.github.io/updates/index.html", result);
 
+
+		console.log("finishing up...");
 		// remove unneeded files and commit
-		require("child_process").spawnSync("sh", [ "ws_cleanup.sh" ], { stdio: "inherit" });
+		require("child_process").spawnSync("sh", [ "ws_cleanup.sh", author ], { stdio: "inherit" });
 
 	}).catch(error => {
 		bot.sendMessage(msg.chat.id, "error: failed to create link", {
 			reply_to_message : msg.message_id
 		});
+		console.log(`fuck:\n${error}`);
 	});
 }
 
@@ -130,7 +145,7 @@ function genArticle(title, description, author, date, body) {
 function genAuthor(from) {
 	var ret = from.first_name;
 	if (from.last_name)
-		ret += " " from.last_name;
+		ret += " " + from.last_name;
 	if (from.username)
 		ret += " (@" + from.username + ")";
 
@@ -140,7 +155,7 @@ function genAuthor(from) {
 function genListing(dirnum, title, summary) {
 	return `<table><tr>
 	<td><a href="https://robobibb.github.io/updates/u/${dirnum}/">
-		<img class="update-thumb" src="https://robobibb.github.io/update/u/${dirnum}/thumb.png"/>
+		<img class="update-thumb" src="https://robobibb.github.io/updates/u/${dirnum}/thumb.png"/>
 	</a></td><td>
 		<a href="https://robobibb.github.io/updates/u/${dirnum}/"><h4 class="update-title">${title}</h4></a>
 		<p class="update-desc">${summary}</p>

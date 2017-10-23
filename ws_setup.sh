@@ -16,20 +16,20 @@ echo "done"
 
 # download the update.zip
 printf "downloading update.zip... "
-wget $1 -o "update.zip"
+wget $1 -O "update.zip"
 echo "done"
 
 echo "unzipping update..."
 unzip "update.zip"
 printf "unpacking update... "
-mv "update/*" "."
-rm -rf "update"
+mv update/* .
 echo "done"
 
-printf "deleting update.zip... "
+printf "cleaning update dir... "
+rm -rf "update"
 rm update.zip
 echo "done"
 
-printf "saving dir... "
+printf "saving dir.txt... "
 pwd > "../../../../dir.txt"
 echo "done"

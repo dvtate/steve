@@ -28,14 +28,8 @@ module.exports.addFortune = function (quote, from) {
 
 		console.log("sys ./push_fortunes.sh \"fortune from " + from.first_name + "\"");
 
-		// commit new fortunes to the github
-		var script = require("child_process").exec("sh push_fortunes.sh \'fortune from " + from.first_name + "\'",
-			(error, stdout, stderr) => {
-				console.log(`${stdout}`);
-				console.log(`${stderr}`);
-				if (error !== null) {
-					console.log(`exec error: ${error}`);
-				}
-		});
+		// commit new fortunes
+		require("child_process").spawnSync("sh", [ "push_fortunes.sh", "fortune from " + from.first_name ], { stdio: "inherit" });
+
 	});
 }

@@ -53,7 +53,7 @@ More at: https://github.com/robobibb/robobibb-steve-bot/
 });
 
 // send a random cat pic
-bot.onText(/^\/cat(?:@robobibb_bot)?/, msg => {
+bot.onText(/^\/cat(?:@robobibb_bot)?$/, msg => {
 	const img = request("http://lorempixel.com/400/200/cats/");
 	bot.sendPhoto(msg.chat.id, img, { caption : "look at the kitty!" });
 	logCmd(msg, "likes /cat's");
@@ -112,9 +112,9 @@ bot.onText(/^\/echo(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
 });
 
 // ping response testing
-bot.onText(/^\/ping(?:@robobibb_bot)?/, function onPing(msg) {
-	bot.sendMessage(msg.chat.id, "pong");
-	logCmd(msg, "ping'd");
+bot.onText(/^\/ping(?:@robobibb_bot)?[\s|$])/, function onPing(msg) {
+	bot.sendMessage(msg.chat.id, "pong", { reply_to_message_id : msg.message_id });
+	logCmd(msg, "/ping'd");
 });
 
 bot.onText(/^\/poll(?:@robobibb_bot)?/, function (msg) {
