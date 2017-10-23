@@ -18,7 +18,7 @@ echo "done"
 
 # commit changes
 git add "assets/fortunes.txt"
-git commit -m $1
+git commit -m "$1"
 git push
 
 # cleanup
