@@ -1,4 +1,4 @@
-	"use strict";
+"use strict";
 
 const request = require("request");
 const fs = require("fs");
@@ -53,7 +53,7 @@ More at: https://github.com/robobibb/robobibb-steve-bot/
 });
 
 // send a random cat pic
-bot.onText(/^\/cat(?:@robobibb_bot)?$/, msg => {
+bot.onText(/^\/cat(?:@robobibb_bot)?(?:$|\s)/, msg => {
 	const img = request("http://lorempixel.com/400/200/cats/");
 	bot.sendPhoto(msg.chat.id, img, { caption : "look at the kitty!" });
 	logCmd(msg, "likes /cat's");
@@ -112,12 +112,12 @@ bot.onText(/^\/echo(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
 });
 
 // ping response testing
-bot.onText(/^\/ping(?:@robobibb_bot)?[\s|$])/, function onPing(msg) {
+bot.onText(/^\/ping(?:@robobibb_bot)?(?:$|\s)/, function onPing(msg) {
 	bot.sendMessage(msg.chat.id, "pong", { reply_to_message_id : msg.message_id });
 	logCmd(msg, "/ping'd");
 });
 
-bot.onText(/^\/poll(?:@robobibb_bot)?/, function (msg) {
+bot.onText(/^\/poll(?:@robobibb_bot)?(?:$|\s)/, function (msg) {
 	const repID = msg.reply_to_message ? msg.reply_to_message.message_id : msg.message_id;
 	const opts = {
 		reply_markup : {
@@ -138,7 +138,7 @@ bot.onText(/^\/poll(?:@robobibb_bot)?/, function (msg) {
 });
 
 // user wants to join a chat
-bot.onText(/^\/join(?:@robobibb_bot)?/, function onJoinRequest(msg) {
+bot.onText(/^\/join(?:@robobibb_bot)?(?:$|\s)/, function onJoinRequest(msg) {
 	const opts = {
 		reply_markup: {
 			inline_keyboard: [
@@ -156,7 +156,7 @@ bot.onText(/^\/join(?:@robobibb_bot)?/, function onJoinRequest(msg) {
 });
 
 // user wants an 8-ball response
-bot.onText(/^\/8ball(?:@robobibb_bot)?/, msg => {
+bot.onText(/^\/8ball(?:@robobibb_bot)?(?:$|\s)/, msg => {
 	// Get number between 1-3, map to responses
 	let txt;
 	switch (Math.floor(Math.random() * 3) + 1) {
@@ -267,7 +267,7 @@ bot.on("callback_query", function(callbackQuery) {
 });
 
 // gives our sm links
-bot.onText(/^\/sm(?:@robobibb_bot)?/, function (msg) {
+bot.onText(/^\/sm(?:@robobibb_bot)?(?:$|\s)/, function (msg) {
 	bot.sendMessage(msg.chat.id,`
 			Check out our social media accounts:
 			  FaceBook: https://fb.com/teamrobobibb/
@@ -280,7 +280,7 @@ bot.onText(/^\/sm(?:@robobibb_bot)?/, function (msg) {
 });
 
 // gives our website link
-bot.onText(/^\/website(?:@robobibb_bot)?/, function (msg) {
+bot.onText(/^\/website(?:@robobibb_bot)?(?:$|\s)/, function (msg) {
 	bot.sendMessage(msg.chat.id,
 			"Check out our website: https://robobibb.github.io/",
 			{ reply_to_message_id : msg.message_id });
@@ -318,7 +318,7 @@ bot.onText(/^\/random(?:@robobibb_bot)? (.+)?/, function onEchoText(msg, match) 
 });
 
 // coin flip
-bot.onText(/^\/coinflip(?:@robobibb_bot)?/, msg => {
+bot.onText(/^\/coinflip(?:@robobibb_bot)?(?:$|\s)/, msg => {
 	if (Math.random() > 0.5)
 		bot.sendMessage(msg.chat.id, "heads");
 	else
@@ -379,7 +379,7 @@ bot.onText(/^\/msg(?:@robobibb_bot)? (\S+) ([\S\s]+)/, (msg, match) => {
 });
 
 // similar to the fortune terminal command
-bot.onText(/^\/fortune(?:@robobibb_bot)?/, msg => {
+bot.onText(/^\/fortune(?:@robobibb_bot)?(?:$|\s)/, msg => {
 	bot.sendMessage(msg.chat.id, require("./fortune").getText(), {
 		reply_to_message_id : msg.message_id,
 		parse_mode : "markdown"
@@ -487,7 +487,7 @@ function addCommand(msg) {
 
 }
 
-bot.onText(/^\/newreply(?:@robobibb_bot)?/, msg => {
+bot.onText(/^\/newreply(?:@robobibb_bot)?(?:$|\s)/, msg => {
 /*
 	// arrow functions are baller
 	bot.getChatMember(officialChatID, msg.from.id)
@@ -584,7 +584,7 @@ ${stdout}
 	);
 });
 
-bot.onText(/^\/sshcmd(?:@robobibb_bot)?/, msg => {
+bot.onText(/^\/sshcmd(?:@robobibb_bot)?(?:$|\s)/, msg => {
 	authorized(msg.from.id,
 		() => {
 			request("https://ipinfo.io", (error, response, body) => {
