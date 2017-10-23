@@ -11,8 +11,9 @@ rm "body.html" "title.txt" "summary.txt"
 
 cd "../../../"
 
+MSG="new update from $1"
 
 # commit changes
 git add --all
-git commit -m "new update from $1"
+git commit -m "$MSG"
 git push
