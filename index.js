@@ -609,7 +609,7 @@ bot.onText(/^\/sshcmd(?:@robobibb_bot)?(?:$|\s)/, msg => {
 	);
 });
 
-bot.onText(/postupdate(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
+bot.onText(/^\/postupdate(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
 
 	// no tag
 	if (match[1] != "all" && match[1] != "impact" && match[1] != "projects" && match[1] != "logs") // invalid category
