@@ -46,7 +46,7 @@ He automates a variety of tasks an gives useful information
 /vaporwave <text> - converts normal text to full-width text
 /xkcd - gives a random XKCD comic strip
 /msg <user/chat id #> <message> - sends a message to the given chat
-
+/postupdate <category> - posts update.zip from reply into a message
 More at: https://github.com/robobibb/robobibb-steve-bot/
 `);
 	logCmd(msg, "asked for /help");
@@ -563,26 +563,6 @@ bot.onText(/^\/system(?:@robobibb_bot)? (.+)/, (msg, match) => {
 	);
 });
 
-/// interface to the server
-bot.onText(/^\/system(?:@robobibb_bot)? (.+)/, (msg, match) => {
-	const command = match[1];
-	authorized(msg.from.id,
-		() => {
-			logCmd(msg, `ran command: "${command}"`);
-			require("child_process")
-				.exec(command,
-					(error, stdout, stderr) => bot.sendMessage(msg.chat.id,
-						`steve@robobibb-server $ ${command}
-${stdout}
-`					)
-				);
-		},
-		() => {
-			logCmd(msg, "was prevented from running a command (unauthorized)");
-			bot.sendMessage(msg.chat.id, "you are not authorized to run commands");
-		}
-	);
-});
 
 bot.onText(/^\/sshcmd(?:@robobibb_bot)?(?:$|\s)/, msg => {
 	authorized(msg.from.id,
