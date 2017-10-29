@@ -14,10 +14,9 @@ const mainChatID = "-1001065686661";
 const codeChatID = "-1001070098331";
 
 // collaborators who might not be in the official chats
-const adminIDs = [ 147617508,	// tate (gh@dvtate) (tg@ridderhoff)
-				   46580443,	// k3 (gh@Technohacker) (tg@Technohackr
+const adminIDs = [ 46580443,	// k3 (gh@Technohacker) (tg@Technohackr
 				   222598812	// umar (gh@humarh-dharnarh) (tg@Humarh_Dharnarh)
-			   ];
+				 ];
 
 // Function to simplify logging
 function logCmd(msg, logMessage) {
