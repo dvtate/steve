@@ -14,8 +14,9 @@ const mainChatID = "-1001065686661";
 const codeChatID = "-1001070098331";
 
 // collaborators who might not be in the official chats
-const adminIDs = [ 147617508, // tate (dvtate)
-				   46580443  // k3 (technohacker)
+const adminIDs = [ 147617508,	// tate (gh@dvtate) (tg@ridderhoff)
+				   46580443,	// k3 (gh@Technohacker) (tg@Technohackr
+				   222598812	// umar (gh@humarh-dharnarh) (tg@Humarh_Dharnarh)
 			   ];
 
 // Function to simplify logging
@@ -46,7 +47,7 @@ He automates a variety of tasks an gives useful information
 /vaporwave <text> - converts normal text to full-width text
 /xkcd - gives a random XKCD comic strip
 /msg <user/chat id #> <message> - sends a message to the given chat
-/postupdate <category> - posts update.zip from reply into a message
+/postupdate <category> - posts update.zip (from reply) onto robobibb.github.io/updates
 More at: https://github.com/robobibb/robobibb-steve-bot/
 `);
 	logCmd(msg, "asked for /help");
