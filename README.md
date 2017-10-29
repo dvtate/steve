@@ -5,7 +5,7 @@ A bot for RoboBibb's telegram groupchat. This bot is programmed for node.js and 
 ### Deployment:
 The included `setup.sh` script gets everything ready to go. All you need to do is enter the Telegram bot token from the botfather. After setup you can run `steve.sh` to start the bot.
 ```
-$ git clone https://github.com/robobibb/robobibb-steve-bot/ && cd robobibb-steve-bot/
+$ git clone https://github.com/robobibb/steve/ && cd steve/
 $ sh setup.sh
 $ ./steve.sh
 ```
@@ -13,11 +13,11 @@ $ ./steve.sh
 Like many things on the internet, uptime is very important. In order to update the bot with essentially no noticeable down-time, you can run `update.sh`. Which will automatically update the bot from this github repo. 
 
 ## Commands:
-- `/ping` - replies `pong` as soon as possible (for testing connection [speed])
+- `/ping` - replies `pong` as soon as possible (for testing connection)
 - `/echo <message>` - repeats `<message>`
 - `/cat` - sends a random cat picture
 - `/join` - helps user get into team group chats
-- `/help` - shows help dialogue
+- `/help` - shows help dialog
 - `/coinflip` - flips a coin and sends result
 - `/random` - random number generator. 
   + given 2 numbers gives a number on the range [num1, num2)
@@ -29,18 +29,30 @@ Like many things on the internet, uptime is very important. In order to update t
   + if message is `__msg_` it logs the entire message object to stdout
   + anthing else gets writen to the logs in stdout so that sysadmin can see their message.
 - `/update` - runs `update.sh` and updates Steve's code.
-- `/8ball <message>` - responds with "Yes", "No" or "Maybe" (accept with a pinch of salt).
-- `/system <command>` - runs a command on the system (requires authorization)
-- `/sshcmd` - gives a ssh command to run (requires authorization)
+- `/8ball` - responds with "Yes", "No" or "Maybe" (not always correct)
 - `/fortune` - sends an interesting quote/fortune
 - `/addfortune <fortune message>` - add your own fortune message
 - `/vaporwave <text>` - converts to full-width text
 - `/xkcd` - sends a random xkcd comic
+- `/xkcd <comic number>` - sends xkcd number <comic number>
 - `/poll` - makes a voteable poll for your message. (+1,-1, ±0)
+- `/website` - link to [our team website](https://robobibb.github.io/)
+- `/sm` - social media links
 
-*Authorization: being in one of the team's main chats or being a designated Admin
+### Require authorization
+These require that you are either in the administrator list or are currently in one of the two RoboBibb General Discussion groupchats.
+- `/system <command>` - runs a command on the system (requires authorization)
+- `/sshcmd` - gives a ssh command to run (requires authorization)
+- `/postupdate <category>` - send this as a response to your update.zip file. Steve will automatically post your story to [robobibb.github.io/updates/](https://robobibb.github.io/updates/)
+- `/msg <chat/userID> <message contents>` - sends a message to userID, user must already be in a GC/DM with steve for this to work.
+
+
 ## Responses:
+messages which could be directed to anyone must be started with `steve,` or anything from `(?:hey\s)?steve(?:\.|\?|\!|\,)?.?`
 - "is steve a human?" - replies "yes" and asks person who was wondering to complete a captcha
+- "shutup steve" - replies "no thx"
+- "make me a sandwitch" - sends a sound clip "I'm sorry dave I'm afraid I can't do that" from 2001 space odyssey
+- "sudo make me a sandwitch" - replies "you're a sandwitch"
 - "shutup steve" - replies "no thx"
 
 ## Chat Events:
