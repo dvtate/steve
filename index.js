@@ -406,15 +406,21 @@ bot.onText(/^\/vaporwave(?:@robobibb_bot)? (.+)/, (msg, match) => {
 // Welcome new members :)
 bot.on("new_chat_participant", msg => {
 	console.log("new user(s):");
-	msg.new_chat_members.forEach(function(new_member) {
-		bot.sendMessage(msg.chat.id, `Welcome to ${msg.chat.title}, ${new_member.first_name}!`);
-		console.log("  * " + new_member.first_name + " " + new_member.last_name + " (@" + new_member.username + "), joined  "
-				+ msg.chat.title);
+	msg.new_chat_members.forEach(function(mem) {
+		bot.sendMessage(msg.chat.id, `Welcome to ${msg.chat.title}, ${mem.first_name}!`);
+		console.log(`  * ${mem.first_name} ${mem.last_name} (@${mem.username}), joined  ${msg.chat.title}`);
 	});
 });
 
-
-
+// steve can now remove himself from chats
+bot.onText(/^\/leave(?:@robobibb_bot)?(?:$|\s)/, msg => {
+	bot.leaveChat(msg.chat.id).then((data) => {
+		console.log("data=" + data);
+	}).catch((err) => {
+		console.log("err=" + err);
+	});
+	logCmd(msg, `made me leave chat ${msg.chat.title}`);
+});
 
 
 /// emulating humans
@@ -589,6 +595,7 @@ bot.onText(/^\/sshcmd(?:@robobibb_bot)?(?:$|\s)/, msg => {
 	);
 });
 
+
 bot.onText(/^\/postupdate(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
 
 	// no tag
@@ -615,3 +622,24 @@ bot.onText(/^\/postupdate(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
 
 
 });
+
+
+bot.onText(/^\/eval(?:@robobibb_bot)? (.+)/, (msg, match) => {
+        authorized(msg.from.id,
+                () => {
+                        try {
+                        //bot.sendMessage(msg.chat.id, eval(match[1]));
+                                eval(match[1]);
+                        } catch (err) {
+                                bot.sendMessage(msg.chat.id, `error:${err}`);
+                        }
+                        logCmd(msg, "ran /eval");
+                },
+                () => {
+                        bot.sendMessage(msg.chat.id, "error: unauthorized", {
+                                        reply_to_message_id : msg.message_id
+                        });
+                        logCmd(msg, "is not authorized to /eval");
+                }
+        );
+}); 
