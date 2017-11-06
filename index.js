@@ -156,14 +156,14 @@ bot.onText(/^\/join(?:@robobibb_bot)?(?:$|\s)/, function onJoinRequest(msg) {
 });
 
 // user wants an 8-ball response
-bot.onText(/^\/8ball(?:@robobibb_bot)?(?:$|\s)/, msg => {
+bot.onText(/^\/(?:8ball|8)(?:@robobibb_bot)?(?:$|\s)/, msg => {
 	// Get number between 1-3, map to responses
 	let txt;
 	switch (Math.floor(Math.random() * 3) + 1) {
 		case 1: txt = "Yes"; break;
 		case 2: txt = "No"; break;
 		case 3: txt = "Maybe"; break;
-		default: txt = "My psychic side isn't working right now, please try again."; break;
+		default:txt = "My psychic side isn't working right now, please try again."; break;
 	}
 	bot.sendMessage(msg.chat.id, txt, {reply_to_message_id: msg.message_id});
 	logCmd(msg, "shook /8ball");
@@ -185,7 +185,6 @@ bot.on("callback_query", function(callbackQuery) {
 
 	// from '/join'
 	if (action === "offical") {
-		//bot.sendMessage(msg.chat.id, "contact @ridderhoff and he will add you to the offical chat.");
 		const text = "@ridderhoff has been contacted and will try to add you to the chat";
 		bot.editMessageText(text, opts);
 		bot.sendMessage("147617508", `${usr.first_name} ${usr.last_name} (@${usr.username}) wants to join offical`);
@@ -195,12 +194,10 @@ bot.on("callback_query", function(callbackQuery) {
 
 		logCmd(msg, "wants to join official");
 	} else if (action === "code") {
-		//bot.sendMessage(msg.chat.id, "click here to join the programming chat: https://t.me/joinchat/AAAAAD_IZ5v-FtjYBUT0cA");
 		const text = "Click here to join the programming chat: https://t.me/joinchat/AAAAAD_IZ5v-FtjYBUT0cA";
 		logCmd(msg, "wants to join programming");
 		bot.editMessageText(text, opts);
 	} else if (action === "web") {
-		//bot.sendMessage(msg.chat.id, "click here to join the website chat: https://t.me/joinchat/AAAAAEDoGWJ1t0xW1tzjzQ");
 		const text = "click here to join the website chat: https://t.me/joinchat/AAAAAEDoGWJ1t0xW1tzjzQ";
 		logCmd(msg, "wants to join web team");
 		bot.editMessageText(text, opts);
