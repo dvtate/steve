@@ -75,4 +75,6 @@ The only thing that can limit you is yourself<quote>
 -Atlanta Sports Proverb<quote>
 Another day another... nickel.<quote>
 "Bad programmers worry about the code. Good programmers worry about data structures and their relationships."
--- Linus Torvalds
+-- Linus Torvalds<quote>
+"UNIX was not designed to stop its users from doing stupid things, as that would also stop them from doing clever things."
+-- Doug Gwyn
