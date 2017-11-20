@@ -1,4 +1,8 @@
 /// This module is used to post articles to robobibb.github.io/updates
+
+
+
+
 const fs = require("fs");
 
 
@@ -34,7 +38,6 @@ If you still need help feel free to contact @ridderhoff", {
 
 		try {
 			var title = fs.readFileSync(dir + "/title.txt", "utf8");
-			console.log(`title=${title}`);
 			var body = fs.readFileSync(dir + "/body.html", "utf8");
 			var summary = fs.readFileSync(dir + "/summary.txt", "utf8");
 		} catch (e) {
@@ -48,12 +51,16 @@ If you still need help feel free to contact @ridderhoff", {
 			if (!summary)
 				bot.sendMessage(msg.chat.id, "error: update.zip lacks summary.txt");
 			throw e;
+
 		}
 
 
-		if (!fs.existsSync(dir + "/thumb.png"))
-			bot.sendMessage(msg.chat.id, "error: update.zip lacks thumb.png");
-
+		if (!fs.existsSync(dir + "/thumb.png")) {
+			bot.sendMessage(msg.chat.id, "error: update.zip lacks thumb.png", {
+				reply_to_message : msg.message_id
+			});
+			return;
+		}
 
 		console.log("generating update from a template...");
 		// write our webpage
@@ -93,6 +100,8 @@ If you still need help feel free to contact @ridderhoff", {
 	});
 }
 
+
+// the source code for the article's page
 function genArticle(title, description, author, date, body) {
 	return `<!DOCTYPE html>
 <html>
@@ -142,8 +151,11 @@ function genArticle(title, description, author, date, body) {
 </html>`;
 }
 
+// make the authors name using msg.from
 function genAuthor(from) {
+	// they are graduated to have a first name
 	var ret = from.first_name;
+
 	if (from.last_name)
 		ret += " " + from.last_name;
 	if (from.username)
@@ -152,6 +164,8 @@ function genAuthor(from) {
 	return ret;
 }
 
+
+// the html element to add to the list for this article
 function genListing(dirnum, title, summary) {
 	return `<table><tr>
 	<td><a href="https://robobibb.github.io/updates/u/${dirnum}/">
@@ -163,4 +177,4 @@ function genListing(dirnum, title, summary) {
 </tr></table></a>
 <hr/>`;
 
-} 
+}

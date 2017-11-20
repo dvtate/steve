@@ -602,9 +602,9 @@ bot.onText(/^\/postupdate(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
 		});
 
 	// not a reply to a document
-	else if (!msg.reply_to_message.document)
+	else if (!msg.reply_to_message || !msg.reply_to_message.document)
 		bot.sendMessage(msg.chat.id,
-						"error: expected an update.zip file.",
+						"error: please reply to an update.zip file.",
 						{ reply_to_message_id : msg.message_id });
 
 	// seems good, check if they're authorized
@@ -639,4 +639,4 @@ bot.onText(/^\/eval(?:@robobibb_bot)? (.+)/, (msg, match) => {
                         logCmd(msg, "is not authorized to /eval");
                 }
         );
-}); 
+});
