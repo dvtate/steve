@@ -32,20 +32,20 @@ I wanna do math<quote>
 ║░▒║i have the power of GOD
 ║░▒║and ANIME on my
 ║░▒║side
-║░▒║ 
-║░▒║ 
-║░▒║ 
-║░▒║ 
-║░▒║ 
-║░▒║ 
-║░▒║ 
-║░▒║ 
-║░▒║ 
-║░▒║ 
+║░▒║
+║░▒║
+║░▒║
+║░▒║
+║░▒║
+║░▒║
+║░▒║
+║░▒║
+║░▒║
+║░▒║
 ▓▓▓▓
 [█▓]
 [█▓]
-[█▓] 
+[█▓]
 [█▓]
 <quote>
 It's certainly easier to implement bad security and make it illegal for anyone to notice than it is to implement good security.
@@ -77,4 +77,5 @@ Another day another... nickel.<quote>
 "Bad programmers worry about the code. Good programmers worry about data structures and their relationships."
 -- Linus Torvalds<quote>
 "UNIX was not designed to stop its users from doing stupid things, as that would also stop them from doing clever things."
--- Doug Gwyn
+-- Doug Gwyn<quote>
+If you want to keep a secret, you must also hide it from yourself.
