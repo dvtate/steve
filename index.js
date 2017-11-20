@@ -39,23 +39,31 @@ He automates a variety of tasks an gives useful information
 /coinflip - flips a coin and sends the result
 /random - random number generator numbers come after for ranges
 /log - log a value/message (ie- "__chat_id", "__from_id", "__msg_id", "__msg_")
-/system - runs a command on the system (use with caution)
 /fortune - opens a fortune cookie
-/addfortune <fortune message> - adds a fortune to the pool
-/sshcmd - get a command to run to ssh into the server
 /vaporwave <text> - converts normal text to full-width text
 /xkcd - gives a random XKCD comic strip
+/poll - get a feel for the opinions of a group
+/leave - remove steve from a GC
+
+Require Authorization:
+/addfortune <fortune message> - adds a fortune to the pool
+/sshcmd - get a command to run to ssh into the server
 /msg <user/chat id #> <message> - sends a message to the given chat
 /postupdate <category> - posts update.zip (from reply) onto robobibb.github.io/updates
-More at: https://github.com/robobibb/robobibb-steve-bot/
-`);
+/system - runs a command on the system (use with caution)
+/eval <code> - runs js code
+More at: https://github.com/robobibb/steve/
+`, { reply_to_message : msg.message_id });
 	logCmd(msg, "asked for /help");
 });
 
 // send a random cat pic
 bot.onText(/^\/cat(?:@robobibb_bot)?(?:$|\s)/, msg => {
 	const img = request("http://lorempixel.com/400/200/cats/");
-	bot.sendPhoto(msg.chat.id, img, { caption : "look at the kitty!" });
+	bot.sendPhoto(msg.chat.id, img, {
+		 caption : "look at the kitty!",
+		 reply_to_message : msg.message_id
+	 });
 	logCmd(msg, "likes /cat's");
 });
 
@@ -263,15 +271,16 @@ bot.on("callback_query", function(callbackQuery) {
 	}
 });
 
+
 // gives our sm links
 bot.onText(/^\/sm(?:@robobibb_bot)?(?:$|\s)/, function (msg) {
 	bot.sendMessage(msg.chat.id,`
 			Check out our social media accounts:
-			  FaceBook: https://fb.com/teamrobobibb/
-			  Twitter: https://twitter.com/FRC4941
-			  Instagram: https://t.co/K8QYQHTEgu
-			  GitHub: https://github.com/RoboBibb/
-			  Email: frcteam4941@gmail.com / code4941@gmail.com
+			  FaceBook: https://fb.com/teamrobobibb/ - Meyers
+			  Twitter: https://twitter.com/FRC4941 - Landon
+			  Instagram: https://t.co/K8QYQHTEgu - Chloe
+			  GitHub: https://github.com/RoboBibb/ - Programming Team
+			  Email: frcteam4941@gmail.com / code4941@gmail.com - Meyers / tate
 	`, { reply_to_message_id : msg.message_id });
 	logCmd(msg, "asked for our social media");
 });
@@ -410,7 +419,7 @@ bot.on("new_chat_participant", msg => {
 });
 
 // steve can now remove himself from chats
-bot.onText(/^\/leave(?:@robobibb_bot)?(?:$|\s)/, msg => {
+bot.onText(/^\/leave(?:@robobibb_bot)?(?:$|\s)|^gtfo steve$|^go away steve$/i, msg => {
 	bot.leaveChat(msg.chat.id).then((data) => {
 		console.log("data=" + data);
 	}).catch((err) => {
@@ -593,7 +602,7 @@ bot.onText(/^\/sshcmd(?:@robobibb_bot)?(?:$|\s)/, msg => {
 });
 
 
-bot.onText(/^\/postupdate(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
+bot.onText(/^\/postupdate(?:@robobibb_bot)? ([\S\s]+)/i, (msg, match) => {
 
 	// no tag
 	if (match[1] != "all" && match[1] != "impact" && match[1] != "projects" && match[1] != "logs") // invalid category
