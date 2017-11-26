@@ -79,3 +79,5 @@ Another day another... nickel.<quote>
 "UNIX was not designed to stop its users from doing stupid things, as that would also stop them from doing clever things."
 -- Doug Gwyn<quote>
 If you want to keep a secret, you must also hide it from yourself.
+<quote>
+"An eye for an eye" makes the whole world go blind.
