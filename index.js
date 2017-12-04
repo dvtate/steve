@@ -302,11 +302,24 @@ bot.onText(/^\/website(?:@robobibb_bot)?(?:$|\s)/, function (msg) {
 
 
 
-var exchange = require("exchange-rates");
+var exchange = require("open-exchange-rates"),
+	money = require("money");
 
+exchange.set({ app_id : ec88db1238ac4a55b1155c3fe46906a4 });
 
 bot.onText(/^\/exchange(?:@robobibb_bot)? ([0-9\.]+)\s?([a-zA-Z][a-zA-Z][a-zA-Z])(?:\sto\s|\s)?([a-zA-Z][a-zA-Z][a-zA-Z])(?:$|\s)/, (msg) => {
+	exchange.latest(function() {
+		// Apply exchange rates and base rate to `money` library object:
+		money.rates = exchange.rates;
+		money.base	= exchange.base;
 
+		const out = money(match[1]).from(match[2]).to(match[3]);
+		logCmd(msg, `converted ${match[1]} ${match[2]} to ${out} ${match[3]}`);
+
+		// money.js is ready to use:
+		bot.sendMessage(`${out} ${match[3]}`, { reply_to_message : msg.message_id };
+
+	});
 })
 
 
