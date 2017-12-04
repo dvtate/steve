@@ -299,6 +299,17 @@ bot.onText(/^\/website(?:@robobibb_bot)?(?:$|\s)/, function (msg) {
 	logCmd(msg, "asked for /website URL");
 });
 
+
+
+
+var exchange = require("exchange-rates");
+
+
+bot.onText(/^\/exchange(?:@robobibb_bot)? ([0-9\.]+)\s?([a-zA-Z][a-zA-Z][a-zA-Z])(?:\sto\s|\s)?([a-zA-Z][a-zA-Z][a-zA-Z])(?:$|\s)/, (msg) => {
+
+})
+
+
 // random number generator
 bot.onText(/^\/random(?:@robobibb_bot)? (.+)?/, function onEchoText(msg, match) {
 	const args = match[1];
