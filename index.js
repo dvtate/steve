@@ -33,7 +33,7 @@ function logCmd(msg, logMessage) {
 bot.onText(/\/help(?:@robobibb_bot)?/, msg => {
 	bot.sendMessage(msg.chat.id, `
 Steve is RoboBibb\'s telegram automation bot
-He automates a variety of tasks an gives useful information
+He automates a variety of tasks an provides utilities for the members of our group chats.
 
 
 /cat - gives a random cat picture
@@ -48,6 +48,7 @@ He automates a variety of tasks an gives useful information
 /vaporwave <text> - converts normal text to full-width text
 /xkcd - gives a random XKCD comic strip
 /poll - get a feel for the opinions of a group
+/exchange <amt> <from> <to> - convert from one currency to another
 /leave - remove steve from a GC
 
 Require Authorization:
@@ -301,26 +302,63 @@ bot.onText(/^\/website(?:@robobibb_bot)?(?:$|\s)/, function (msg) {
 
 
 
-
+// currency conversion api
 var exchange = require("open-exchange-rates"),
 	money = require("money");
+exchange.set({ app_id : "ec88db1238ac4a55b1155c3fe46906a4" });
 
-exchange.set({ app_id : ec88db1238ac4a55b1155c3fe46906a4 });
-
-bot.onText(/^\/exchange(?:@robobibb_bot)? ([0-9\.]+)\s?([a-zA-Z][a-zA-Z][a-zA-Z])(?:\sto\s|\s)?([a-zA-Z][a-zA-Z][a-zA-Z])(?:$|\s)/, (msg) => {
+// convert from one currency to another
+bot.onText(/^\/exchange(?:@robobibb_bot)? ([0-9\.]+)\s?([a-zA-Z][a-zA-Z][a-zA-Z])(?:\sto\s|\s|)?([a-zA-Z][a-zA-Z][a-zA-Z])(?:$|\s)/, (msg, match) => {
 	exchange.latest(function() {
 		// Apply exchange rates and base rate to `money` library object:
 		money.rates = exchange.rates;
 		money.base	= exchange.base;
 
-		const out = money(match[1]).from(match[2]).to(match[3]);
-		logCmd(msg, `converted ${match[1]} ${match[2]} to ${out} ${match[3]}`);
+		try {
+			// calculate conversion
+			const out = money.convert(parseFloat(match[1]), {
+				from : match[2].toUpperCase(),
+				to : match[3].toUpperCase()
+			});
+		
+	
+			// write to logfile
+			logCmd(msg, `converted ${match[1]} ${match[2]} to ${out} ${match[3]}`);
 
-		// money.js is ready to use:
-		bot.sendMessage(`${out} ${match[3]}`, { reply_to_message : msg.message_id };
+			// send results to user
+			bot.sendMessage(msg.chat.id, `${out} ${match[3]}`, {
+				reply_to_message_id : msg.message_id
+			});
 
+		} catch (e) {
+			if (e == "fx error")
+				bot.sendMessage(msg.chat.id, "invalid currency?", {
+					reply_to_message_id : msg.message_id
+				});
+			else
+				bot.sendMessage(msg.chat.id, "msg @ridderhoff, somethings not right...", {
+					reply_to_message_id : msg.message_id
+				});
+
+			logCmd(msg, `/exchange caught error: ${e}`);
+		}
 	});
-})
+});
+
+bot.onText(/^\/exchange$/, (msg) => {
+	bot.sendMessage(msg.chat.id, `
+Currency Conversion Utility Help:
+Useage: /exchange <quantity> <from> <to>
+
+Commands should be in any of the following formats:
+	- /exchange 20 USD to CAD
+	- /exchange 20usdcad
+	- /exchange 20 usd cad
+
+For a list of currency symbols use the following link: 
+https://www.easymarkets.com/int/learn-centre/discover-trading/currency-acronyms-and-abbreviations/
+`, { reply_to_message_id : msg.message_id });
+});
 
 
 // random number generator
