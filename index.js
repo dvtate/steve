@@ -2,6 +2,7 @@
 
 const request = require("request");
 const fs = require("fs");
+const time = require("time");
 
 const TOKEN = process.env.TELEGRAM_TOKEN;
 const TelegramBot = require("node-telegram-bot-api");
@@ -73,6 +74,7 @@ He automates a variety of tasks an provides utilities for the members of our gro
 /xkcd - gives a random XKCD comic strip
 /poll - get a feel for the opinions of a group
 /exchange <amt> <from> <to> - convert from one currency to another
+/timezone <timezone> - Find the time at a given timezone
 /leave - remove steve from a GC
 
 Require Authorization:
@@ -147,6 +149,17 @@ bot.onText(/^\/echo(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
 	bot.sendMessage(msg.chat.id, resp, { reply_to_message_id : msg.message_id });
 
 	logCmd(msg, "/echo'd text");
+});
+
+// Timezone conversion
+bot.onText(/^\/timezone(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
+	const tz = match[1];
+
+    let timeConv = new time.Date();
+    timeConv.setTimezone(tz);
+	bot.sendMessage(msg.chat.id, `Time in ${tz}: ${timeConv.toString()}`, { reply_to_message_id : msg.message_id });
+
+	logCmd(msg, "/timezone'd");
 });
 
 // ping response testing
