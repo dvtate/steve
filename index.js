@@ -151,27 +151,46 @@ bot.onText(/^\/echo(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
 	logCmd(msg, "/echo'd text");
 });
 
-// Timezone conversion
-bot.onText(/^\/timezone(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
-	const tz = match[1];
 
+// Timezone conversion
+bot.onText(/^\/timezone(?:@robobibb_bot)? ([\S\s]+)(?:$|\s)/, (msg, match) => {
+
+	const tz = match[1];
     let timeConv = new time.Date();
+
 	try {
+
+		// get local time
     	timeConv.setTimezone(tz);
 
+		// send msg
 		bot.sendMessage(msg.chat.id, `Time in ${tz}: ${timeConv.toString()}`, {
 			reply_to_message_id : msg.message_id
 		});
-
 		logCmd(msg, "/timezone'd");
 
-	} catch (e) {
+	} catch (e) { // catch errors from invalid tz
 		bot.sendMessage(msg.chat.id,
-						"Invalid timezone see: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones",
+						"Invalid timezone\nSee: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List",
 						{ reply_to_message_id : msg.message_id }
 					);
 		logCmd(msg, "gave invalid /timezone");
 	};
+});
+
+// Timezone help
+bot.onText(/^\/timezone$/, (msg) => {
+	bot.sendMessage(msg.chat.id, `
+Timezone Checker Help:
+Useage: /timezone <tz database timezone>
+Example commands:
+/timezone America/New_York
+/timezone Cuba
+
+For a complete list of Valid timezones use the following link:
+https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
+`, { reply_to_message_id : msg.message_id });
+	logCmd(msg, "read help for /timezone");
 });
 
 // ping response testing
