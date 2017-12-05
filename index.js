@@ -156,10 +156,22 @@ bot.onText(/^\/timezone(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
 	const tz = match[1];
 
     let timeConv = new time.Date();
-    timeConv.setTimezone(tz);
-	bot.sendMessage(msg.chat.id, `Time in ${tz}: ${timeConv.toString()}`, { reply_to_message_id : msg.message_id });
+	try {
+    	timeConv.setTimezone(tz);
 
-	logCmd(msg, "/timezone'd");
+		bot.sendMessage(msg.chat.id, `Time in ${tz}: ${timeConv.toString()}`, {
+			reply_to_message_id : msg.message_id
+		});
+
+		logCmd(msg, "/timezone'd");
+
+	} catch (e) {
+		bot.sendMessage(msg.chat.id,
+						"Invalid timezone see: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones",
+						{ reply_to_message_id : msg.message_id }
+					);
+		logCmd(msg, "gave invalid /timezone");
+	};
 });
 
 // ping response testing
@@ -218,7 +230,7 @@ bot.onText(/^\/(?:8ball|8)(?:@robobibb_bot)?(?:$|\s)/, msg => {
 			txt = "My psychic side isn't working right now, please try again.";
 			break;
 	}
-	
+
 	bot.sendMessage(msg.chat.id, txt, {reply_to_message_id: msg.message_id});
 	logCmd(msg, "shook /8ball");
 });
