@@ -29,6 +29,30 @@ function logCmd(msg, logMessage) {
 	});
 }
 
+// is the user trustworthy enough for advanced commands?
+// isAuth() called if trustworthy
+// notAuth() called otherwise
+function authorized(usrID, isAuth, notAuth) {
+	// they're an admin ?
+	if (adminIDs.includes(usrID))
+		isAuth();
+	else // in the offical gc ?
+		bot.getChatMember(officialChatID, usrID)
+			.then(usr_ret0 => {
+				if (usr_ret0.status != "left")
+					isAuth();
+				else // in the unoffical gc ?
+					bot.getChatMember(mainChatID, usrID)
+						.then(usr_ret1 => {
+							if (usr_ret1.status != "left")
+								isAuth();
+							else
+								notAuth();
+						}).catch(err => console.log("strange authentication error: 1A --> ", err));
+			}).catch(err => console.log("strange error: authentication 1B -->", err));
+}
+
+
 // help dialog
 bot.onText(/\/help(?:@robobibb_bot)?/, msg => {
 	bot.sendMessage(msg.chat.id, `
@@ -177,8 +201,11 @@ bot.onText(/^\/(?:8ball|8)(?:@robobibb_bot)?(?:$|\s)/, msg => {
 		case 1: txt = "Yes"; break;
 		case 2: txt = "No"; break;
 		case 3: txt = "Maybe"; break;
-		default:txt = "My psychic side isn't working right now, please try again."; break;
+		default:
+			txt = "My psychic side isn't working right now, please try again.";
+			break;
 	}
+	
 	bot.sendMessage(msg.chat.id, txt, {reply_to_message_id: msg.message_id});
 	logCmd(msg, "shook /8ball");
 });
@@ -302,26 +329,27 @@ bot.onText(/^\/website(?:@robobibb_bot)?(?:$|\s)/, function (msg) {
 
 
 
-// currency conversion api
-var exchange = require("open-exchange-rates"),
-	money = require("money");
-exchange.set({ app_id : "ec88db1238ac4a55b1155c3fe46906a4" });
-
 // convert from one currency to another
-bot.onText(/^\/exchange(?:@robobibb_bot)? ([0-9\.]+)\s?([a-zA-Z][a-zA-Z][a-zA-Z])(?:\sto\s|\s|)?([a-zA-Z][a-zA-Z][a-zA-Z])(?:$|\s)/, (msg, match) => {
+bot.onText(/^\/exchange(?:@robobibb_bot)? ([0-9\.]+)\s?([a-zA-Z]{3})(?:\sto\s|\s)?([a-zA-Z]{3})(?:$|\s)/, (msg, match) => {
+	// currency conversion api
+	var exchange = require("open-exchange-rates"),
+		fx = require("money");
+	exchange.set({ app_id : "ec88db1238ac4a55b1155c3fe46906a4" });
+
+	// get current exchange-rates
 	exchange.latest(function() {
-		// Apply exchange rates and base rate to `money` library object:
-		money.rates = exchange.rates;
-		money.base	= exchange.base;
+		// Apply exchange rates and base rate to money/fx library object:
+		fx.rates = exchange.rates;
+		fx.base	= exchange.base;
 
 		try {
 			// calculate conversion
-			const out = money.convert(parseFloat(match[1]), {
+			const out = fx.convert(parseFloat(match[1]), {
 				from : match[2].toUpperCase(),
 				to : match[3].toUpperCase()
 			});
-		
-	
+
+
 			// write to logfile
 			logCmd(msg, `converted ${match[1]} ${match[2]} to ${out} ${match[3]}`);
 
@@ -330,6 +358,7 @@ bot.onText(/^\/exchange(?:@robobibb_bot)? ([0-9\.]+)\s?([a-zA-Z][a-zA-Z][a-zA-Z]
 				reply_to_message_id : msg.message_id
 			});
 
+		// exchange error
 		} catch (e) {
 			if (e == "fx error")
 				bot.sendMessage(msg.chat.id, "invalid currency?", {
@@ -345,6 +374,8 @@ bot.onText(/^\/exchange(?:@robobibb_bot)? ([0-9\.]+)\s?([a-zA-Z][a-zA-Z][a-zA-Z]
 	});
 });
 
+
+// help entry for /exchange
 bot.onText(/^\/exchange$/, (msg) => {
 	bot.sendMessage(msg.chat.id, `
 Currency Conversion Utility Help:
@@ -355,7 +386,7 @@ Commands should be in any of the following formats:
 	- /exchange 20usdcad
 	- /exchange 20 usd cad
 
-For a list of currency symbols use the following link: 
+For a list of currency symbols use the following link:
 https://www.easymarkets.com/int/learn-centre/discover-trading/currency-acronyms-and-abbreviations/
 `, { reply_to_message_id : msg.message_id });
 });
@@ -536,91 +567,6 @@ bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?sudo make me a sandwich/i, msg => {
 	logCmd(msg, "wants a sandwich (sudo)");
 });
 
-function addCommand(msg) {
-	const args = msg.text.split("\n");
-	logCmd(msg, "tried to make a new command");
-	if (args.length < 2) {
-		bot.sendMessage(msg.chat.id, "malformed /newreply, are you supposed to be doing this?")
-	} else {
-		if (args[0] === "/newreply adv") {
-
-		} else if (args[0] === "/newreply") {
-
-			/** how these will work
-			* - take their prompt, and escape all chars
-			* - add it to user_cmds.txt
-			* - add their resp to user_resps.txt
-			* - these will be called in the /hey steve/ event
-			*/
-
-			/*
-						// format the info
-
-			fs.appendFile('assets/user_commands.txt', 'data to append', function (err) {
-			  if (err) throw err;
-			  console.log('Saved!');
-			});*/
-			// attempt PR on GH???
-		}
-	}
-
-}
-
-bot.onText(/^\/newreply(?:@robobibb_bot)?(?:$|\s)/, msg => {
-/*
-	// arrow functions are baller
-	bot.getChatMember(officialChatID, msg.from.id)
-		.then(usr_ret0 => {
-			if (usr_ret0.status != "left") {
-				addCommand(msg);
-			} else {
-				bot.getChatMember(mainChatID, msg.from.id)
-					.then(usr_ret1 => {
-						if (usr_ret1.status != "left") {
-							addCommand(msg);
-						} else {
-							console.log(msg.from.first_name + " " + msg.from.last_name
-							+ " (@" + msg.from.username + ") wasn't allowed to make a command");
-							bot.sendMessage(msg.chat.id, "you are not authorized to run this command");
-						}
-					}).catch(err => console.log("strange error: 1A"));
-			}
-		}).catch(err => console.log("strange error: 1B"));
-*/
-		authorized(msg.from.id, () => addCommand(msg),
-			() => {
-				logCmd(msg, "wasn't allowed to make a command");
-				bot.sendMessage(msg.chat.id, "you are not authorized to run this command");
-			}
-		);
-});
-
-
-
-
-function authorized(usrID, isAuth, notAuth) {
-	if (adminIDs.includes(usrID)) {
-		isAuth();
-	} else {
-		bot.getChatMember(officialChatID, usrID)
-			.then(usr_ret0 => {
-				if (usr_ret0.status != "left") {
-					isAuth();
-				} else {
-					bot.getChatMember(mainChatID, usrID)
-						.then(usr_ret1 => {
-							if (usr_ret1.status != "left") {
-								isAuth();
-							} else {
-								notAuth();
-							}
-						})
-						.catch(err => console.log("strange authentication error: 1A --> ", err));
-				}
-			})
-			.catch(err => console.log("strange error: authentication 1B -->", err));
-	}
-}
 
 
 /// interface to the server
