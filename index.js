@@ -181,15 +181,17 @@ bot.onText(/^\/timezone(?:@robobibb_bot)? ([\S\s]+)(?:$|\s)/, (msg, match) => {
 // Timezone help
 bot.onText(/^\/timezone$/, (msg) => {
 	bot.sendMessage(msg.chat.id, `
-Timezone Checker Help:
-Useage: /timezone <tz database timezone>
-Example commands:
-/timezone America/New_York
-/timezone Cuba
+		Timezone Checker Help:
+		Useage: /timezone <tz database timezone>
+		Example commands:
+		/timezone America/New_York
+		/timezone Cuba
 
-For a complete list of Valid timezones use the following link:
-https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
-`, { reply_to_message_id : msg.message_id });
+		For a complete list of Valid timezones use the following link:
+		https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
+		`, {
+			reply_to_message_id : msg.message_id
+	});
 	logCmd(msg, "read help for /timezone");
 });
 
@@ -199,25 +201,6 @@ bot.onText(/^\/ping(?:@robobibb_bot)?(?:$|\s)/, function onPing(msg) {
 	logCmd(msg, "/ping'd");
 });
 
-bot.onText(/^\/poll(?:@robobibb_bot)?(?:$|\s)/, function (msg) {
-	const repID = msg.reply_to_message ? msg.reply_to_message.message_id : msg.message_id;
-	const opts = {
-		reply_markup : {
-			inline_keyboard: [
-				[ 	{ text: "+1", callback_data: "upvote" },
-					{ text: "-1", callback_data: "downvote" } ],
-				[ { text: "¯\\_(ツ)_/¯", callback_data: "idc" } ]
-			]
-		},
-		reply_to_message_id : repID
-	};
-	bot.sendMessage(msg.chat.id, `
-		vote here:
-		+1 : 0
-		-1 : 0
-		±0 : 0
-	`, opts);
-});
 
 // user wants to join a chat
 bot.onText(/^\/join(?:@robobibb_bot)?(?:$|\s)/, function onJoinRequest(msg) {
@@ -280,72 +263,22 @@ bot.on("callback_query", function(callbackQuery) {
 		logCmd(msg, "wants to join official");
 	} else if (action === "code") {
 		const text = "Click here to join the programming chat: https://t.me/joinchat/AAAAAD_IZ5v-FtjYBUT0cA";
-		logCmd(msg, "wants to join programming");
+		logCmd(msg, "wants to /join programming");
 		bot.editMessageText(text, opts);
 	} else if (action === "web") {
 		const text = "click here to join the website chat: https://t.me/joinchat/AAAAAEDoGWJ1t0xW1tzjzQ";
-		logCmd(msg, "wants to join web team");
+		logCmd(msg, "wants to /join web team");
 		bot.editMessageText(text, opts);
 	} else if (action === "bots") {
 		const text = "click here to join the bot spam chat: https://t.me/joinchat/CMx25A4N48cfJuFRTTdwPg";
-		logCmd(msg, "wants to join bot spammers");
+		logCmd(msg, "wants to /join bot spammers");
 		bot.editMessageText(text, opts);
 	} else if (action === "proxy") {
 		const text = "click here to get passed the firewall: https://t.me/joinchat/CMx25EC8RpXQvjLa8cMmVA";
-		logCmd(msg, "wants to join MaconShadowsocks society");
+		logCmd(msg, "wants to /join MaconShadowsocks society");
 		bot.editMessageText(text, opts);
 	}
 
-	// from /poll
-	else if (action === "upvote") {
-		const upNum = parseInt(msg.text.match(/\+1 : ([0-9]+?)\n/)[1]);
-
-		const opts = {
-			reply_markup : {
-				inline_keyboard: [
-					[ 	{ text: "+1", callback_data: "upvote" },
-						{ text: "-1", callback_data: "downvote" } ],
-					[ { text: "¯\\_(ツ)_/¯", callback_data: "idc" } ]
-				]
-			},
-			chat_id: msg.chat.id,
-			message_id: msg.message_id
-		};
-
-		bot.editMessageText(msg.text.replace(/\+1 : [0-9]+/, "+1 : " + (upNum + 1)), opts);
-
-	} else if (action === "downvote") {
-		const downNum = parseInt(msg.text.match(/\-1 : ([0-9]+?)\n/)[1]);
-
-		const opts = {
-			reply_markup : {
-				inline_keyboard: [
-					[ 	{ text: "+1", callback_data: "upvote" },
-						{ text: "-1", callback_data: "downvote" } ],
-					[ { text: "¯\\_(ツ)_/¯", callback_data: "idc" } ]
-				]
-			},
-			chat_id: msg.chat.id,
-			message_id: msg.message_id
-		};
-		bot.editMessageText(msg.text.replace(/-1 : [0-9]+/, "-1 : " + (downNum + 1)), opts);
-
-	} else if (action === "idc") {
-		const idcNum = parseInt(msg.text.match(/0 : ([0-9]+?)/)[1]);
-
-		const opts = {
-			reply_markup : {
-				inline_keyboard: [
-					[ 	{ text: "+1", callback_data: "upvote" },
-						{ text: "-1", callback_data: "downvote" } ],
-					[ { text: "¯\\_(ツ)_/¯", callback_data: "idc" } ]
-				]
-			},
-			chat_id: msg.chat.id,
-			message_id: msg.message_id
-		};
-		bot.editMessageText(msg.text.replace(/0 : [0-9]+/, "0 : " + (idcNum + 1)), opts);
-	}
 });
 
 
@@ -357,6 +290,7 @@ bot.onText(/^\/sm(?:@robobibb_bot)?(?:$|\s)/, function (msg) {
 			  Twitter: https://twitter.com/FRC4941 - Landon
 			  Instagram: https://t.co/K8QYQHTEgu - Chloe
 			  GitHub: https://github.com/RoboBibb/ - Programming Team
+			  YouTube: https://www.youtube.com/channel/UCu0h4fqfM0H3ygVXqr1eFVg/ - Tate
 			  Email: frcteam4941@gmail.com / code4941@gmail.com - Meyers / tate
 	`, { reply_to_message_id : msg.message_id });
 	logCmd(msg, "asked for our social media");
@@ -422,17 +356,17 @@ bot.onText(/^\/exchange(?:@robobibb_bot)? ([0-9\.]+)\s?([a-zA-Z]{3})(?:\sto\s|\s
 // help entry for /exchange
 bot.onText(/^\/exchange$/, (msg) => {
 	bot.sendMessage(msg.chat.id, `
-Currency Conversion Utility Help:
-Useage: /exchange <quantity> <from> <to>
+		Currency Conversion Utility Help:
+		Useage: /exchange <quantity> <from> <to>
 
-Commands should be in any of the following formats:
-	- /exchange 20 USD to CAD
-	- /exchange 20usdcad
-	- /exchange 20 usd cad
+		Commands should be in any of the following formats:
+			- /exchange 20 USD to CAD
+			- /exchange 20usdcad
+			- /exchange 20 usd cad
 
-For a list of currency symbols use the following link:
-https://www.easymarkets.com/int/learn-centre/discover-trading/currency-acronyms-and-abbreviations/
-`, { reply_to_message_id : msg.message_id });
+		For a list of currency symbols use the following link:
+		https://www.easymarkets.com/int/learn-centre/discover-trading/currency-acronyms-and-abbreviations/
+	`, { reply_to_message_id : msg.message_id });
 });
 
 
