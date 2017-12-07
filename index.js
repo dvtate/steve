@@ -55,7 +55,7 @@ function authorized(usrID, isAuth, notAuth) {
 
 
 // help dialog
-bot.onText(/\/help(?:@robobibb_bot)?/, msg => {
+bot.onText(/\/(?:start|help(?:@robobibb_bot)?)/, msg => {
 	bot.sendMessage(msg.chat.id, `
 Steve is RoboBibb\'s telegram automation bot
 He automates a variety of tasks an provides utilities for the members of our group chats.
@@ -153,7 +153,7 @@ bot.onText(/^\/echo(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
 
 
 // Timezone conversion
-bot.onText(/^\/timezone(?:@robobibb_bot)? ([\S\s]+)(?:$|\s)/, (msg, match) => {
+bot.onText(/^\/(?:timezone|tz)(?:@robobibb_bot)? ([\S\s]+)(?:$|\s)/, (msg, match) => {
 
 	const tz = match[1];
     let timeConv = new time.Date();
@@ -179,7 +179,7 @@ bot.onText(/^\/timezone(?:@robobibb_bot)? ([\S\s]+)(?:$|\s)/, (msg, match) => {
 });
 
 // Timezone help
-bot.onText(/^\/timezone$/, (msg) => {
+bot.onText(/^\/(?:timezone|tz)$/, (msg) => {
 	bot.sendMessage(msg.chat.id, `
 		Timezone Checker Help:
 		Useage: /timezone <tz database timezone>
