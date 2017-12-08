@@ -72,7 +72,6 @@ He automates a variety of tasks an provides utilities for the members of our gro
 /fortune - opens a fortune cookie
 /vaporwave <text> - converts normal text to full-width text
 /xkcd - gives a random XKCD comic strip
-/poll - get a feel for the opinions of a group
 /exchange <amt> <from> <to> - convert from one currency to another
 /timezone <timezone> - Find the time at a given timezone
 /leave - remove steve from a GC
@@ -179,7 +178,7 @@ bot.onText(/^\/(?:timezone|tz)(?:@robobibb_bot)? ([\S\s]+)(?:$|\s)/, (msg, match
 });
 
 // Timezone help
-bot.onText(/^\/(?:timezone|tz)$/, (msg) => {
+bot.onText(/^\/(?:timezone|tz)(?:@robobibb_bot)?$/, (msg) => {
 	bot.sendMessage(msg.chat.id, `
 		Timezone Checker Help:
 		Useage: /timezone <tz database timezone>
@@ -329,7 +328,7 @@ bot.onText(/^\/exchange(?:@robobibb_bot)? ([0-9\.]+)\s?([a-zA-Z]{3})(?:\sto\s|\s
 
 
 			// write to logfile
-			logCmd(msg, `converted ${match[1]} ${match[2]} to ${out} ${match[3]}`);
+			logCmd(msg, `converted ${match[2]} to ${match[3]}`);
 
 			// send results to user
 			bot.sendMessage(msg.chat.id, `${out} ${match[3]}`, {
@@ -339,7 +338,8 @@ bot.onText(/^\/exchange(?:@robobibb_bot)? ([0-9\.]+)\s?([a-zA-Z]{3})(?:\sto\s|\s
 		// exchange error
 		} catch (e) {
 			if (e == "fx error")
-				bot.sendMessage(msg.chat.id, "invalid currency?", {
+				bot.sendMessage(msg.chat.id, "invalid currency. See list: \
+https://www.easymarkets.com/int/learn-centre/discover-trading/currency-acronyms-and-abbreviations/", {
 					reply_to_message_id : msg.message_id
 				});
 			else
@@ -354,18 +354,18 @@ bot.onText(/^\/exchange(?:@robobibb_bot)? ([0-9\.]+)\s?([a-zA-Z]{3})(?:\sto\s|\s
 
 
 // help entry for /exchange
-bot.onText(/^\/exchange$/, (msg) => {
+bot.onText(/^\/exchange(?:@robobibb_bot)?$/, (msg) => {
 	bot.sendMessage(msg.chat.id, `
-		Currency Conversion Utility Help:
-		Useage: /exchange <quantity> <from> <to>
+	Currency Conversion Utility Help:
+	Useage: /exchange <quantity> <from> <to>
 
-		Commands should be in any of the following formats:
-			- /exchange 20 USD to CAD
-			- /exchange 20usdcad
-			- /exchange 20 usd cad
+	Commands should be in any of the following formats:
+		- /exchange 20 USD to CAD
+		- /exchange 20usdcad
+		- /exchange 20 usd cad
 
-		For a list of currency symbols use the following link:
-		https://www.easymarkets.com/int/learn-centre/discover-trading/currency-acronyms-and-abbreviations/
+	For a list of currency symbols use the following link:
+	https://www.easymarkets.com/int/learn-centre/discover-trading/currency-acronyms-and-abbreviations/
 	`, { reply_to_message_id : msg.message_id });
 });
 
@@ -505,48 +505,6 @@ bot.onText(/^\/leave(?:@robobibb_bot)?(?:$|\s)|^gtfo steve$|^go away steve$/i, m
 });
 
 
-/// emulating humans
-
-// just to confuse people
-bot.onText(/^is steve (?:a\s)?(human|bot)\?/i, msg => {
-	bot.sendMessage(msg.chat.id, "Yes", { reply_to_message_id : msg.message_id });
-	const img = request("http://www.seosmarty.com/wp-content/uploads/2009/05/captcha-7.jpg");
-	bot.sendPhoto(msg.chat.id, img, { caption: "Are YOU a human? proove it!" });
-
-	logCmd(msg, "suspects I'm an AI");
-});
-
-
-// ofc we follow instructions
-bot.onText(/^shutup steve|steve shutup/, msg => {
-	bot.sendMessage(msg.chat.id, "No thx", { reply_to_message_id : msg.message_id });
-	logCmd(msg, "told me to shut up");
-});
-
-// hey siri
-bot.onText(/^(?:hey\s|hi\s)?steve(?:\.|\?|\!)?$/i, msg => {
-	bot.sendMessage(msg.chat.id, "wuddup");
-	logCmd(msg, "got my attention");
-});
-
-// this is a reference to 2001 space oddysey
-bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?make me a sandwich/i, msg => {
-	bot.sendAudio(msg.chat.id, "assets/sound_files/cantdo.mp3",	{
-		caption : "I'm afraid I can't do that...",
-		reply_to_message_id : msg.message_id
-	});
-	logCmd(msg, "wants a sandwich");
-});
-
-// Sudo fun ;P
-bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?sudo make me a sandwich/i, msg => {
-	bot.sendMessage(msg.chat.id, "You're a sandwich!",
-		{ reply_to_message_id : msg.message_id });
-	logCmd(msg, "wants a sandwich (sudo)");
-});
-
-
-
 /// interface to the server
 bot.onText(/^\/system(?:@robobibb_bot)? (.+)/, (msg, match) => {
 	const command = match[1];
@@ -617,7 +575,6 @@ bot.onText(/^\/postupdate(?:@robobibb_bot)? ([\S\s]+)/i, (msg, match) => {
 			});
 		});
 
-
 });
 
 
@@ -639,4 +596,59 @@ bot.onText(/^\/eval(?:@robobibb_bot)? (.+)/, (msg, match) => {
                         logCmd(msg, "is not authorized to /eval");
                 }
         );
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/// understanding convos
+
+// just to confuse people
+bot.onText(/^is steve (?:a\s)?(human|bot)\?/i, msg => {
+	bot.sendMessage(msg.chat.id, "Yes", { reply_to_message_id : msg.message_id });
+	const img = request("http://www.seosmarty.com/wp-content/uploads/2009/05/captcha-7.jpg");
+	bot.sendPhoto(msg.chat.id, img, { caption: "Are YOU a human? proove it!" });
+
+	logCmd(msg, "suspects I'm an AI");
+});
+
+
+// ofc we follow instructions
+bot.onText(/^shutup steve|steve shutup/, msg => {
+	bot.sendMessage(msg.chat.id, "No thx", { reply_to_message_id : msg.message_id });
+	logCmd(msg, "told me to shut up");
+});
+
+// hey siri
+bot.onText(/^(?:hey\s|hi\s)?steve(?:\.|\?|\!)?$/i, msg => {
+	bot.sendMessage(msg.chat.id, "wuddup");
+	logCmd(msg, "got my attention");
+});
+
+// this is a reference to 2001 space oddysey
+bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?make me a sandwich/i, msg => {
+	bot.sendAudio(msg.chat.id, "assets/sound_files/cantdo.mp3",	{
+		caption : "I'm afraid I can't do that...",
+		reply_to_message_id : msg.message_id
+	});
+	logCmd(msg, "wants a sandwich");
+});
+
+// Sudo fun ;P
+bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?sudo make me a sandwich/i, msg => {
+	bot.sendMessage(msg.chat.id, "You're a sandwich!",
+		{ reply_to_message_id : msg.message_id });
+	logCmd(msg, "wants a sandwich (sudo)");
 });
