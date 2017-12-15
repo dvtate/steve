@@ -1,12 +1,12 @@
 "use strict";
 
+const TOKEN = process.env.TELEGRAM_TOKEN;
+const TelegramBot = require("node-telegram-bot-api");
+const bot = new TelegramBot(TOKEN, { polling: true });
 const request = require("request");
 const fs = require("fs");
 const time = require("time");
 
-const TOKEN = process.env.TELEGRAM_TOKEN;
-const TelegramBot = require("node-telegram-bot-api");
-const bot = new TelegramBot(TOKEN, { polling: true });
 
 // chats
 const officialChatID = "-1001065686661";
@@ -486,7 +486,7 @@ bot.onText(/^\/vaporwave(?:@robobibb_bot)? (.+)/, (msg, match) => {
 });
 
 // Welcome new members :)
-bot.on("new_chat_participant", msg => {
+bot.on("new_chat_members", msg => {
 	console.log("new user(s):");
 	msg.new_chat_members.forEach(function(mem) {
 		bot.sendMessage(msg.chat.id, `Welcome to ${msg.chat.title}, ${mem.first_name}!`);
