@@ -3,6 +3,7 @@
 const TOKEN = process.env.TELEGRAM_TOKEN;
 const TelegramBot = require("node-telegram-bot-api");
 const bot = new TelegramBot(TOKEN, { polling: true });
+
 const request = require("request");
 const fs = require("fs");
 const time = require("time");
@@ -489,7 +490,9 @@ bot.onText(/^\/vaporwave(?:@robobibb_bot)? (.+)/, (msg, match) => {
 bot.on("new_chat_members", msg => {
 	console.log("new user(s):");
 	msg.new_chat_members.forEach(function(mem) {
-		bot.sendMessage(msg.chat.id, `Welcome to ${msg.chat.title}, ${mem.first_name}!`);
+		bot.sendMessage(msg.chat.id, `Welcome to ${msg.chat.title}, ${mem.first_name}!`, {
+			reply_to_message_id : msg.message_id
+		});
 		console.log(`  * ${mem.first_name} ${mem.last_name} (@${mem.username}), joined  ${msg.chat.title}`);
 	});
 });
