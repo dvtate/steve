@@ -56,11 +56,10 @@ async function authorized(usrID, isAuth, notAuth) {
 
 
 // help dialog
-bot.onText(/\/(?:start|help(?:@robobibb_bot)?)/, msg => {
+bot.onText(/^\/(?:start|help(?:@robobibb_bot)?)(?:$|\s)/, msg => {
 	bot.sendMessage(msg.chat.id, `
 Steve is RoboBibb\'s telegram automation bot
 He automates a variety of tasks an provides utilities for the members of our group chats.
-
 
 /cat - gives a random cat picture
 /echo <message> - steve repeats <message>
@@ -455,7 +454,7 @@ bot.onText(/^\/msg(?:@robobibb_bot)? (\S+) ([\S\s]+)/, (msg, match) => {
 		console.log(`info=${info}`);
 		bot.sendMessage(msg.chat.id, "Message sent.", { reply_to_message_id : msg.message_id } );
 	}).catch(err => {
-		bot.sendMessage(`error: ${error}`, { reply_to_message_id : msg.message_id } );
+		bot.sendMessage(msg.chat.id, `error: ${error}`, { reply_to_message_id : msg.message_id } );
 	});
 
 	logCmd(`sent a /msg to ${args[1]}`);
