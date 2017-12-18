@@ -21,7 +21,7 @@ const adminIDs = [ 46580443,	// k3 (gh@Technohacker) (tg@Technohackr
 				 ];
 
 // Function to simplify logging
-function logCmd(msg, logMessage) {
+async function logCmd(msg, logMessage) {
 	const timestamp = require("node-datetime").create().format("[Y-m-d@H:M:S]");
 	const entry = `${timestamp}: ${msg.from.first_name} ${msg.from.last_name} (@${msg.from.username}) ${logMessage}`;
 	fs.appendFile("steve_useage.log", entry + '\n', (err) => {
@@ -34,7 +34,7 @@ function logCmd(msg, logMessage) {
 // is the user trustworthy enough for advanced commands?
 // isAuth() called if trustworthy
 // notAuth() called otherwise
-function authorized(usrID, isAuth, notAuth) {
+async function authorized(usrID, isAuth, notAuth) {
 	// they're an admin ?
 	if (adminIDs.includes(usrID))
 		isAuth();
@@ -449,13 +449,13 @@ The correct syntax for /msg is as follows:
 });
 
 bot.onText(/^\/msg(?:@robobibb_bot)? (\S+) ([\S\s]+)/, (msg, match) => {
-	bot.sendMessage(match[1], `${args[2]}\n\n
+	bot.sendMessage(match[1], `${match[2]}\n\n
 	**From user#${msg.from.id} via /msg.**"
 	`, { parse_mode : "markdown" }).then(info => {
 		console.log(`info=${info}`);
 		bot.sendMessage(msg.chat.id, "Message sent.", { reply_to_message_id : msg.message_id } );
 	}).catch(err => {
-		bot.sendMessage(`error: ${error}`, {reply_to_message_id : msg.message_id } );
+		bot.sendMessage(`error: ${error}`, { reply_to_message_id : msg.message_id } );
 	});
 
 	logCmd(`sent a /msg to ${args[1]}`);
