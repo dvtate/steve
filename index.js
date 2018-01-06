@@ -21,7 +21,7 @@ const adminIDs = [ 46580443,	// k3 (gh@Technohacker) (tg@Technohackr
 				 ];
 
 // Function to simplify logging
-async function logCmd(msg, logMessage) {
+async function logCmd(msg, logMessageText) {
 	const timestamp = require("node-datetime").create().format("[Y-m-d@H:M:S]");
 	const entry = `${timestamp}: ${msg.from.first_name} ${msg.from.last_name} (@${msg.from.username}) ${logMessage}`;
 	fs.appendFile("steve_useage.log", entry + '\n', (err) => {
@@ -32,6 +32,7 @@ async function logCmd(msg, logMessage) {
 }
 
 // is the user trustworthy enough for advanced commands?
+// checks if they are in a robobibb group chat
 // isAuth() called if trustworthy
 // notAuth() called otherwise
 async function authorized(usrID, isAuth, notAuth) {
@@ -206,11 +207,12 @@ bot.onText(/^\/join(?:@robobibb_bot)?(?:$|\s)/, function onJoinRequest(msg) {
 	const opts = {
 		reply_markup: {
 			inline_keyboard: [
-				[ { text: "RoboBibb Offical", callback_data: "offical" } ],
-				[ { text: "Programming team", callback_data: "code" } ],
-				[ { text: "Website team", callback_data: "web" } ],
-				[ { text: "Bot Spammers", callback_data: "bots" } ],
-				[ { text: "Proxy/VPN Users", callback_data: "proxy" } ]
+				[ { text: "RoboBibb Offical", callback_data: "join_offical" } ],
+				[ { text: "Programming team", callback_data: "join_code" } ],
+				[ { text: "Website team", callback_data: "join_web" } ],
+				[ { text: "Media Team", callback_data: "join_media" } ],
+				[ { text: "Bot Spammers", callback_data: "join_bots" } ],
+				[ { text: "Proxy/VPN Users", callback_data: "join_proxy" } ]
 			]
 		},
 		reply_to_message_id : msg.message_id
@@ -251,7 +253,7 @@ bot.on("callback_query", function(callbackQuery) {
 	};
 
 	// from '/join'
-	if (action === "offical") {
+	if (action === "join_offical") {
 		const text = "@ridderhoff has been contacted and will try to add you to the chat";
 		bot.editMessageText(text, opts);
 		bot.sendMessage("147617508", `${usr.first_name} ${usr.last_name} (@${usr.username}) wants to join offical`);
@@ -260,21 +262,25 @@ bot.on("callback_query", function(callbackQuery) {
 		bot.forwardMessage("147617508", msg.chat.id, msg.reply_to_message.message_id);
 
 		logCmd(msg, "wants to join official");
-	} else if (action === "code") {
+	} else if (action === "join_code") {
 		const text = "Click here to join the programming chat: https://t.me/joinchat/AAAAAD_IZ5v-FtjYBUT0cA";
 		logCmd(msg, "wants to /join programming");
 		bot.editMessageText(text, opts);
-	} else if (action === "web") {
+	} else if (action === "join_web") {
 		const text = "click here to join the website chat: https://t.me/joinchat/AAAAAEDoGWJ1t0xW1tzjzQ";
 		logCmd(msg, "wants to /join web team");
 		bot.editMessageText(text, opts);
-	} else if (action === "bots") {
+	} else if (action === "join_bots") {
 		const text = "click here to join the bot spam chat: https://t.me/joinchat/CMx25A4N48cfJuFRTTdwPg";
 		logCmd(msg, "wants to /join bot spammers");
 		bot.editMessageText(text, opts);
-	} else if (action === "proxy") {
+	} else if (action === "join_proxy") {
 		const text = "click here to get passed the firewall: https://t.me/joinchat/CMx25EC8RpXQvjLa8cMmVA";
 		logCmd(msg, "wants to /join MaconShadowsocks society");
+		bot.editMessageText(text, opts);
+	} else if (action === "join_media") {
+		const text = "click here to join media team: https://t.me/joinchat/Dj6XLxD-lP1k8dVbmnz2zw";
+		logCmd(msg, "wants to /join media team");
 		bot.editMessageText(text, opts);
 	}
 
@@ -290,7 +296,7 @@ bot.onText(/^\/sm(?:@robobibb_bot)?(?:$|\s)/, function (msg) {
 			  Instagram: https://t.co/K8QYQHTEgu - Chloe
 			  GitHub: https://github.com/RoboBibb/ - Programming Team
 			  YouTube: https://www.youtube.com/channel/UCu0h4fqfM0H3ygVXqr1eFVg/ - Tate
-			  Email: frcteam4941@gmail.com / code4941@gmail.com - Meyers / tate
+			  Email: frcteam4941@gmail.com | code4941@gmail.com - Meyers | Tate
 	`, { reply_to_message_id : msg.message_id });
 	logCmd(msg, "asked for our social media");
 });
@@ -599,8 +605,6 @@ bot.onText(/^\/eval(?:@robobibb_bot)? (.+)/, (msg, match) => {
                 }
         );
 });
-
-
 
 
 
