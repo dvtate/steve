@@ -21,9 +21,9 @@ const adminIDs = [ 46580443,	// k3 (gh@Technohacker) (tg@Technohackr
 				 ];
 
 // Function to simplify logging
-async function logCmd(msg, logMessageText) {
+async function logCmd(msg, logMsgText) {
 	const timestamp = require("node-datetime").create().format("[Y-m-d@H:M:S]");
-	const entry = `${timestamp}: ${msg.from.first_name} ${msg.from.last_name} (@${msg.from.username}) ${logMessage}`;
+	const entry = `${timestamp}: ${msg.from.first_name} ${msg.from.last_name} (@${msg.from.username}) ${logMsgText}`;
 	fs.appendFile("steve_useage.log", entry + '\n', (err) => {
 		if (err)
 			throw err;
