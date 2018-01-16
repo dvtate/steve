@@ -558,30 +558,56 @@ bot.onText(/^\/sshcmd(?:@robobibb_bot)?(?:$|\s)/, msg => {
 	);
 });
 
+bot.onText(/^\/postupdate(?:@robobibb_bot)?(?:$|\s)/, msg => {
+	locCmd(msg, "asked for help with /postUpdate");
+	bot.sendMessage(msg.chat.id, `
+		Post Website Update Help:
+		Useage: /postupdate <category>
+			<category>: subject of update (one of \`all\`, \`impact\`, \`projects\`, or \`logs\`)
+		Purpose: to add an article to https://robobibb.github.io/updates
+
+		This command must be sent as a reply to a .zip file containing a minimum of the following:
+			- body.html: the contents of the page
+			- thumb.png: a square picture to represent the article
+			- title.txt: the article's title
+			- summary.txt: a twitter post length summary of the article
+
+
+	`, { reply_to_message_id : msg.message_id });
+
+
+});
 
 bot.onText(/^\/postupdate(?:@robobibb_bot)? ([\S\s]+)/i, (msg, match) => {
 
+
 	// no tag
-	if (match[1] != "all" && match[1] != "impact" && match[1] != "projects" && match[1] != "logs") // invalid category
+	if (match[1] != "all" && match[1] != "impact" && match[1] != "projects" && match[1] != "logs") {// invalid category
 		bot.sendMessage(msg.chat.id, "error: invalid category, use: all, impact, projects or log", {
 			reply_to_message : msg.message_id
 		});
+		logCmd(msg, "used invalid category for /postupdate");
 
 	// not a reply to a document
-	else if (!msg.reply_to_message || !msg.reply_to_message.document)
+	} else if (!msg.reply_to_message || !msg.reply_to_message.document) {
 		bot.sendMessage(msg.chat.id,
 						"error: please reply to an update.zip file.",
 						{ reply_to_message_id : msg.message_id });
-
+		logCmd(msg, "didn't use /postupdate as a reply to .zip");
 	// seems good, check if they're authorized
 	else
 		authorized(msg.from.id,
-			() => { require("./post_update").postUpdate(msg, bot, match[1], TOKEN); },
+			() => {
+				logCmd(msg, "ran /postupdate");
+				require("./post_update").postUpdate(msg, bot, match[1], TOKEN);
+			},
 			() => {
 				bot.sendMessage(msg.chat.id, "error: unauthorized", {
 					reply_to_message_id : msg.message_id
-			});
-		});
+				});
+				logCmd(msg, "is not authorized to use /postupdate");
+			}
+		);
 
 });
 
