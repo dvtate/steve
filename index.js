@@ -566,16 +566,18 @@ bot.onText(/^\/postupdate(?:@robobibb_bot)?(?:$|\s)/, msg => {
 			<category>: subject of update (one of \`all\`, \`impact\`, \`projects\`, or \`logs\`)
 		Purpose: to add an article to https://robobibb.github.io/updates
 
-		This command must be sent as a reply to a .zip file containing a minimum of the following:
+		This command must be sent as a reply to an update.zip file containing the following:
 			- body.html: the contents of the page
 			- thumb.png: a square picture to represent the article
 			- title.txt: the article's title
 			- summary.txt: a twitter post length summary of the article
 
+		other files will be put in same directory as article on website.
+
+		for more help on writing your body.html file, see robobibb.github.io/updates/u/0/
 
 	`, { reply_to_message_id : msg.message_id });
-
-
+	logCmd(msg, "needs help with /postupdate");
 });
 
 bot.onText(/^\/postupdate(?:@robobibb_bot)? ([\S\s]+)/i, (msg, match) => {
