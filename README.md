@@ -1,5 +1,5 @@
 # Steve the Telegram Bot
-A bot for RoboBibb's telegram groupchats. This bot is programmed for node.js and runs on a Raspberry pi.
+A bot for RoboBibb's telegram groupchats. This bot is programmed for node.js and runs on a Raspberry pi. Message steve [here](https://t.me/robobibb_bot).
 
 ## How to use:
 ### Deployment:
