@@ -597,7 +597,7 @@ bot.onText(/^\/postupdate(?:@robobibb_bot)? ([\S\s]+)/i, (msg, match) => {
 						{ reply_to_message_id : msg.message_id });
 		logCmd(msg, "didn't use /postupdate as a reply to .zip");
 	// seems good, check if they're authorized
-	else
+	} else
 		authorized(msg.from.id,
 			() => {
 				logCmd(msg, "ran /postupdate");
