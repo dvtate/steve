@@ -558,7 +558,7 @@ bot.onText(/^\/sshcmd(?:@robobibb_bot)?(?:$|\s)/, msg => {
 	);
 });
 
-bot.onText(/^\/postupdate(?:@robobibb_bot)?(?:$|\s)/, msg => {
+bot.onText(/^\/postupdate(?:@robobibb_bot)?(?:$|\s)/i, msg => {
 	locCmd(msg, "asked for help with /postUpdate");
 	bot.sendMessage(msg.chat.id, `
 		Post Website Update Help:
@@ -577,7 +577,6 @@ bot.onText(/^\/postupdate(?:@robobibb_bot)?(?:$|\s)/, msg => {
 		for more help on writing your body.html file, see robobibb.github.io/updates/u/0/
 
 	`, { reply_to_message_id : msg.message_id });
-	logCmd(msg, "needs help with /postupdate");
 });
 
 bot.onText(/^\/postupdate(?:@robobibb_bot)? ([\S\s]+)/i, (msg, match) => {
