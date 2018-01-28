@@ -558,7 +558,7 @@ bot.onText(/^\/sshcmd(?:@robobibb_bot)?(?:$|\s)/, msg => {
 	);
 });
 
-bot.onText(/^\/postupdate(?:@robobibb_bot)?(?:$|\s)/i, msg => {
+bot.onText(/^\/postupdate(?:@robobibb_bot)?$/i, msg => {
 	locCmd(msg, "asked for help with /postUpdate");
 	bot.sendMessage(msg.chat.id, `
 		Post Website Update Help:
