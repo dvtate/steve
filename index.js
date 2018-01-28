@@ -153,13 +153,21 @@ bot.onText(/^\/echo(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
 
 // Timezone conversion
 bot.onText(/^\/timezone(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
-	const tz = match[1];
+    const tz = match[1];
+    const timeString = match[2];
 
-    let timeConv = new time.Date();
+    let timeConv;
+
+    if (time) {
+        timeConv = new time.Date(timeString);
+    } else {
+        timeConv = new time.Date();
+    }
+
     timeConv.setTimezone(tz);
-	bot.sendMessage(msg.chat.id, `Time in ${tz}: ${timeConv.toString()}`, { reply_to_message_id : msg.message_id });
+    bot.sendMessage(msg.chat.id, `Time in ${tz}: ${timeConv.toString()}`, { reply_to_message_id : msg.message_id });
 
-	logCmd(msg, "/timezone'd");
+    logCmd(msg, "/tz'd");
 });
 
 // ping response testing
