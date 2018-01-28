@@ -34,5 +34,5 @@ printf "done\n"
 
 # install dependencies
 echo "installing dependencies..."
-npm install --save node-telegram-bot-api node-datetime open-exchange-rates money
+npm install --save node-telegram-bot-api node-datetime open-exchange-rates money time
 echo "installed dependencies"

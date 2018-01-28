@@ -1,12 +1,13 @@
 "use strict";
 
+const TOKEN = process.env.TELEGRAM_TOKEN;
+const TelegramBot = require("node-telegram-bot-api");
+const bot = new TelegramBot(TOKEN, { polling: true });
+
 const request = require("request");
 const fs = require("fs");
 const time = require("time");
 
-const TOKEN = process.env.TELEGRAM_TOKEN;
-const TelegramBot = require("node-telegram-bot-api");
-const bot = new TelegramBot(TOKEN, { polling: true });
 
 // chats
 const officialChatID = "-1001065686661";
@@ -20,9 +21,9 @@ const adminIDs = [ 46580443,	// k3 (gh@Technohacker) (tg@Technohackr
 				 ];
 
 // Function to simplify logging
-function logCmd(msg, logMessage) {
+async function logCmd(msg, logMsgText) {
 	const timestamp = require("node-datetime").create().format("[Y-m-d@H:M:S]");
-	const entry = `${timestamp}: ${msg.from.first_name} ${msg.from.last_name} (@${msg.from.username}) ${logMessage}`;
+	const entry = `${timestamp}: ${msg.from.first_name} ${msg.from.last_name} (@${msg.from.username}) ${logMsgText}`;
 	fs.appendFile("steve_useage.log", entry + '\n', (err) => {
 		if (err)
 			throw err;
@@ -31,9 +32,10 @@ function logCmd(msg, logMessage) {
 }
 
 // is the user trustworthy enough for advanced commands?
+// checks if they are in a robobibb group chat
 // isAuth() called if trustworthy
 // notAuth() called otherwise
-function authorized(usrID, isAuth, notAuth) {
+async function authorized(usrID, isAuth, notAuth) {
 	// they're an admin ?
 	if (adminIDs.includes(usrID))
 		isAuth();
@@ -55,11 +57,10 @@ function authorized(usrID, isAuth, notAuth) {
 
 
 // help dialog
-bot.onText(/\/help(?:@robobibb_bot)?/, msg => {
+bot.onText(/^\/(?:start|help(?:@robobibb_bot)?)(?:$|\s)/, msg => {
 	bot.sendMessage(msg.chat.id, `
 Steve is RoboBibb\'s telegram automation bot
 He automates a variety of tasks an provides utilities for the members of our group chats.
-
 
 /cat - gives a random cat picture
 /echo <message> - steve repeats <message>
@@ -72,7 +73,6 @@ He automates a variety of tasks an provides utilities for the members of our gro
 /fortune - opens a fortune cookie
 /vaporwave <text> - converts normal text to full-width text
 /xkcd - gives a random XKCD comic strip
-/poll - get a feel for the opinions of a group
 /exchange <amt> <from> <to> - convert from one currency to another
 /timezone <timezone> - Find the time at a given timezone
 /leave - remove steve from a GC
@@ -151,23 +151,55 @@ bot.onText(/^\/echo(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
 	logCmd(msg, "/echo'd text");
 });
 
+
 // Timezone conversion
-bot.onText(/^\/timezone(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
-    const tz = match[1];
+bot.onText(/^\/(?:timezone|tz)(?:@robobibb_bot)? ([\S\s]+)(?:$|\s)/, (msg, match) => {
+
+	const tz = match[1];
     const timeString = match[2];
-
     let timeConv;
-
-    if (time) {
-        timeConv = new time.Date(timeString);
+    
+    if (timeString) {
+        timeConv = new time.Date(timeConv);
     } else {
         timeConv = new time.Date();
     }
 
-    timeConv.setTimezone(tz);
-    bot.sendMessage(msg.chat.id, `Time in ${tz}: ${timeConv.toString()}`, { reply_to_message_id : msg.message_id });
+	try {
 
-    logCmd(msg, "/tz'd");
+		// get local time
+    	timeConv.setTimezone(tz);
+
+		// send msg
+		bot.sendMessage(msg.chat.id, `Time in ${tz}: ${timeConv.toString()}`, {
+			reply_to_message_id : msg.message_id
+		});
+		logCmd(msg, "/timezone'd");
+
+	} catch (e) { // catch errors from invalid tz
+		bot.sendMessage(msg.chat.id,
+						"Invalid timezone\nSee: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List",
+						{ reply_to_message_id : msg.message_id }
+					);
+		logCmd(msg, "gave invalid /timezone");
+	};
+});
+
+// Timezone help
+bot.onText(/^\/(?:timezone|tz)(?:@robobibb_bot)?$/, (msg) => {
+	bot.sendMessage(msg.chat.id, `
+		Timezone Checker Help:
+		Useage: /timezone <tz database timezone> [ISO date]
+		Example commands:
+		/timezone America/New_York
+		/timezone Cuba
+
+		For a complete list of Valid timezones use the following link:
+		https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
+		`, {
+			reply_to_message_id : msg.message_id
+	});
+	logCmd(msg, "read help for /timezone");
 });
 
 // ping response testing
@@ -176,36 +208,18 @@ bot.onText(/^\/ping(?:@robobibb_bot)?(?:$|\s)/, function onPing(msg) {
 	logCmd(msg, "/ping'd");
 });
 
-bot.onText(/^\/poll(?:@robobibb_bot)?(?:$|\s)/, function (msg) {
-	const repID = msg.reply_to_message ? msg.reply_to_message.message_id : msg.message_id;
-	const opts = {
-		reply_markup : {
-			inline_keyboard: [
-				[ 	{ text: "+1", callback_data: "upvote" },
-					{ text: "-1", callback_data: "downvote" } ],
-				[ { text: "¯\\_(ツ)_/¯", callback_data: "idc" } ]
-			]
-		},
-		reply_to_message_id : repID
-	};
-	bot.sendMessage(msg.chat.id, `
-		vote here:
-		+1 : 0
-		-1 : 0
-		±0 : 0
-	`, opts);
-});
 
 // user wants to join a chat
 bot.onText(/^\/join(?:@robobibb_bot)?(?:$|\s)/, function onJoinRequest(msg) {
 	const opts = {
 		reply_markup: {
 			inline_keyboard: [
-				[ { text: "RoboBibb Offical", callback_data: "offical" } ],
-				[ { text: "Programming team", callback_data: "code" } ],
-				[ { text: "Website team", callback_data: "web" } ],
-				[ { text: "Bot Spammers", callback_data: "bots" } ],
-				[ { text: "Proxy/VPN Users", callback_data: "proxy" } ]
+				[ { text: "RoboBibb Offical", callback_data: "join_offical" } ],
+				[ { text: "Programming team", callback_data: "join_code" } ],
+				[ { text: "Website team", callback_data: "join_web" } ],
+				[ { text: "Media Team", callback_data: "join_media" } ],
+				[ { text: "Bot Spammers", callback_data: "join_bots" } ],
+				[ { text: "Proxy/VPN Users", callback_data: "join_proxy" } ]
 			]
 		},
 		reply_to_message_id : msg.message_id
@@ -226,7 +240,7 @@ bot.onText(/^\/(?:8ball|8)(?:@robobibb_bot)?(?:$|\s)/, msg => {
 			txt = "My psychic side isn't working right now, please try again.";
 			break;
 	}
-	
+
 	bot.sendMessage(msg.chat.id, txt, {reply_to_message_id: msg.message_id});
 	logCmd(msg, "shook /8ball");
 });
@@ -246,7 +260,7 @@ bot.on("callback_query", function(callbackQuery) {
 	};
 
 	// from '/join'
-	if (action === "offical") {
+	if (action === "join_offical") {
 		const text = "@ridderhoff has been contacted and will try to add you to the chat";
 		bot.editMessageText(text, opts);
 		bot.sendMessage("147617508", `${usr.first_name} ${usr.last_name} (@${usr.username}) wants to join offical`);
@@ -255,74 +269,28 @@ bot.on("callback_query", function(callbackQuery) {
 		bot.forwardMessage("147617508", msg.chat.id, msg.reply_to_message.message_id);
 
 		logCmd(msg, "wants to join official");
-	} else if (action === "code") {
+	} else if (action === "join_code") {
 		const text = "Click here to join the programming chat: https://t.me/joinchat/AAAAAD_IZ5v-FtjYBUT0cA";
-		logCmd(msg, "wants to join programming");
+		logCmd(msg, "wants to /join programming");
 		bot.editMessageText(text, opts);
-	} else if (action === "web") {
+	} else if (action === "join_web") {
 		const text = "click here to join the website chat: https://t.me/joinchat/AAAAAEDoGWJ1t0xW1tzjzQ";
-		logCmd(msg, "wants to join web team");
+		logCmd(msg, "wants to /join web team");
 		bot.editMessageText(text, opts);
-	} else if (action === "bots") {
+	} else if (action === "join_bots") {
 		const text = "click here to join the bot spam chat: https://t.me/joinchat/CMx25A4N48cfJuFRTTdwPg";
-		logCmd(msg, "wants to join bot spammers");
+		logCmd(msg, "wants to /join bot spammers");
 		bot.editMessageText(text, opts);
-	} else if (action === "proxy") {
+	} else if (action === "join_proxy") {
 		const text = "click here to get passed the firewall: https://t.me/joinchat/CMx25EC8RpXQvjLa8cMmVA";
-		logCmd(msg, "wants to join MaconShadowsocks society");
+		logCmd(msg, "wants to /join MaconShadowsocks society");
+		bot.editMessageText(text, opts);
+	} else if (action === "join_media") {
+		const text = "click here to join media team: https://t.me/joinchat/Dj6XLxD-lP1k8dVbmnz2zw";
+		logCmd(msg, "wants to /join media team");
 		bot.editMessageText(text, opts);
 	}
 
-	// from /poll
-	else if (action === "upvote") {
-		const upNum = parseInt(msg.text.match(/\+1 : ([0-9]+?)\n/)[1]);
-
-		const opts = {
-			reply_markup : {
-				inline_keyboard: [
-					[ 	{ text: "+1", callback_data: "upvote" },
-						{ text: "-1", callback_data: "downvote" } ],
-					[ { text: "¯\\_(ツ)_/¯", callback_data: "idc" } ]
-				]
-			},
-			chat_id: msg.chat.id,
-			message_id: msg.message_id
-		};
-
-		bot.editMessageText(msg.text.replace(/\+1 : [0-9]+/, "+1 : " + (upNum + 1)), opts);
-
-	} else if (action === "downvote") {
-		const downNum = parseInt(msg.text.match(/\-1 : ([0-9]+?)\n/)[1]);
-
-		const opts = {
-			reply_markup : {
-				inline_keyboard: [
-					[ 	{ text: "+1", callback_data: "upvote" },
-						{ text: "-1", callback_data: "downvote" } ],
-					[ { text: "¯\\_(ツ)_/¯", callback_data: "idc" } ]
-				]
-			},
-			chat_id: msg.chat.id,
-			message_id: msg.message_id
-		};
-		bot.editMessageText(msg.text.replace(/-1 : [0-9]+/, "-1 : " + (downNum + 1)), opts);
-
-	} else if (action === "idc") {
-		const idcNum = parseInt(msg.text.match(/0 : ([0-9]+?)/)[1]);
-
-		const opts = {
-			reply_markup : {
-				inline_keyboard: [
-					[ 	{ text: "+1", callback_data: "upvote" },
-						{ text: "-1", callback_data: "downvote" } ],
-					[ { text: "¯\\_(ツ)_/¯", callback_data: "idc" } ]
-				]
-			},
-			chat_id: msg.chat.id,
-			message_id: msg.message_id
-		};
-		bot.editMessageText(msg.text.replace(/0 : [0-9]+/, "0 : " + (idcNum + 1)), opts);
-	}
 });
 
 
@@ -334,7 +302,8 @@ bot.onText(/^\/sm(?:@robobibb_bot)?(?:$|\s)/, function (msg) {
 			  Twitter: https://twitter.com/FRC4941 - Landon
 			  Instagram: https://t.co/K8QYQHTEgu - Chloe
 			  GitHub: https://github.com/RoboBibb/ - Programming Team
-			  Email: frcteam4941@gmail.com / code4941@gmail.com - Meyers / tate
+			  YouTube: https://www.youtube.com/channel/UCu0h4fqfM0H3ygVXqr1eFVg/ - Tate
+			  Email: frcteam4941@gmail.com | code4941@gmail.com - Meyers | Tate
 	`, { reply_to_message_id : msg.message_id });
 	logCmd(msg, "asked for our social media");
 });
@@ -372,7 +341,7 @@ bot.onText(/^\/exchange(?:@robobibb_bot)? ([0-9\.]+)\s?([a-zA-Z]{3})(?:\sto\s|\s
 
 
 			// write to logfile
-			logCmd(msg, `converted ${match[1]} ${match[2]} to ${out} ${match[3]}`);
+			logCmd(msg, `converted ${match[2]} to ${match[3]}`);
 
 			// send results to user
 			bot.sendMessage(msg.chat.id, `${out} ${match[3]}`, {
@@ -382,7 +351,8 @@ bot.onText(/^\/exchange(?:@robobibb_bot)? ([0-9\.]+)\s?([a-zA-Z]{3})(?:\sto\s|\s
 		// exchange error
 		} catch (e) {
 			if (e == "fx error")
-				bot.sendMessage(msg.chat.id, "invalid currency?", {
+				bot.sendMessage(msg.chat.id, "invalid currency. See list: \
+https://www.easymarkets.com/int/learn-centre/discover-trading/currency-acronyms-and-abbreviations/", {
 					reply_to_message_id : msg.message_id
 				});
 			else
@@ -397,19 +367,19 @@ bot.onText(/^\/exchange(?:@robobibb_bot)? ([0-9\.]+)\s?([a-zA-Z]{3})(?:\sto\s|\s
 
 
 // help entry for /exchange
-bot.onText(/^\/exchange$/, (msg) => {
+bot.onText(/^\/exchange(?:@robobibb_bot)?$/, (msg) => {
 	bot.sendMessage(msg.chat.id, `
-Currency Conversion Utility Help:
-Useage: /exchange <quantity> <from> <to>
+	Currency Conversion Utility Help:
+	Useage: /exchange <quantity> <from> <to>
 
-Commands should be in any of the following formats:
-	- /exchange 20 USD to CAD
-	- /exchange 20usdcad
-	- /exchange 20 usd cad
+	Commands should be in any of the following formats:
+		- /exchange 20 USD to CAD
+		- /exchange 20usdcad
+		- /exchange 20 usd cad
 
-For a list of currency symbols use the following link:
-https://www.easymarkets.com/int/learn-centre/discover-trading/currency-acronyms-and-abbreviations/
-`, { reply_to_message_id : msg.message_id });
+	For a list of currency symbols use the following link:
+	https://www.easymarkets.com/int/learn-centre/discover-trading/currency-acronyms-and-abbreviations/
+	`, { reply_to_message_id : msg.message_id });
 });
 
 
@@ -491,13 +461,13 @@ The correct syntax for /msg is as follows:
 });
 
 bot.onText(/^\/msg(?:@robobibb_bot)? (\S+) ([\S\s]+)/, (msg, match) => {
-	bot.sendMessage(match[1], `${args[2]}\n\n
+	bot.sendMessage(match[1], `${match[2]}\n\n
 	**From user#${msg.from.id} via /msg.**"
 	`, { parse_mode : "markdown" }).then(info => {
 		console.log(`info=${info}`);
 		bot.sendMessage(msg.chat.id, "Message sent.", { reply_to_message_id : msg.message_id } );
 	}).catch(err => {
-		bot.sendMessage(`error: ${error}`, {reply_to_message_id : msg.message_id } );
+		bot.sendMessage(msg.chat.id, `error: ${error}`, { reply_to_message_id : msg.message_id } );
 	});
 
 	logCmd(`sent a /msg to ${args[1]}`);
@@ -529,10 +499,12 @@ bot.onText(/^\/vaporwave(?:@robobibb_bot)? (.+)/, (msg, match) => {
 });
 
 // Welcome new members :)
-bot.on("new_chat_participant", msg => {
+bot.on("new_chat_members", msg => {
 	console.log("new user(s):");
 	msg.new_chat_members.forEach(function(mem) {
-		bot.sendMessage(msg.chat.id, `Welcome to ${msg.chat.title}, ${mem.first_name}!`);
+		bot.sendMessage(msg.chat.id, `Welcome to ${msg.chat.title}, ${mem.first_name}!`, {
+			reply_to_message_id : msg.message_id
+		});
 		console.log(`  * ${mem.first_name} ${mem.last_name} (@${mem.username}), joined  ${msg.chat.title}`);
 	});
 });
@@ -546,48 +518,6 @@ bot.onText(/^\/leave(?:@robobibb_bot)?(?:$|\s)|^gtfo steve$|^go away steve$/i, m
 	});
 	logCmd(msg, `made me leave chat ${msg.chat.title}`);
 });
-
-
-/// emulating humans
-
-// just to confuse people
-bot.onText(/^is steve (?:a\s)?(human|bot)\?/i, msg => {
-	bot.sendMessage(msg.chat.id, "Yes", { reply_to_message_id : msg.message_id });
-	const img = request("http://www.seosmarty.com/wp-content/uploads/2009/05/captcha-7.jpg");
-	bot.sendPhoto(msg.chat.id, img, { caption: "Are YOU a human? proove it!" });
-
-	logCmd(msg, "suspects I'm an AI");
-});
-
-
-// ofc we follow instructions
-bot.onText(/^shutup steve|steve shutup/, msg => {
-	bot.sendMessage(msg.chat.id, "No thx", { reply_to_message_id : msg.message_id });
-	logCmd(msg, "told me to shut up");
-});
-
-// hey siri
-bot.onText(/^(?:hey\s|hi\s)?steve(?:\.|\?|\!)?$/i, msg => {
-	bot.sendMessage(msg.chat.id, "wuddup");
-	logCmd(msg, "got my attention");
-});
-
-// this is a reference to 2001 space oddysey
-bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?make me a sandwich/i, msg => {
-	bot.sendAudio(msg.chat.id, "assets/sound_files/cantdo.mp3",	{
-		caption : "I'm afraid I can't do that...",
-		reply_to_message_id : msg.message_id
-	});
-	logCmd(msg, "wants a sandwich");
-});
-
-// Sudo fun ;P
-bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?sudo make me a sandwich/i, msg => {
-	bot.sendMessage(msg.chat.id, "You're a sandwich!",
-		{ reply_to_message_id : msg.message_id });
-	logCmd(msg, "wants a sandwich (sudo)");
-});
-
 
 
 /// interface to the server
@@ -635,31 +565,57 @@ bot.onText(/^\/sshcmd(?:@robobibb_bot)?(?:$|\s)/, msg => {
 	);
 });
 
+bot.onText(/^\/postupdate(?:@robobibb_bot)?$/i, msg => {
+	locCmd(msg, "asked for help with /postUpdate");
+	bot.sendMessage(msg.chat.id, `
+		Post Website Update Help:
+		Useage: /postupdate <category>
+			<category>: subject of update (one of \`all\`, \`impact\`, \`projects\`, or \`logs\`)
+		Purpose: to add an article to https://robobibb.github.io/updates
+
+		This command must be sent as a reply to an update.zip file containing the following:
+			- body.html: the contents of the page
+			- thumb.png: a square picture to represent the article
+			- title.txt: the article's title
+			- summary.txt: a twitter post length summary of the article
+
+		other files will be put in same directory as article on website.
+
+		for more help on writing your body.html file, see robobibb.github.io/updates/u/0/
+
+	`, { reply_to_message_id : msg.message_id });
+});
 
 bot.onText(/^\/postupdate(?:@robobibb_bot)? ([\S\s]+)/i, (msg, match) => {
 
+
 	// no tag
-	if (match[1] != "all" && match[1] != "impact" && match[1] != "projects" && match[1] != "logs") // invalid category
+	if (match[1] != "all" && match[1] != "impact" && match[1] != "projects" && match[1] != "logs") {// invalid category
 		bot.sendMessage(msg.chat.id, "error: invalid category, use: all, impact, projects or log", {
 			reply_to_message : msg.message_id
 		});
+		logCmd(msg, "used invalid category for /postupdate");
 
 	// not a reply to a document
-	else if (!msg.reply_to_message || !msg.reply_to_message.document)
+	} else if (!msg.reply_to_message || !msg.reply_to_message.document) {
 		bot.sendMessage(msg.chat.id,
 						"error: please reply to an update.zip file.",
 						{ reply_to_message_id : msg.message_id });
-
+		logCmd(msg, "didn't use /postupdate as a reply to .zip");
 	// seems good, check if they're authorized
-	else
+	} else
 		authorized(msg.from.id,
-			() => { require("./post_update").postUpdate(msg, bot, match[1], TOKEN); },
+			() => {
+				logCmd(msg, "ran /postupdate");
+				require("./post_update").postUpdate(msg, bot, match[1], TOKEN);
+			},
 			() => {
 				bot.sendMessage(msg.chat.id, "error: unauthorized", {
 					reply_to_message_id : msg.message_id
-			});
-		});
-
+				});
+				logCmd(msg, "is not authorized to use /postupdate");
+			}
+		);
 
 });
 
@@ -682,4 +638,57 @@ bot.onText(/^\/eval(?:@robobibb_bot)? (.+)/, (msg, match) => {
                         logCmd(msg, "is not authorized to /eval");
                 }
         );
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/// understanding convos
+
+// just to confuse people
+bot.onText(/^is steve (?:a\s)?(human|bot)\?/i, msg => {
+	bot.sendMessage(msg.chat.id, "Yes", { reply_to_message_id : msg.message_id });
+	const img = request("http://www.seosmarty.com/wp-content/uploads/2009/05/captcha-7.jpg");
+	bot.sendPhoto(msg.chat.id, img, { caption: "Are YOU a human? proove it!" });
+
+	logCmd(msg, "suspects I'm an AI");
+});
+
+
+// ofc we follow instructions
+bot.onText(/^shutup steve|steve shutup/, msg => {
+	bot.sendMessage(msg.chat.id, "No thx", { reply_to_message_id : msg.message_id });
+	logCmd(msg, "told me to shut up");
+});
+
+// hey siri
+bot.onText(/^(?:hey\s|hi\s)?steve(?:\.|\?|\!)?$/i, msg => {
+	bot.sendMessage(msg.chat.id, "wuddup");
+	logCmd(msg, "got my attention");
+});
+
+// this is a reference to 2001 space oddysey
+bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?make me a sandwich/i, msg => {
+	bot.sendAudio(msg.chat.id, "assets/sound_files/cantdo.mp3",	{
+		caption : "I'm afraid I can't do that...",
+		reply_to_message_id : msg.message_id
+	});
+	logCmd(msg, "wants a sandwich");
+});
+
+// Sudo fun ;P
+bot.onText(/(?:hey\s)?steve(?:\.|\?|\!|\,)?.?sudo make me a sandwich/i, msg => {
+	bot.sendMessage(msg.chat.id, "You're a sandwich!",
+		{ reply_to_message_id : msg.message_id });
+	logCmd(msg, "wants a sandwich (sudo)");
 });
