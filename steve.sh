@@ -1,35 +1,15 @@
 #!/bin/sh
 
 ## this script is used to run the bot
-## in addition it helps to maintain privacy of our bot token
+## in addition it helps to maintain privacy of our bot tokens
 
-# telegram bot token (this will be edited by setup.sh)
-export TELEGRAM_TOKEN=your token
+echo "starting steve..."
 
-# github API token
-export GH_TOKEN=your token
+# get keys from fs
+export TG_KEY=$(cat $HOME/.steve/tg_key)
+export SLACK_KEY=$(cat $HOME/.steve/slack_key)
 
-# gets run after Steve is killed
-function cleanup {
-	printf "Killing Steve... "
-	kill -KILL $STEVE_PID
-	printf "done\n"
-}
+# start bot
+node index.js
 
-# run cleanup before exiting
-trap cleanup EXIT
-
-# gets run before Steve is started
-printf "Spawning Steve... "
-
-# start steve & mark his PID
-node index.js & 
-STEVE_PID=$!
-
-printf "done\n"
-
-# wait for eternity... unless they kill me...
-cat
-
-# this should never get run
-echo "Steve -> error -> cat abuse..."
+echo "bot died?"

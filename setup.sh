@@ -8,29 +8,41 @@ printf "marking scripts as runable..."
 chmod +x setup.sh update.sh steve.sh push_fortunes.sh ws_setup.sh ws_cleanup.sh
 printf " done\n"
 
+
+printf "making ~/.steve..."
+mkdir "$HOME/.steve"
+echo "done"
+
 # if token wasn't exported by update.sh or steve.sh
 # then we need to prompt the user for it
-if [ -z "$TELEGRAM_TOKEN" ]; then
+if [ ! -f $HOME/.steve/tg_key ]; then
 	# get bot token
 	printf "Enter your Telegram Bot API token: "
 	read TELEGRAM_TOKEN
+
+    # put token into config dir
+    printf "inserting token into ur ~/.steve/tg_key... "
+    echo $TELEGRAM_TOKEN > $HOME/.steve/tg_key
+
+    echo "done"
+
 fi
 
-: '
-# if token wasnt exported by update.sh or steve.sh
+
+# if token wasn't exported by update.sh or steve.sh
 # then we need to prompt the user for it
-if [ -z "$GH_TOKEN" ]; then
+if [ ! -f $HOME/.steve/slack_key ]; then
 	# get bot token
-	printf "Enter your GitHub API token: "
-	read GH_TOKEN
-fi
-'
+	printf "Enter your Slack Token (xoxb-...): "
+	read SLACK_TOKEN
 
-# put token into steve.sh
-printf "inserting token into steve.sh... "
-sed -i "s/^export TELEGRAM_TOKEN=.*/export TELEGRAM_TOKEN=${TELEGRAM_TOKEN}/" steve.sh
-#sed -i "s/^export GH_TOKEN=.*/export GH_TOKEN=${GH_TOKEN}/" steve.sh
-printf "done\n"
+    # put token into config dir
+    printf "inserting token into ur ~/.steve/slack_key ... "
+    echo $SLACK_TOKEN > $HOME/.steve/slack_key
+
+    echo "done"
+
+fi
 
 # install dependencies
 echo "installing dependencies..."
