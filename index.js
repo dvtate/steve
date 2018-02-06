@@ -1,6 +1,6 @@
 "use strict";
 
-const TOKEN = process.env.TELEGRAM_TOKEN;
+const TOKEN = process.env.TG_KEY;
 const TelegramBot = require("node-telegram-bot-api");
 const bot = new TelegramBot(TOKEN, { polling: true });
 
@@ -21,10 +21,10 @@ const adminIDs = [ 46580443,	// k3 (gh@Technohacker) (tg@Technohackr
 				 ];
 
 // Function to simplify logging
-async function logCmd(msg, logMsgText) {
+async function logCmd(msg, logMessage) {
 	const timestamp = require("node-datetime").create().format("[Y-m-d@H:M:S]");
-	const entry = `${timestamp}: ${msg.from.first_name} ${msg.from.last_name} (@${msg.from.username}) ${logMsgText}`;
-	fs.appendFile("steve_useage.log", entry + '\n', (err) => {
+	const entry = `${timestamp}: ${msg.from.first_name} ${msg.from.last_name} (@${msg.from.username}) ${logMessage}`;
+	fs.appendFile("/home/alarm/.steve/steve_useage.log", entry + '\n', (err) => {
 		if (err)
 			throw err;
 		console.log(entry);
@@ -32,7 +32,6 @@ async function logCmd(msg, logMsgText) {
 }
 
 // is the user trustworthy enough for advanced commands?
-// checks if they are in a robobibb group chat
 // isAuth() called if trustworthy
 // notAuth() called otherwise
 async function authorized(usrID, isAuth, notAuth) {
@@ -55,6 +54,8 @@ async function authorized(usrID, isAuth, notAuth) {
 			}).catch(err => console.log("strange error: authentication 1B -->", err));
 }
 
+// bind slack bot to steve
+require("./slack.js").setBot(bot);
 
 // help dialog
 bot.onText(/^\/(?:start|help(?:@robobibb_bot)?)(?:$|\s)/, msg => {
@@ -120,7 +121,7 @@ bot.onText(/^\/xkcd(?:@robobibb_bot)?$/, msg => {
 
 // sends a specific XKCD comic strip
 bot.onText(/^\/xkcd(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
-	let url = `https://xkcd.com/${match[1] === "latest" ? "" : match[1]}`
+	let url = `https://xkcd.com/${match[1] === "latest" ? "" : match[1]}`;
 	request(url, (error, response, body) => {
 		if (error) {
 			console.log(`/xkcd - error: ${error}`);
@@ -156,14 +157,7 @@ bot.onText(/^\/echo(?:@robobibb_bot)? ([\S\s]+)/, (msg, match) => {
 bot.onText(/^\/(?:timezone|tz)(?:@robobibb_bot)? ([\S\s]+)(?:$|\s)/, (msg, match) => {
 
 	const tz = match[1];
-    const timeString = match[2];
-    let timeConv;
-    
-    if (timeString) {
-        timeConv = new time.Date(timeConv);
-    } else {
-        timeConv = new time.Date();
-    }
+    let timeConv = new time.Date();
 
 	try {
 
@@ -189,7 +183,7 @@ bot.onText(/^\/(?:timezone|tz)(?:@robobibb_bot)? ([\S\s]+)(?:$|\s)/, (msg, match
 bot.onText(/^\/(?:timezone|tz)(?:@robobibb_bot)?$/, (msg) => {
 	bot.sendMessage(msg.chat.id, `
 		Timezone Checker Help:
-		Useage: /timezone <tz database timezone> [ISO date]
+		Useage: /timezone <tz database timezone>
 		Example commands:
 		/timezone America/New_York
 		/timezone Cuba
@@ -214,12 +208,11 @@ bot.onText(/^\/join(?:@robobibb_bot)?(?:$|\s)/, function onJoinRequest(msg) {
 	const opts = {
 		reply_markup: {
 			inline_keyboard: [
-				[ { text: "RoboBibb Offical", callback_data: "join_offical" } ],
-				[ { text: "Programming team", callback_data: "join_code" } ],
-				[ { text: "Website team", callback_data: "join_web" } ],
-				[ { text: "Media Team", callback_data: "join_media" } ],
-				[ { text: "Bot Spammers", callback_data: "join_bots" } ],
-				[ { text: "Proxy/VPN Users", callback_data: "join_proxy" } ]
+				[ { text: "RoboBibb Offical", callback_data: "offical" } ],
+				[ { text: "Programming team", callback_data: "code" } ],
+				[ { text: "Website team", callback_data: "web" } ],
+				[ { text: "Bot Spammers", callback_data: "bots" } ],
+				[ { text: "Proxy/VPN Users", callback_data: "proxy" } ]
 			]
 		},
 		reply_to_message_id : msg.message_id
@@ -260,7 +253,7 @@ bot.on("callback_query", function(callbackQuery) {
 	};
 
 	// from '/join'
-	if (action === "join_offical") {
+	if (action === "offical") {
 		const text = "@ridderhoff has been contacted and will try to add you to the chat";
 		bot.editMessageText(text, opts);
 		bot.sendMessage("147617508", `${usr.first_name} ${usr.last_name} (@${usr.username}) wants to join offical`);
@@ -269,25 +262,21 @@ bot.on("callback_query", function(callbackQuery) {
 		bot.forwardMessage("147617508", msg.chat.id, msg.reply_to_message.message_id);
 
 		logCmd(msg, "wants to join official");
-	} else if (action === "join_code") {
+	} else if (action === "code") {
 		const text = "Click here to join the programming chat: https://t.me/joinchat/AAAAAD_IZ5v-FtjYBUT0cA";
 		logCmd(msg, "wants to /join programming");
 		bot.editMessageText(text, opts);
-	} else if (action === "join_web") {
+	} else if (action === "web") {
 		const text = "click here to join the website chat: https://t.me/joinchat/AAAAAEDoGWJ1t0xW1tzjzQ";
 		logCmd(msg, "wants to /join web team");
 		bot.editMessageText(text, opts);
-	} else if (action === "join_bots") {
+	} else if (action === "bots") {
 		const text = "click here to join the bot spam chat: https://t.me/joinchat/CMx25A4N48cfJuFRTTdwPg";
 		logCmd(msg, "wants to /join bot spammers");
 		bot.editMessageText(text, opts);
-	} else if (action === "join_proxy") {
+	} else if (action === "proxy") {
 		const text = "click here to get passed the firewall: https://t.me/joinchat/CMx25EC8RpXQvjLa8cMmVA";
 		logCmd(msg, "wants to /join MaconShadowsocks society");
-		bot.editMessageText(text, opts);
-	} else if (action === "join_media") {
-		const text = "click here to join media team: https://t.me/joinchat/Dj6XLxD-lP1k8dVbmnz2zw";
-		logCmd(msg, "wants to /join media team");
 		bot.editMessageText(text, opts);
 	}
 
@@ -303,7 +292,7 @@ bot.onText(/^\/sm(?:@robobibb_bot)?(?:$|\s)/, function (msg) {
 			  Instagram: https://t.co/K8QYQHTEgu - Chloe
 			  GitHub: https://github.com/RoboBibb/ - Programming Team
 			  YouTube: https://www.youtube.com/channel/UCu0h4fqfM0H3ygVXqr1eFVg/ - Tate
-			  Email: frcteam4941@gmail.com | code4941@gmail.com - Meyers | Tate
+			  Email: frcteam4941@gmail.com / code4941@gmail.com - Meyers / tate
 	`, { reply_to_message_id : msg.message_id });
 	logCmd(msg, "asked for our social media");
 });
@@ -414,10 +403,7 @@ bot.onText(/^\/random(?:@robobibb_bot)? (.+)?/, function onEchoText(msg, match) 
 
 // coin flip
 bot.onText(/^\/coinflip(?:@robobibb_bot)?(?:$|\s)/, msg => {
-	if (Math.random() > 0.5)
-		bot.sendMessage(msg.chat.id, "heads");
-	else
-		bot.sendMessage(msg.chat.id, "tails");
+	bot.sendMessage(msg.chat.id, Math.random() > 0.5 ? "heads" : "tails");
 	logCmd(msg, "flipped a coin");
 });
 
@@ -565,60 +551,58 @@ bot.onText(/^\/sshcmd(?:@robobibb_bot)?(?:$|\s)/, msg => {
 	);
 });
 
-bot.onText(/^\/postupdate(?:@robobibb_bot)?$/i, msg => {
-	locCmd(msg, "asked for help with /postUpdate");
-	bot.sendMessage(msg.chat.id, `
-		Post Website Update Help:
-		Useage: /postupdate <category>
-			<category>: subject of update (one of \`all\`, \`impact\`, \`projects\`, or \`logs\`)
-		Purpose: to add an article to https://robobibb.github.io/updates
 
-		This command must be sent as a reply to an update.zip file containing the following:
-			- body.html: the contents of the page
-			- thumb.png: a square picture to represent the article
-			- title.txt: the article's title
-			- summary.txt: a twitter post length summary of the article
+bot.onText(/^\/postupdate(?:@robobibb_bot)? ([\S\s]+)/i, (msg, match) => {
+
+	// no tag
+	if (match[1] != "all" && match[1] != "impact" && match[1] != "projects" && match[1] != "logs") // invalid category
+		bot.sendMessage(msg.chat.id, "error: invalid category, use: all, impact, projects or log", {
+			reply_to_message : msg.message_id
+		});
+
+	// not a reply to a document
+	else if (!msg.reply_to_message || !msg.reply_to_message.document)
+		bot.sendMessage(msg.chat.id,
+						"error: please reply to an update.zip file.",
+						{ reply_to_message_id : msg.message_id });
+
+	// seems good, check if they're authorized
+	else
+		authorized(msg.from.id,
+			() => { require("./post_update").postUpdate(msg, bot, match[1], TOKEN); },
+			() => {
+				bot.sendMessage(msg.chat.id, "error: unauthorized", {
+					reply_to_message_id : msg.message_id
+			});
+		});
+
+});
+
+bot.onText(/^\/postupdate(?:@robobibb_bot)?(?:$|\s)/i, msg => {
+	bot.sendMessage(msg.chat.id, `
+		/postUpdate <category>
+		post an update to RoboBibb.github.io/updates
+
+		Arguments:
+		<category> - category of update (options- all, logs, projects, impact)
+
+		This command must be sent as a reply to an \`update.zip\` file.
+
+		update.zip must contain:
+		- thumb.png - approximately square thumbnail image for article in listing
+		- title.txt - text file containing title of article
+		- summary.txt - twitter length summary of article
+		- body.html - actual article content, text, etc. formatted in html
 
 		other files will be put in same directory as article on website.
 
 		for more help on writing your body.html file, see robobibb.github.io/updates/u/0/
+	`, {
+		reply_to_message_id : msg.message_id
+	});
 
-	`, { reply_to_message_id : msg.message_id });
+	logCmd(msg, "needs help with /postupdate");
 });
-
-bot.onText(/^\/postupdate(?:@robobibb_bot)? ([\S\s]+)/i, (msg, match) => {
-
-
-	// no tag
-	if (match[1] != "all" && match[1] != "impact" && match[1] != "projects" && match[1] != "logs") {// invalid category
-		bot.sendMessage(msg.chat.id, "error: invalid category, use: all, impact, projects or log", {
-			reply_to_message : msg.message_id
-		});
-		logCmd(msg, "used invalid category for /postupdate");
-
-	// not a reply to a document
-	} else if (!msg.reply_to_message || !msg.reply_to_message.document) {
-		bot.sendMessage(msg.chat.id,
-						"error: please reply to an update.zip file.",
-						{ reply_to_message_id : msg.message_id });
-		logCmd(msg, "didn't use /postupdate as a reply to .zip");
-	// seems good, check if they're authorized
-	} else
-		authorized(msg.from.id,
-			() => {
-				logCmd(msg, "ran /postupdate");
-				require("./post_update").postUpdate(msg, bot, match[1], TOKEN);
-			},
-			() => {
-				bot.sendMessage(msg.chat.id, "error: unauthorized", {
-					reply_to_message_id : msg.message_id
-				});
-				logCmd(msg, "is not authorized to use /postupdate");
-			}
-		);
-
-});
-
 
 bot.onText(/^\/eval(?:@robobibb_bot)? (.+)/, (msg, match) => {
         authorized(msg.from.id,
@@ -639,6 +623,8 @@ bot.onText(/^\/eval(?:@robobibb_bot)? (.+)/, (msg, match) => {
                 }
         );
 });
+
+
 
 
 

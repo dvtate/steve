@@ -18,8 +18,6 @@ If you still need help feel free to contact @ridderhoff", {
 		return;
 	}
 
-	bot.sendMessage(msg.from.id, "downloading update.zip", { reply_to_message_id : msg.message_id });
-
 	bot.getFileLink(msg.reply_to_message.document.file_id).then(fileURL => {
 
 		// ws_setup.sh does the following
@@ -28,16 +26,10 @@ If you still need help feel free to contact @ridderhoff", {
 		// make dir.txt to tell us where the directory is
 		// unpack update.zip into the directory
 		require("child_process").spawnSync("sh", [ "ws_setup.sh", fileURL ], {stdio:"inherit"});
-		bot.sendMessage(msg.chat.id, `
-			cloning the website repo...
-			making space for the new page...
-			saving the directory...
-			unpacking update.zip into directory...
-		`, { reply_to_message_id : msg.message_id }
-		);
+
 
 		var dir = fs.readFileSync("dir.txt", "utf8");
-		dir = `${dir}`.replace(/\n/, ""); // remove newlines && convert to string
+		dir = `${dir}`.replace(/\n/, "");
 
 		console.log(`getting post content from ${dir}...`);
 
@@ -45,9 +37,9 @@ If you still need help feel free to contact @ridderhoff", {
 		const author = genAuthor(msg.from);
 
 		try {
-			var title = fs.readFileSync(dir + "/title.txt", "utf8").replace(/\n/, "");;
+			var title = fs.readFileSync(dir + "/title.txt", "utf8");
 			var body = fs.readFileSync(dir + "/body.html", "utf8");
-			var summary = fs.readFileSync(dir + "/summary.txt", "utf8").replace(/\n/, "");;
+			var summary = fs.readFileSync(dir + "/summary.txt", "utf8");
 		} catch (e) {
 
 			console.log("error: something missing://///");
@@ -62,6 +54,7 @@ If you still need help feel free to contact @ridderhoff", {
 
 		}
 
+
 		if (!fs.existsSync(dir + "/thumb.png")) {
 			bot.sendMessage(msg.chat.id, "error: update.zip lacks thumb.png", {
 				reply_to_message : msg.message_id
@@ -69,17 +62,7 @@ If you still need help feel free to contact @ridderhoff", {
 			return;
 		}
 
-		bot.sendMessage(msg.chat.id, "update.zip seems to contain all needed files", {
-			reply_to_message_id : msg.message_id
-		});
-
-		bot.sendMessage(msg.chat.id, `
-			generating update from template...
-			adding update to listing...
-		`, { reply_to_message_id : msg.message_id });
-
 		console.log("generating update from a template...");
-
 		// write our webpage
 		fs.writeFileSync(dir + "/index.html", genArticle(title, summary, author, date, body));
 
@@ -87,10 +70,13 @@ If you still need help feel free to contact @ridderhoff", {
 
 		// add webpage to listing
 		var data = fs.readFileSync("robobibb.github.io/updates/index.html", "utf8");
+
+
 		var listing = genListing(dir.match(/\/([0-9]+?)\/?$/)[1], title, summary);
+
+
 		var result = `${data}`.replace(/id="list_all">/, "id=\"list_all\">\n" + listing);
 
-		// add article to non-all category too
 		if (category != "all")
 			if (category == "impact")
 				result = result.replace(/id="list_impact">/, "id=\"list_impact\">\n" + listing);
@@ -99,25 +85,18 @@ If you still need help feel free to contact @ridderhoff", {
 			else if (category == "logs")
 				result = result.replace(/id="list_logs">/, "id=\"list_logs\">\n" + listing);
 
-		// write listing
 		fs.writeFileSync("robobibb.github.io/updates/index.html", result);
 
 
-		bot.sendMessage(msg.chat.id, `
-			cleaning page directory...
-			publishing page to github...
-		`, { reply_to_message_id : msg.message_id });
-
 		console.log("finishing up...");
-
 		// remove unneeded files and commit
 		require("child_process").spawnSync("sh", [ "ws_cleanup.sh", author ], { stdio: "inherit" });
 
 	}).catch(error => {
-		bot.sendMessage(msg.chat.id, "error: failed to create link, try again... (maybe telegram's fault)", {
+		bot.sendMessage(msg.chat.id, "error: failed to create link", {
 			reply_to_message : msg.message_id
 		});
-		console.log(`err:\n${error}`);
+		console.log(`fuck:\n${error}`);
 	});
 }
 
@@ -174,14 +153,13 @@ function genArticle(title, description, author, date, body) {
 
 // make the authors name using msg.from
 function genAuthor(from) {
-
-	// they are guaranteed to have a first name (telegram requires)
+	// they are graduated to have a first name
 	var ret = from.first_name;
 
 	if (from.last_name)
 		ret += " " + from.last_name;
 	if (from.username)
-		ret += ` (@${from.username})`;
+		ret += " (@" + from.username + ")";
 
 	return ret;
 }
