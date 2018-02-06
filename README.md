@@ -1,5 +1,5 @@
 # Steve, RoboBibb's Chat Bot
-A bot for RoboBibb's communication mediums. This bot is programmed for node.js and runs on a Raspberry pi. Message steve [here](https://t.me/robobibb_bot).
+A bot for RoboBibb's communication mediums. This bot is programmed for node.js and runs on a Raspberry pi. Anyone can [messaage steve](https://t.me/robobibb_bot). freely in Telegram, however, in Slack steve is only available on our server. 
 
 ## How to use:
 ### Deployment:
