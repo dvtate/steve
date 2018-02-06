@@ -1,5 +1,5 @@
-# Steve the Telegram Bot
-A bot for RoboBibb's telegram groupchats. This bot is programmed for node.js and runs on a Raspberry pi. Message steve [here](https://t.me/robobibb_bot).
+# Steve, RoboBibb's Chat Bot
+A bot for RoboBibb's communication mediums. This bot is programmed for node.js and runs on a Raspberry pi. Message steve [here](https://t.me/robobibb_bot).
 
 ## How to use:
 ### Deployment:
@@ -12,7 +12,9 @@ $ ./steve.sh
 ### Updating:
 Like many things on the internet, uptime is very important. In order to update the bot with essentially no noticeable down-time, you can run `update.sh`. Which will automatically update the bot from this github repo. 
 
+
 ## Commands:
+These commands start with `/` in Telegram and `.` in Slack.
 - `/exchange <amt> <from> <to>` - converts currencies
 - `/timzeone <timezone>` - tells current time in <timezone>
 - `/ping` - replies `pong` as soon as possible (for testing connection)
@@ -60,4 +62,5 @@ messages which could be directed to anyone must be started with `steve,` or anyt
 - "shutup steve" - replies "no thx"
 
 ## Chat Events:
+This is only included in the Telegram portion as Slack is primarily for announcements.
 - on new member: welcomes the new member to the chat
