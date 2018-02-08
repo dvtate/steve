@@ -67,7 +67,7 @@ rtm.on(RTM_EVENTS.MESSAGE, message => {
                 web.chat.postMessage(message.channel, `${caption}\nhttps:${imgurl}`)
 
         	});
-        } else
+        }
     }
 
     // Logging
