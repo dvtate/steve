@@ -55,7 +55,7 @@ async function authorized(usrID, isAuth, notAuth) {
 }
 
 // bind slack bot to steve
-require("./slack.js").setBot(bot);
+//require("./slack.js").setBot(bot); // meyers deleted slack integration
 
 // help dialog
 bot.onText(/^\/(?:start|help(?:@robobibb_bot)?)(?:$|\s)/, msg => {
