@@ -8,8 +8,8 @@
 ## get new repo
 echo "cloning into repo..."
 rm -rf "robobibb-steve-bot"
-git clone "git+ssh://git@github.com/robobibb/robobibb-steve-bot.git"
-cd "robobibb-steve-bot"
+git clone "git+ssh://git@github.com/dvtate/steve.git"
+cd "steve"
 
 # make changes
 printf "updating fortunes.txt... "
