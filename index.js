@@ -488,20 +488,39 @@ bot.onText(/^\/vaporwave(?:@robobibb_bot)? (.+)/, (msg, match) => {
 bot.onText(/^\/glitch(?:@robobibb_bot)? (.+)/, (msg, match) => {
 	bot.sendMessage(msg.chat.id,
 		require("lunicode-creepify").encode(match[1]),
-		{ reply_to_message_id : msg.message_id }
-	);
+		{ reply_to_message_id : msg.message_id });
 
 	logCmd(msg, "/glitch'ed some text");
 });
 
 // puts text into tinycaps
-bot.onText(/^\/tiny(?:@robobibb_bot)? (.+)/, (msg, match) => {
+bot.onText(/^\/tinycaps(?:@robobibb_bot)? (.+)/, (msg, match) => {
 	bot.sendMessage(msg.chat.id,
 		require("lunicode-tiny").encode(match[1]),
-		{reply_to_message_id : msg.message_id });
+		{ reply_to_message_id : msg.message_id });
 
-	logCmd(msg, "converted text to tinycaps");
+	logCmd(msg, "converted text to /tinycaps");
 });
+
+// mirrors text
+bot.onText(/^\/mirror(?:@robobibb_bot)? (.+)/, (msg, match) => {
+	bot.sendMessage(msg.chat.id,
+		require("lunicode-mirror").encode(match[1]),
+		{ reply_to_message_id : msg.message_id });
+
+	logCmd(msg, "/mirror'ed some text")
+});
+
+
+// flips text upside down
+bot.onText(/^\/flip(?:@robobibb_bot)? (.+)/, (msg, match) => {
+	bot.sendMessage(msg.chat.id,
+		require("lunicode-flip").encode(match[1]),
+		{ reply_to_message_id : msg.message_id });
+
+	logCmd(msg, "/flip'ed some text")
+});
+
 
 // Welcome new members :)
 bot.on("new_chat_members", msg => {
