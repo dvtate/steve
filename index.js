@@ -24,7 +24,7 @@ const adminIDs = [ 46580443,	// k3 (gh@Technohacker) (tg@Technohackr
 async function logCmd(msg, logMessage) {
 	const timestamp = require("node-datetime").create().format("[Y-m-d@H:M:S]");
 	const entry = `${timestamp}: ${msg.from.first_name} ${msg.from.last_name} (@${msg.from.username}) ${logMessage}`;
-	fs.appendFile("/home/alarm/.steve/steve_useage.log", entry + '\n', (err) => {
+	fs.appendFile("${process.env.HOME}/.steve/steve_useage.log", entry + '\n', (err) => {
 		if (err)
 			throw err;
 		console.log(entry);
@@ -55,7 +55,7 @@ async function authorized(usrID, isAuth, notAuth) {
 }
 
 // bind slack bot to steve
-require("./slack.js").setBot(bot);
+//require("./slack.js").setBot(bot); meyers deleted slack integration
 
 // help dialog
 bot.onText(/^\/(?:start|help(?:@robobibb_bot)?)(?:$|\s)/, msg => {
