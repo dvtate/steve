@@ -73,6 +73,10 @@ He automates a variety of tasks an provides utilities for the members of our gro
 /log - log a value/message (ie- "__chat_id", "__from_id", "__msg_id", "__msg_")
 /fortune - opens a fortune cookie
 /vaporwave <text> - converts normal text to full-width text
+/glitch <text> - adds extra characters to make text look glitchy and scary
+/tinycaps <text> - puts text in very small capital letters
+/flip <text> - flips text upside-down
+/mirror <text> - reverses text including backwards characters
 /xkcd - gives a random XKCD comic strip
 /exchange <amt> <from> <to> - convert from one currency to another
 /timezone <timezone> - Find the time at a given timezone
