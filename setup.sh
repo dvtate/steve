@@ -25,7 +25,6 @@ if [ ! -f $HOME/.steve/tg_key ]; then
     echo $TELEGRAM_TOKEN > $HOME/.steve/tg_key
 
     echo "done"
-
 fi
 
 
@@ -41,10 +40,9 @@ if [ ! -f $HOME/.steve/slack_key ]; then
     echo $SLACK_TOKEN > $HOME/.steve/slack_key
 
     echo "done"
-
 fi
 
 # install dependencies
 echo "installing dependencies..."
-npm install --save node-telegram-bot-api node-datetime open-exchange-rates money time
+npm install --save node-telegram-bot-api node-datetime open-exchange-rates money time @slack/client @slack/events-api lunicode-creepify lunicode-tiny lunicode-flip lunicode-mirror
 echo "installed dependencies"
