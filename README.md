@@ -36,6 +36,11 @@ These commands start with `/` in Telegram and `.` in Slack.
 - `/8ball` - responds with "Yes", "No" or "Maybe" (not always correct)
 - `/fortune` - sends an interesting quote/fortune
 - `/vaporwave <text>` - converts to full-width text
+- `/glitch <text>` - adds glitchy characters to text
+- `/flip <text>` - flips text upside down
+- `/mirror <text>` - reverses text and characters
+- `/tinycaps <text>` - puts text in small capital letters
+- `/shrug` - sends a random shrug response
 - `/xkcd` - sends a random xkcd comic
 - `/xkcd <comic number>` - sends xkcd number \<comic number>
 - `/xkcd latest` - sends most recent xkcd comic strip
