@@ -525,7 +525,7 @@ bot.onText(/^\/flip(?:@robobibb_bot)? (.+)/, (msg, match) => {
 	logCmd(msg, "/flip'ed some text")
 });
 
-bot.onText(/^\/shrug(?:@robobibb_bot)?(?:$|\s)/, msg => {
+bot.onText(/\/shrug(?:@robobibb_bot)?[\s$]/, msg => {
 	const replyOptions = [
 		msg => {
 			bot.sendMessage(msg.chat.id, "¯\_(ツ)_/¯", { reply_to_message_id : msg.message_id });
