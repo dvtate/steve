@@ -525,7 +525,7 @@ bot.onText(/^\/flip(?:@robobibb_bot)? (.+)/, (msg, match) => {
 	logCmd(msg, "/flip'ed some text")
 });
 
-bot.onText(/\/shrug(?:@robobibb_bot)?[\s$]/, msg => {
+bot.onText(/\/shrug(?:@robobibb_bot)?(?:$|\s)/, msg => {
 	const replyOptions = [
 		msg => {
 			bot.sendMessage(msg.chat.id, "¯\_(ツ)_/¯", { reply_to_message_id : msg.message_id });
@@ -537,10 +537,10 @@ bot.onText(/\/shrug(?:@robobibb_bot)?[\s$]/, msg => {
 		}
 	];
 
-	replyOptions[Math.random() * replyOptions.length](msg);
+	replyOptions[Math.floor(Math.random() * replyOptions.length)](msg);
+
 	logCmd(msg, "/shrug'ed");
 });
-
 
 // Welcome new members :)
 bot.on("new_chat_members", msg => {
@@ -553,7 +553,7 @@ bot.on("new_chat_members", msg => {
 	});
 });
 
-// steve can now remove himself from chats
+// steve can remove himself from chats
 bot.onText(/^\/leave(?:@robobibb_bot)?(?:$|\s)|^gtfo steve$|^go away steve$/i, msg => {
 	bot.leaveChat(msg.chat.id).then((data) => {
 		console.log("data=" + data);
@@ -562,7 +562,6 @@ bot.onText(/^\/leave(?:@robobibb_bot)?(?:$|\s)|^gtfo steve$|^go away steve$/i, m
 	});
 	logCmd(msg, `made me leave chat ${msg.chat.title}`);
 });
-
 
 /// interface to the server
 bot.onText(/^\/system(?:@robobibb_bot)? (.+)/, (msg, match) => {
