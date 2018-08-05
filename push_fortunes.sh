@@ -13,7 +13,7 @@ cd "steve"
 
 # make changes
 printf "updating fortunes.txt... "
-cat "../assets/fortunes.txt" > "assets/fortunes.txt"
+touch "assets/fortunes.txt" 
 echo "done"
 
 # commit changes
