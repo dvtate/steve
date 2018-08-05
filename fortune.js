@@ -1,5 +1,7 @@
 /// This module gets all the fortunes from assets/fortunes.txt
 
+const fs = require("fs");
+
 // reads the list of fortunes from the file
 module.exports.updateFortunesList = function(){
         module.exports.fortunes = require("fs").readFileSync("./assets/fortunes.txt")
@@ -29,7 +31,9 @@ module.exports.addFortune = function (quote, from) {
 		console.log("sys ./push_fortunes.sh \"fortune from " + from.first_name + "\"");
 
 		// commit new fortunes
-		require("child_process").spawnSync("sh", [ "push_fortunes.sh", "fortune from " + from.first_name ], { stdio: "inherit" });
+		require("child_process").spawnSync("sh",
+			[ "push_fortunes.sh", "fortune from " + from.first_name ],
+			{ stdio: [ fs.openSync(`${process.env.HOME}/.steve/gh_key`, 'r'), 0, 0] });
 
 	});
 }

@@ -28,6 +28,21 @@ if [ ! -f $HOME/.steve/tg_key ]; then
 fi
 
 
+# github login details
+if [ ! -f $HOME/.steve/gh_key ]; then
+	# get login
+	printf "enter username:"
+	read GH_UN
+	printf "enter passwd:"
+	read GH_PW
+	
+	printf "inserting credentials into ~/.steve/gh_key... "
+	echo $GH_UN > $HOME/.steve/gh_key
+	echo $GH_PW >> $HOME/.steve/gh_key
+	echo "done"
+
+fi
+
 # if token wasn't exported by update.sh or steve.sh
 # then we need to prompt the user for it
 if [ ! -f $HOME/.steve/slack_key ]; then
